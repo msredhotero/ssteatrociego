@@ -35,69 +35,71 @@ function query($sql,$accion) {
 
 
 
-$tablasAr	= array("clientes"        => "dbclientes",        
-"empleados"=> "dbempleados",
-"productos"         => "dbproductos",         
+$tablasAr	= array("clientes"        => "dbclientes",                
 "usuarios"        => "dbusuarios",        
 "proveedores"       => "dbproveedores",       
 "predio_menu"     => "predio_menu",       
 "estados"         => "tbestados",                 
-"roles"           => "tbroles",          
-"categorias"    => "tbcategorias",
-"compras"       => "dbcompras",
-"pedidos"       => "dbpedidos",
-"ventas"       => "dbventas",
-"detalleventa"       => "dbdetalleventa",                    
-"detallepedido" => "dbdetallepedido",
+"roles"           => "tbroles",                            
 "tipopago"        => "tbtipopago",
-"cajadiaria"	=> "tbcajadiaria",
-"autorizacion" => "tbautorizacion",
-"administrativo"=>"dbadministrativo",
-"promos"=>"dbpromos",
-"promodetalle"=>"dbpromodetalle");
+"salas"		=>	"tbsalas",
+"tiposcargos"		=>	"tbtiposcargos",
+"tipodocumento"		=>	"tbtipodocumento",
+"estadocivil"		=>	"tbestadocivil",
+"tipoconceptos"		=>	"tbtipoconceptos",
+"personal"		=>	"dbpersonal",
+"personalcargos"		=>	"dbpersonalcargos",
+"datosbancos"		=>	"dbdatosbancos",
+"domicilios"		=>	"dbdomicilios",
+"cooperativas"		=>	"dbcooperativas",
+"obras"		=>	"dbobras",
+"obrascooperativas"		=>	"dbobrascooperativas",
+"gastosobras"		=>	"dbgastosobras");
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 	
-	$tablasArAux2	= array("clientes"        => "dbclientes",        
-"empleados"=> "dbempleados",
-"productos"         => "dbproductos",         
+	$tablasArAux2	= array("clientes"        => "dbclientes",                
 "usuarios"        => "dbusuarios",        
 "proveedores"       => "dbproveedores",       
 "predio_menu"     => "predio_menu",       
 "estados"         => "tbestados",                 
-"roles"           => "tbroles",          
-"categorias"    => "tbcategorias",
-"ventas"       => "dbventas",
-"detalleventa"       => "dbdetalleventa",                            
-"pedidos"       => "dbpedidos",
-"detallepedido" => "dbdetallepedido",
+"roles"           => "tbroles",                            
 "tipopago"        => "tbtipopago",
-"cajadiaria"	=> "tbcajadiaria",
-"autorizacion" => "tbautorizacion",
-"administrativo"=>"dbadministrativo",
-"promos"=>"dbpromos",
-"promodetalle"=>"dbpromodetalle");
+"salas"		=>	"tbsalas",
+"tiposcargos"		=>	"tbtiposcargos",
+"tipodocumento"		=>	"tbtipodocumento",
+"estadocivil"		=>	"tbestadocivil",
+"tipoconceptos"		=>	"tbtipoconceptos",
+"personal"		=>	"dbpersonal",
+"personalcargos"		=>	"dbpersonalcargos",
+"datosbancos"		=>	"dbdatosbancos",
+"domicilios"		=>	"dbdomicilios",
+"cooperativas"		=>	"dbcooperativas",
+"obras"		=>	"dbobras",
+"obrascooperativas"		=>	"dbobrascooperativas",
+"gastosobras"		=>	"dbgastosobras");
 
-	$tablasArAux	= array("clientes"        => 1,        
-"empleados"=> 1,
-"productos"         => 3,         
+	$tablasArAux	= array("clientes"        => 1,                
 "usuarios"        => 2,        
 "proveedores"       => 1,       
 "predio_menu"     => 1,       
 "estados"         => 1,                 
-"roles"           => 1,          
-"categorias"    => 1,
-"ventas"       => 3,
-"detalleventa"  => 3,                               
-"pedidos"       => 2,
-"detallepedido" => 3,
+"roles"           => 1,                            
 "tipopago"        => 1,
-"cajadiaria"	=> 1,
-"autorizacion" => 1,
-"administrativo"=>1,
-"promos"=>2,
-"promodetalle"=>3);
+"salas"		=>	1,
+"tiposcargos"		=>	1,
+"tipodocumento"		=>	1,
+"estadocivil"		=>	1,
+"tipoconceptos"		=>	1,
+"personal"		=>	3,
+"personalcargos"		=>	3,
+"datosbancos"		=>	2,
+"domicilios"		=>	2,
+"cooperativas"		=>	1,
+"obras"		=>	2,
+"obrascooperativas"		=>	3,
+"gastosobras"		=>	2);
 	
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;
@@ -127,7 +129,7 @@ $ajaxFuncionesController = '';
 
 $servicios	= "Referencias";
 
-$sqlMapaer	= "SHOW FULL TABLES FROM vinoteca";
+$sqlMapaer	= "SHOW FULL TABLES FROM teatrociego";
 $resMapeo 	=	query($sqlMapaer,0);
 
 $aliasTablaMadre = '';
