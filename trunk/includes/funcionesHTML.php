@@ -62,7 +62,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 			
 			<ul class="list-inline" style="margin-left:12px;">
 				<li style="margin-left:20%;"><span class="glyphicon glyphicon-list" id="colapsarMenu" style="cursor:pointer;"> </span></li>	
-				<li class="navbar-right"><a href="javascript:void(0)" class="cajainicio" id="cajainicio" data-toggle="modal" data-target="#myModalcaja"> Inicio Caja</a></li>
+				
 				<li class="navbar-right"><span class="glyphicon glyphicon-user"></span> '.$usuario.'</li>
 
 			</ul>
@@ -74,7 +74,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	
 		<div id="navigation" >
 			<div align="center">
-			<img src="../imagenes/dash_logo.png"/ style="padding-bottom:5%;" width="50%">
+			<img src="../imagenes/dash_logo.png"/ style="padding-bottom:5%;">
 			</div>
 				<nav class="nav">
 					<ul>

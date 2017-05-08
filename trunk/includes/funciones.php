@@ -8,6 +8,16 @@ date_default_timezone_set('America/Buenos_Aires');
 
 class Servicios {
 	
+	//para los campos bit
+	
+	function jsBit($campo, $valor) {
+		if ($valor == 'Si') {
+			return "$('#".$campo."').prop( 'checked', true );";	
+		} else {
+			return "$('#".$campo."').prop( 'checked', false );";
+		}
+	}
+	
 	function devolverSelectBox($datos, $ar, $delimitador) {
 		
 		$cad		= ''; 
@@ -50,6 +60,14 @@ class Servicios {
 		$iconoEditar = '';
 		$cambio = 0;
 		
+		$classVar1 = '';
+		$iconoVar1 = '';
+		$lblVar1 = '';
+		
+		$classVar2 = '';
+		$iconoVar2 = '';
+		$lblVar2 = '';
+		
 		switch ($cantidad) {
 			case 0:
 				$cambio = 1;
@@ -71,18 +89,23 @@ class Servicios {
 				$idresultados = "resultadospredio";
 				break;
 			case 97:
-				$cantidad = 3;
-				$classMod = 'varmodificarprincipal';
-				$classEli = 'varborrarprincipal';
-				$idresultados = "resultadosprincipal";
+				$cantidad = 5;
+				$classMod = 'varmodificar';
+				$classEli = 'varborrar';
+				$classVer = 'varver';
+				$lblVer	  =	'ver';
+				$idresultados = "resultados";
 				break;
 			case 96:
-				$cantidad = 6;
+				$cantidad = 9;
 				$classMod = 'varmodificar';
-				$classEditar = 'varpdf';
-				$iconoEditar = 'glyphicon glyphicon-barcode';
-				$lblEditar	  = 'Factura';
+				$classEditar = 'vardomicilios';
+				$iconoEditar = 'glyphicon glyphicon-home';
+				$lblEditar	  = 'Domicilio';
 				$classEli = 'varborrar';
+				$classVar1 = 'varbanco';
+				$iconoVar1 = 'glyphicon glyphicon-credit-card';
+				$lblVar1	  = 'Datos Banco';
 				$idresultados = "resultados";
 				break;
 			case 95:
@@ -208,6 +231,18 @@ class Servicios {
 												<a href="javascript:void(0)" class="'.$classEditar.'" id="'.$row[0].'" ><span class="'.$iconoEditar.'"></span> '.$lblEditar.'</a>
 												</li>';	
 					}
+					
+					if ($classVar1 != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classVar1.'" id="'.$row[0].'" ><span class="'.$iconoVar1.'"></span> '.$lblVar1.'</a>
+												</li>';	
+					}
+					
+					if ($classVar2 != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classVar2.'" id="'.$row[0].'" ><span class="'.$iconoVar2.'"></span> '.$lblVar2.'</a>
+												</li>';	
+					}
 											
 					$cadRows = $cadRows.'		<li>
 												<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'"><span class="glyphicon glyphicon-remove"></span> Borrar</a>
@@ -325,7 +360,7 @@ class Servicios {
 		$sql	=	"show columns from ".$tabla;
 		$res 	=	$this->query($sql,0);
 		$label  = '';
-		$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","refviejo");
+		$ocultar = array("fechacrea","fechacreacion","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","refviejo");
 		
 		$geoposicionamiento = array("latitud","longitud");
 		
@@ -665,7 +700,296 @@ class Servicios {
 	}
 
 
+	function camposTablaVer($id,$lblid,$tabla,$lblcambio,$lblreemplazo,$refdescripcion,$refCampo) {
+		
+		switch ($tabla) {
+			case 'dbtorneos':
+				
+				break;
 
+			default:
+				$sqlMod = "select * from ".$tabla." where ".$lblid." = ".$id;
+				$resMod = $this->query($sqlMod,0);
+		}
+		/*if ($tabla == 'dbtorneos') {
+			$resMod = $this->TraerIdTorneos($id);
+		} else {
+			$sqlMod = "select * from ".$tabla." where ".$lblid." = ".$id;
+			$resMod = $this->query($sqlMod,0);
+		}*/
+		$sql	=	"show columns from ".$tabla;
+		$res 	=	$this->query($sql,0);
+		
+		$camposEscondido = "";
+		/* Analizar para despues */
+		/*if (count($refencias) > 0) {
+			$j = 0;
+
+			foreach ($refencias as $reftablas) {
+				$sqlTablas = "select id".$reftablas.", ".$refdescripcion[$j]." from ".$reftablas." order by ".$refdescripcion[$j];
+				$resultadoRef[$j][0] = $this->query($sqlTablas,0);
+				$resultadoRef[$j][1] = $refcampos[$j];
+			}
+		}*/
+		
+		
+		if ($res == false) {
+			return 'Error al traer datos';
+		} else {
+			
+			$form	=	'';
+			
+			while ($row = mysql_fetch_array($res)) {
+				
+				$i = 0;
+				foreach ($lblcambio as $cambio) {
+					if ($row[0] == $cambio) {
+						$label = $lblreemplazo[$i];
+						$i = 0;
+						break;
+					} else {
+						$label = $row[0];
+					}
+					$i = $i + 1;
+				}
+				
+				if ($row[3] != 'PRI') {
+					if (strpos($row[1],"decimal") !== false) {
+						$form	=	$form.'
+						
+						<div class="form-group col-md-6 col-xs-6">
+							<label for="'.$label.'" class="control-label" style="text-align:left; font-size:1.4em;"><b>'.ucwords($label).'</b></label>
+							<div class="input-group col-md-12">
+								
+								<p>'.mysql_result($resMod,0,$row[0]).'</p>
+								
+							</div>
+						</div>
+						
+						';
+					} else {
+						if ( in_array($row[0],$refCampo) ) {
+							
+							$campo = strtolower($row[0]);
+							
+							$option = $refdescripcion[array_search($row[0], $refCampo)];
+							/*
+							$i = 0;
+							foreach ($lblcambio as $cambio) {
+								if ($row[0] == $cambio) {
+									$label = $lblreemplazo[$i];
+									$i = 0;
+									break 2;
+								} else {
+									$label = $row[0];
+								}
+								$i = $i + 1;
+							}*/
+							
+							$form	=	$form.'
+							
+							<div class="form-group col-md-6 col-xs-6">
+								<label for="'.$campo.'" class="control-label" style="text-align:left; font-size:1.4em;"><b>'.$label.'</b></label>
+								<div class="input-group col-md-12">
+									<p>
+										';
+							
+							$form	=	$form.$option;
+							
+							$form	=	$form.'		</p>
+								</div>
+							</div>
+							
+							';
+							
+						} else {
+							
+							if (strpos($row[1],"bit") !== false) {
+								$label = ucwords($label);
+								$campo = strtolower($row[0]);
+								
+								$activo = '';
+								if (mysql_result($resMod,0,$row[0])==1){
+									$activo = 'Si';
+								} else {
+									$activo = 'No';
+								}
+								
+								$form	=	$form.'
+								
+								<div class="form-group col-md-6 col-xs-6">
+									<label for="'.$campo.'" class="control-label" style="text-align:left; font-size:1.4em;"><b>'.$label.'</b></label>
+									<div class="input-group col-md-12">
+										<p>'.$activo.'</p>
+									</div>
+								</div>
+								
+								';
+								
+								
+							} else {
+								
+								if (strpos($row[1],"date") !== false) {
+									$label = ucwords($label);
+									$campo = strtolower($row[0]);
+									/*
+									$form	=	$form.'
+									
+									<div class="form-group col-md-6">
+										<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+										<div class="input-group date form_date col-md-6" data-date="" data-date-format="dd MM yyyy" data-link-field="'.$campo.'" data-link-format="yyyy-mm-dd">
+											<input class="form-control" value="'.mysql_result($resMod,0,$row[0]).'" size="50" type="text" value="" readonly>
+											<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+										</div>
+										<input type="hidden" name="'.$campo.'" id="'.$campo.'" value="'.mysql_result($resMod,0,$row[0]).'" />
+									</div>
+									
+									';
+									*/
+									
+									$form	=	$form.'
+									
+									<div class="form-group col-md-6 col-xs-6">
+										<label for="'.$campo.'" class="control-label" style="text-align:left; font-size:1.4em;"><b>'.$label.'</b></label>
+										<div class="input-group col-md-6">
+											<p>'.mysql_result($resMod,0,$row[0]).'</p>
+										</div>
+										
+									</div>
+									
+									';
+									
+								} else {
+									
+									if (strpos($row[1],"time") !== false) {
+										$label = ucwords($label);
+										$campo = strtolower($row[0]);
+										
+										$form	=	$form.'
+										
+										<div class="form-group col-md-6 col-xs-6">
+											<label for="'.$campo.'" class="control-label" style="text-align:left; font-size:1.4em;">'.$label.'</label>
+											<div class="input-group col-md-6">
+												<p>'.mysql_result($resMod,0,$row[0]).'</p>
+											</div>
+											
+										</div>
+										
+										';
+										
+									} else {
+										if ((integer)(str_replace('varchar(','',$row[1])) > 200) {
+											$label = ucwords($label);
+											$campo = strtolower($row[0]);
+											
+											$form	=	$form.'
+											
+											<div class="form-group col-md-6 col-xs-6">
+												<label for="'.$campo.'" class="control-label" style="text-align:left; font-size:1.4em;"><b>'.$label.'</b></label>
+												<div class="input-group col-md-12">
+													<p>'.(htmlspecialchars(mysql_result($resMod,0,$row[0]),ENT_HTML5) == '' ? ".............." : htmlspecialchars(mysql_result($resMod,0,$row[0]),ENT_HTML5)).'</p>
+												</div>
+												
+											</div>
+											
+											';
+											
+										} else {
+											
+											if ($row[1] == 'MEDIUMTEXT') {
+											$label = ucwords($label);
+											$campo = strtolower($row[0]);
+											
+											$form	=	$form.'
+											
+											<div class="form-group col-md-12 col-xs-12">
+												<label for="'.$campo.'" class="control-label" style="text-align:left; font-size:1.4em;"><b>'.$label.'</b></label>
+												<div class="input-group col-md-12 col-xs-12">
+													<p>'.(htmlspecialchars(mysql_result($resMod,0,$row[0]),ENT_HTML5) == '' ? ".............." : htmlspecialchars(mysql_result($resMod,0,$row[0]),ENT_HTML5)).'</p>
+													
+													
+												</div>
+												
+											</div>
+											
+											';
+											
+											} else {
+												
+												if ($row[0]=='imagen') {
+													$label = ucwords($label);
+													$campo = strtolower($row[0]);
+													
+													$imagen = $this->traerImagenUnica(mysql_result($resMod,0,0));
+													
+													if (mysql_num_rows($imagen)>0) {
+														$mystring = mysql_result($imagen,0,"type");
+														$findme   = "image";
+														$pos = strpos($mystring, $findme);
+													} else {
+														$mystring = 0;
+														$findme   = "image";
+														$pos = strpos($mystring, $findme);
+
+													}
+													
+													$form	=	$form.'<div class="form-group col-md-6 col-xs-6">
+														<label for="'.$campo.'" class="control-label" style="text-align:left; font-size:1.4em;">'.$label.'</label>
+														<div class="input-group col-md-12">';
+													
+													if (mysql_num_rows($imagen)>0) {
+
+                            	
+														if ($pos !== false) { 
+									
+														$form	=	$form.'<img src="../../archivos/'.mysql_result($imagen,0,0).'/'.mysql_result($imagen,0,1).'/'.utf8_encode(mysql_result($imagen,0,2)).'" width="150" height="150">';
+														} else { 
+														$form	=	$form.'<img src="../../imagenes/pdf_ico2.jpg" width="100" height="100">'.$imagen["imagen"];
+														
+														} 
+
+													}
+													
+													$form	=	$form.'</div>
+													</div>';
+													
+													
+														
+												} else {
+													$label = ucwords($label);
+													$campo = strtolower($row[0]);
+													
+													$form	=	$form.'
+													
+													<div class="form-group col-md-6 col-xs-6">
+														<label for="'.$campo.'" class="control-label" style="text-align:left; font-size:1.4em;">'.$label.'</label>
+														<div class="input-group col-md-12">
+															<p>'.(utf8_encode(mysql_result($resMod,0,$row[0])) == '' ? ".............." : utf8_encode(mysql_result($resMod,0,$row[0]))).'</p>
+														</div>
+													</div>
+													
+													';
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						
+						
+					}
+				} else {
+	
+					$camposEscondido = '';	
+				}
+			}
+			
+			$formulario = $form."<br><br>".$camposEscondido;
+			
+			return $formulario;
+		}	
+	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	
@@ -712,7 +1036,7 @@ class Servicios {
 		$sql	=	"show columns from ".$tabla;
 		$res 	=	$this->query($sql,0);
 		
-		$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","refviejo");
+		$ocultar = array("fechacrea","fechacreacion","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","refviejo");
 		
 		$camposEscondido = "";
 		/* Analizar para despues */

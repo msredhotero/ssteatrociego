@@ -574,48 +574,74 @@ echo $res;
 /* PARA Tiposcargos */
 
 function insertarCooperativas($serviciosReferencias) { 
-$descripcion = $_POST['descripcion']; 
-$puntos = $_POST['puntos']; 
-$puntosproduccion = $_POST['puntosproduccion']; 
-$puntossinproduccion = $_POST['puntossinproduccion']; 
-$fechacreacion = $_POST['fechacreacion']; 
-$usuacrea = $_POST['usuacrea']; 
-$fechamodi = $_POST['fechamodi']; 
-$usuamodi = $_POST['usuamodi']; 
-if (isset($_POST['activo'])) { 
-$activo	= 1; 
-} else { 
-$activo = 0; 
+	$descripcion = $_POST['descripcion']; 
+	$puntos = $_POST['puntos']; 
+	$puntosproduccion = $_POST['puntosproduccion']; 
+	$puntossinproduccion = $_POST['puntossinproduccion']; 
+	$fechacreacion = $_POST['fechacreacion']; 
+	$usuacrea = $_POST['usuacrea']; 
+	$fechamodi = $_POST['fechamodi']; 
+	$usuamodi = $_POST['usuamodi']; 
+	
+	if (isset($_POST['activo'])) { 
+		$activo	= 1; 
+	} else { 
+		$activo = 0; 
+	} 
+	
+	$res = $serviciosReferencias->insertarCooperativas($descripcion,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
+	
+	if ((integer)$res > 0) { 
+		$resUser = $serviciosReferencias->traerObras();
+				$cad = 'user';
+				while ($rowFS = mysql_fetch_array($resUser)) {
+					if (isset($_POST[$cad.$rowFS[0]])) {
+						$serviciosReferencias->insertarObrascooperativas($rowFS[0],$res);
+					}
+				}
+				
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	 
+	} 
 } 
-$res = $serviciosReferencias->insertarCooperativas($descripcion,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
-if ((integer)$res > 0) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al insertar datos';	 
-} 
-} 
+
 function modificarCooperativas($serviciosReferencias) { 
-$id = $_POST['id']; 
-$descripcion = $_POST['descripcion']; 
-$puntos = $_POST['puntos']; 
-$puntosproduccion = $_POST['puntosproduccion']; 
-$puntossinproduccion = $_POST['puntossinproduccion']; 
-$fechacreacion = $_POST['fechacreacion']; 
-$usuacrea = $_POST['usuacrea']; 
-$fechamodi = $_POST['fechamodi']; 
-$usuamodi = $_POST['usuamodi']; 
-if (isset($_POST['activo'])) { 
-$activo	= 1; 
-} else { 
-$activo = 0; 
+	$id = $_POST['id']; 
+	$descripcion = $_POST['descripcion']; 
+	$puntos = $_POST['puntos']; 
+	$puntosproduccion = $_POST['puntosproduccion']; 
+	$puntossinproduccion = $_POST['puntossinproduccion']; 
+	$fechacreacion = $_POST['fechacreacion']; 
+	$usuacrea = $_POST['usuacrea']; 
+	$fechamodi = $_POST['fechamodi']; 
+	$usuamodi = $_POST['usuamodi']; 
+	
+	if (isset($_POST['activo'])) { 
+		$activo	= 1; 
+	} else { 
+		$activo = 0; 
+	} 
+	
+	$res = $serviciosReferencias->modificarCooperativas($id,$descripcion,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
+	
+	if ($res == true) { 
+		$serviciosReferencias->eliminarObrascooperativasPorCooperativa($id);
+		$resUser = $serviciosReferencias->traerObras();
+		$cad = 'user';
+		while ($rowFS = mysql_fetch_array($resUser)) {
+			if (isset($_POST[$cad.$rowFS[0]])) {
+				$serviciosReferencias->insertarObrascooperativas($rowFS[0],$id);
+			}
+		}
+		
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
 } 
-$res = $serviciosReferencias->modificarCooperativas($id,$descripcion,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
-if ($res == true) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al modificar datos'; 
-} 
-} 
+
+
 function eliminarCooperativas($serviciosReferencias) { 
 $id = $_POST['id']; 
 $res = $serviciosReferencias->eliminarCooperativas($id); 

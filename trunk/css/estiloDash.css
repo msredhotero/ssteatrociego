@@ -134,8 +134,8 @@ padding-bottom: 10px;
 
 #navigation {
 			height:100%;
-			/*background-color: #99583D;*/
-			background:url(../imagenes/370799.jpg) repeat;
+			background-color: #07110E;
+			/*background:url(../imagenes/370799.jpg) repeat;*/
 			padding-top:15px;
 			overflow-y: auto;
 			position: fixed;
@@ -613,6 +613,19 @@ padding-bottom: 10px;
 
         .icoconfiguracion {
 			background:url(../imagenes/iconmenu/configuracion.png) no-repeat;
+			background-position: center center;
+			width:40px;
+			height:40px;
+			float:left;
+			margin-right:10px;
+			margin-top:-4px;
+			/* OKAY */
+		   background-size: 25px 50px;
+		   background-size: 50% 50%;
+		}
+		
+		.icocinema {
+			background:url(../imagenes/iconmenu/cinema.png) no-repeat;
 			background-position: center center;
 			width:40px;
 			height:40px;

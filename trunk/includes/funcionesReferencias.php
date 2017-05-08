@@ -348,11 +348,11 @@ c.descripcion,
 c.puntos,
 c.puntosproduccion,
 c.puntossinproduccion,
+(case when c.activo = 1 then 'Si' else 'No' end) as activo,
 c.fechacreacion,
 c.usuacrea,
 c.fechamodi,
-c.usuamodi,
-(case when c.activo = 1 then 'Si' else 'No' end) as activo
+c.usuamodi
 from dbcooperativas c 
 order by c.descripcion"; 
 $res = $this->query($sql,0); 
@@ -366,11 +366,11 @@ c.descripcion,
 c.puntos,
 c.puntosproduccion,
 c.puntossinproduccion,
+(case when c.activo = 1 then 'Si' else 'No' end) as activo,
 c.fechacreacion,
 c.usuacrea,
 c.fechamodi,
-c.usuamodi,
-(case when c.activo = 1 then 'Si' else 'No' end) as activo
+c.usuamodi
 from dbcooperativas c 
 where c.activo = 1
 order by c.descripcion"; 
@@ -608,11 +608,12 @@ o.costotranscciontarjetaiva,
 o.porcentajeargentores,
 o.porcentajereparto,
 o.porcentajeretencion,
+(case when o.activo = 1 then 'Si' else 'No' end) as activo,
 o.fechacreacion,
 o.usuacrea,
 o.fechamodi,
-o.usuamodi,
-(case when o.activo = 1 then 'Si' else 'No' end) as activo
+o.usuamodi
+
 from dbobras o 
 inner join tbsalas sal ON sal.idsala = o.refsalas 
 order by o.nombre"; 
@@ -633,11 +634,11 @@ o.costotranscciontarjetaiva,
 o.porcentajeargentores,
 o.porcentajereparto,
 o.porcentajeretencion,
+(case when o.activo = 1 then 'Si' else 'No' end) as activo,
 o.fechacreacion,
 o.usuacrea,
 o.fechamodi,
-o.usuamodi,
-(case when o.activo = 1 then 'Si' else 'No' end) as activo
+o.usuamodi
 from dbobras o 
 inner join tbsalas sal ON sal.idsala = o.refsalas 
 where o.activo = 1
@@ -681,6 +682,18 @@ function eliminarObrascooperativas($id) {
 $sql = "delete from dbobrascooperativas where idobracooperativa =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
+}
+
+function eliminarObrascooperativasPorCooperativa($idCooperativa) { 
+$sql = "delete from dbobrascooperativas where refcooperativas =".$idCooperativa; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+function eliminarObrascooperativasPorObra($idObra) { 
+$sql = "delete from dbobrascooperativas where refobras =".$idObra; 
+$res = $this->query($sql,0); 
+return $res; 
 } 
 
 
@@ -693,6 +706,39 @@ from dbobrascooperativas o
 inner join dbobras obr ON obr.idobra = o.refobras 
 inner join tbsalas sa ON sa.idsala = obr.refsalas 
 inner join dbcooperativas coo ON coo.idcooperativa = o.refcooperativas 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+function traerObrascooperativasPorCooperativa($idCooperativa) { 
+$sql = "select 
+o.idobracooperativa,
+o.refobras,
+o.refcooperativas,
+obr.nombre as obra,
+coo.descripcion as cooperativa,
+sa.descripcion as sala
+from dbobrascooperativas o 
+inner join dbobras obr ON obr.idobra = o.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+inner join dbcooperativas coo ON coo.idcooperativa = o.refcooperativas 
+where coo.idcooperativa = ".$idCooperativa."
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+function traerObrascooperativasPorObra($idObra) { 
+$sql = "select 
+o.idobracooperativa,
+o.refobras,
+o.refcooperativas
+from dbobrascooperativas o 
+inner join dbobras obr ON obr.idobra = o.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+inner join dbcooperativas coo ON coo.idcooperativa = o.refcooperativas 
+where coo.refobras = ".$idObra."
 order by 1"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -739,18 +785,20 @@ return $res;
 function traerPersonal() { 
 $sql = "select 
 p.idpersonal,
-p.reftipodocumento,
+tip.tipodocumento,
 p.nrodocumento,
 p.apellido,
 p.nombre,
 p.fechanacimiento,
 p.cuil,
 p.sexo,
-p.refestadocivil,
+est.estadocivil,
 p.paisorigen,
 p.fechacrea,
 p.usuacrea,
 p.fechamodi,
+p.reftipodocumento,
+p.refestadocivil,
 p.usuamodi
 from dbpersonal p 
 inner join tbtipodocumento tip ON tip.idtipodocumento = p.reftipodocumento 
