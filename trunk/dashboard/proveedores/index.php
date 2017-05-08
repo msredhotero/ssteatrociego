@@ -34,7 +34,7 @@ $eliminar = "eliminarProveedores";
 
 $insertar = "insertarProveedores";
 
-$tituloWeb = "Gestión: Vinoteca";
+$tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 

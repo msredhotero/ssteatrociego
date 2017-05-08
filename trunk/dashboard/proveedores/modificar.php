@@ -41,7 +41,7 @@ $modificar = "modificarProveedores";
 
 $idTabla = "idproveedor";
 
-$tituloWeb = "Gestión: Vinoteca";
+$tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 

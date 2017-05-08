@@ -19,7 +19,7 @@ session_destroy();
 
 
 
-<title>Sistema de Vinoteca</title>
+<title>Sistema de Géstion Teatro Ciego</title>
 
 
 
