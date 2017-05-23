@@ -1085,8 +1085,24 @@ c.direccion,
 c.telefono,
 c.cuit,
 c.email,
-c.activo
+(case when c.activo = 1 then 'Si' else 'No' end) as activo
 from tbcuponeras c 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+function traerCuponerasActivas() { 
+$sql = "select 
+c.idcuponera,
+c.nombre,
+c.direccion,
+c.telefono,
+c.cuit,
+c.email,
+(case when c.activo = 1 then 'Si' else 'No' end) as activo
+from tbcuponeras c 
+where c.activo = 1
 order by 1"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -1094,7 +1110,7 @@ return $res;
 
 
 function traerCuponerasPorId($id) { 
-$sql = "select idcuponera,nombre,direccion,telefono,cuit,email,activo from tbcuponeras where idcuponera =".$id; 
+$sql = "select idcuponera,nombre,direccion,telefono,cuit,email,(case when activo = 1 then 'Si' else 'No' end) as activo from tbcuponeras where idcuponera =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
