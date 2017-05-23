@@ -882,6 +882,227 @@ return $res;
 /* /* Fin de la Tabla: dbpersonalcargos*/
 
 
+
+/* PARA Categorias */
+
+function insertarCategorias($descripcion,$refobras,$refcuponeras,$porcentaje,$monto,$pocentajeretenido) { 
+$sql = "insert into dbcategorias(idcategoria,descripcion,refobras,refcuponeras,porcentaje,monto,pocentajeretenido) 
+values ('','".utf8_decode($descripcion)."',".$refobras.",".$refcuponeras.",".$porcentaje.",".$monto.",".$pocentajeretenido.")"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
+
+function modificarCategorias($id,$descripcion,$refobras,$refcuponeras,$porcentaje,$monto,$pocentajeretenido) { 
+$sql = "update dbcategorias 
+set 
+descripcion = '".utf8_decode($descripcion)."',refobras = ".$refobras.",refcuponeras = ".$refcuponeras.",porcentaje = ".$porcentaje.",monto = ".$monto.",pocentajeretenido = ".$pocentajeretenido." 
+where idcategoria =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarCategorias($id) { 
+$sql = "delete from dbcategorias where idcategoria =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerCategorias() { 
+$sql = "select 
+c.idcategoria,
+c.descripcion,
+c.refobras,
+c.refcuponeras,
+c.porcentaje,
+c.monto,
+c.pocentajeretenido
+from dbcategorias c 
+inner join dbobras obr ON obr.idobra = c.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+inner join tbcuponeras cup ON cup.idcuponera = c.refcuponeras 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerCategoriasPorId($id) { 
+$sql = "select idcategoria,descripcion,refobras,refcuponeras,porcentaje,monto,pocentajeretenido from dbcategorias where idcategoria =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+/* Fin */
+/* /* Fin de la Tabla: dbcategorias*/
+
+
+/* PARA Promosobras */
+
+function insertarPromosobras($descripcion,$refobras,$vignciadesde,$vigenciahasta,$porcentaje,$monto) { 
+$sql = "insert into dbpromosobras(idpromoobra,descripcion,refobras,vignciadesde,vigenciahasta,porcentaje,monto) 
+values ('','".utf8_decode($descripcion)."',".$refobras.",'".utf8_decode($vignciadesde)."','".utf8_decode($vigenciahasta)."',".$porcentaje.",".$monto.")"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
+
+function modificarPromosobras($id,$descripcion,$refobras,$vignciadesde,$vigenciahasta,$porcentaje,$monto) { 
+$sql = "update dbpromosobras 
+set 
+descripcion = '".utf8_decode($descripcion)."',refobras = ".$refobras.",vignciadesde = '".utf8_decode($vignciadesde)."',vigenciahasta = '".utf8_decode($vigenciahasta)."',porcentaje = ".$porcentaje.",monto = ".$monto." 
+where idpromoobra =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarPromosobras($id) { 
+$sql = "delete from dbpromosobras where idpromoobra =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerPromosobras() { 
+$sql = "select 
+p.idpromoobra,
+p.descripcion,
+p.refobras,
+p.vignciadesde,
+p.vigenciahasta,
+p.porcentaje,
+p.monto
+from dbpromosobras p 
+inner join dbobras obr ON obr.idobra = p.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerPromosobrasPorId($id) { 
+$sql = "select idpromoobra,descripcion,refobras,vignciadesde,vigenciahasta,porcentaje,monto from dbpromosobras where idpromoobra =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+/* Fin */
+/* /* Fin de la Tabla: dbpromosobras*/
+
+
+/* PARA Ventas */
+
+function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras) { 
+$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras) 
+values ('','".utf8_decode($numero)."',".$reftipopago.",'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".$refcategorias.",".$refpromosobras.")"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
+
+function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras) { 
+$sql = "update dbventas 
+set 
+numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',refcategorias = ".$refcategorias.",refpromosobras = ".$refpromosobras." 
+where idventa =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarVentas($id) { 
+$sql = "delete from dbventas where idventa =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerVentas() { 
+$sql = "select 
+v.idventa,
+v.numero,
+v.reftipopago,
+v.fecha,
+v.total,
+v.cancelado,
+v.usuario,
+v.refcategorias,
+v.refpromosobras
+from dbventas v 
+inner join tbtipopago tip ON tip.idtipopago = v.reftipopago 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerVentasPorId($id) { 
+$sql = "select idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras from dbventas where idventa =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+/* Fin */
+/* /* Fin de la Tabla: dbventas*/
+
+
+/* PARA Cuponeras */
+
+function insertarCuponeras($nombre,$direccion,$telefono,$cuit,$email,$activo) { 
+$sql = "insert into tbcuponeras(idcuponera,nombre,direccion,telefono,cuit,email,activo) 
+values ('','".utf8_decode($nombre)."','".utf8_decode($direccion)."','".utf8_decode($telefono)."','".utf8_decode($cuit)."','".utf8_decode($email)."',".$activo.")"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
+
+function modificarCuponeras($id,$nombre,$direccion,$telefono,$cuit,$email,$activo) { 
+$sql = "update tbcuponeras 
+set 
+nombre = '".utf8_decode($nombre)."',direccion = '".utf8_decode($direccion)."',telefono = '".utf8_decode($telefono)."',cuit = '".utf8_decode($cuit)."',email = '".utf8_decode($email)."',activo = ".$activo." 
+where idcuponera =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarCuponeras($id) { 
+$sql = "delete from tbcuponeras where idcuponera =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerCuponeras() { 
+$sql = "select 
+c.idcuponera,
+c.nombre,
+c.direccion,
+c.telefono,
+c.cuit,
+c.email,
+c.activo
+from tbcuponeras c 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerCuponerasPorId($id) { 
+$sql = "select idcuponera,nombre,direccion,telefono,cuit,email,activo from tbcuponeras where idcuponera =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+/* Fin */
+/* /* Fin de la Tabla: tbcuponeras*/
+
+
 /* PARA Proveedores */
 
 function insertarProveedores($nombre,$cuit,$dni,$direccion,$telefono,$celular,$email,$observacionces) { 

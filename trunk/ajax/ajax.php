@@ -240,11 +240,187 @@ case 'eliminarTiposcargos':
 eliminarTiposcargos($serviciosReferencias); 
 break; 
 
+case 'insertarCategorias': 
+insertarCategorias($serviciosReferencias); 
+break; 
+case 'modificarCategorias': 
+modificarCategorias($serviciosReferencias); 
+break; 
+case 'eliminarCategorias': 
+eliminarCategorias($serviciosReferencias); 
+break; 
+
+case 'insertarPromosobras': 
+insertarPromosobras($serviciosReferencias); 
+break; 
+case 'modificarPromosobras': 
+modificarPromosobras($serviciosReferencias); 
+break; 
+case 'eliminarPromosobras': 
+eliminarPromosobras($serviciosReferencias); 
+break; 
+
+case 'insertarVentas': 
+insertarVentas($serviciosReferencias); 
+break; 
+case 'modificarVentas': 
+modificarVentas($serviciosReferencias); 
+break; 
+case 'eliminarVentas': 
+eliminarVentas($serviciosReferencias); 
+break; 
+
+case 'insertarCuponeras': 
+insertarCuponeras($serviciosReferencias); 
+break; 
+case 'modificarCuponeras': 
+modificarCuponeras($serviciosReferencias); 
+break; 
+case 'eliminarCuponeras': 
+eliminarCuponeras($serviciosReferencias); 
+break; 
+
+
 }
 
 /* Fin */
 /* nuevo */
 
+
+
+function insertarCategorias($serviciosReferencias) { 
+	$descripcion = $_POST['descripcion']; 
+	$refobras = $_POST['refobras']; 
+	$refcuponeras = $_POST['refcuponeras']; 
+	$porcentaje = $_POST['porcentaje']; 
+	$monto = $_POST['monto']; 
+	$pocentajeretenido = $_POST['pocentajeretenido']; 
+	
+	$res = $serviciosReferencias->insertarCategorias($descripcion,$refobras,$refcuponeras,$porcentaje,$monto,$pocentajeretenido); 
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	 
+	} 
+} 
+
+function modificarCategorias($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$descripcion = $_POST['descripcion']; 
+	$refobras = $_POST['refobras']; 
+	$refcuponeras = $_POST['refcuponeras']; 
+	$porcentaje = $_POST['porcentaje']; 
+	$monto = $_POST['monto']; 
+	$pocentajeretenido = $_POST['pocentajeretenido']; 
+	
+	$res = $serviciosReferencias->modificarCategorias($id,$descripcion,$refobras,$refcuponeras,$porcentaje,$monto,$pocentajeretenido); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
+} 
+
+function eliminarCategorias($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$res = $serviciosReferencias->eliminarCategorias($id); 
+	echo $res; 
+} 
+
+
+function insertarPromosobras($serviciosReferencias) { 
+	$descripcion = $_POST['descripcion']; 
+	$refobras = $_POST['refobras']; 
+	$vignciadesde = $_POST['vignciadesde']; 
+	$vigenciahasta = $_POST['vigenciahasta']; 
+	$porcentaje = $_POST['porcentaje']; 
+	$monto = $_POST['monto']; 
+	
+	$res = $serviciosReferencias->insertarPromosobras($descripcion,$refobras,$vignciadesde,$vigenciahasta,$porcentaje,$monto); 
+	
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	 
+	} 
+} 
+
+function modificarPromosobras($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$descripcion = $_POST['descripcion']; 
+	$refobras = $_POST['refobras']; 
+	$vignciadesde = $_POST['vignciadesde']; 
+	$vigenciahasta = $_POST['vigenciahasta']; 
+	$porcentaje = $_POST['porcentaje']; 
+	$monto = $_POST['monto']; 
+	
+	$res = $serviciosReferencias->modificarPromosobras($id,$descripcion,$refobras,$vignciadesde,$vigenciahasta,$porcentaje,$monto); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
+} 
+
+
+function eliminarPromosobras($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$res = $serviciosReferencias->eliminarPromosobras($id); 
+	echo $res; 
+} 
+
+function insertarCuponeras($serviciosReferencias) { 
+	$nombre = $_POST['nombre']; 
+	$direccion = $_POST['direccion']; 
+	$telefono = $_POST['telefono']; 
+	$cuit = $_POST['cuit']; 
+	$email = $_POST['email']; 
+	
+	if (isset($_POST['activo'])) { 
+		$activo	= 1; 
+	} else { 
+		$activo = 0; 
+	} 
+	
+	$res = $serviciosReferencias->insertarCuponeras($nombre,$direccion,$telefono,$cuit,$email,$activo); 
+	
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	 
+	} 
+} 
+
+function modificarCuponeras($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$nombre = $_POST['nombre']; 
+	$direccion = $_POST['direccion']; 
+	$telefono = $_POST['telefono']; 
+	$cuit = $_POST['cuit']; 
+	$email = $_POST['email']; 
+	
+	if (isset($_POST['activo'])) { 
+		$activo	= 1; 
+	} else { 
+		$activo = 0; 
+	} 
+	
+	$res = $serviciosReferencias->modificarCuponeras($id,$nombre,$direccion,$telefono,$cuit,$email,$activo); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
+} 
+
+function eliminarCuponeras($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$res = $serviciosReferencias->eliminarCuponeras($id); 
+	echo $res; 
+} 
 
 function insertarClientes($serviciosReferencias) { 
 $nombrecompleto = $_POST['nombrecompleto']; 
