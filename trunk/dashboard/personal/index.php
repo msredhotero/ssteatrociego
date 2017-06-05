@@ -313,10 +313,6 @@ $(document).ready(function(){
 	$('#usuacrea').val('<?php echo $_SESSION['nombre_predio']; ?>');
 	$('#usuamodi').val('');
 	
-	$('#eliminarMasivo').click( function(){
-      		url = "borrarMasivo.php";
-			$(location).attr('href',url);
-      });
 	
 	
 	$('#activo').prop( "checked", true );
@@ -340,6 +336,30 @@ $(document).ready(function(){
 		  if (!isNaN(usersid)) {
 			
 			url = "modificar.php?id=" + usersid;
+			$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton modificar
+	
+	
+	$("#example").on("click",'.vardomicilios', function(){
+		  usersid =  $(this).attr("id");
+		  if (!isNaN(usersid)) {
+			
+			url = "domicilio.php?id=" + usersid;
+			$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton modificar
+	
+	
+	$("#example").on("click",'.varbanco', function(){
+		  usersid =  $(this).attr("id");
+		  if (!isNaN(usersid)) {
+			
+			url = "banco.php?id=" + usersid;
 			$(location).attr('href',url);
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	

@@ -280,13 +280,88 @@ case 'eliminarCuponeras':
 eliminarCuponeras($serviciosReferencias); 
 break; 
 
+case 'insertarAlbumobras':
+insertarAlbumobras($serviciosReferencias);
+break;
+case 'modificarAlbumobras':
+modificarAlbumobras($serviciosReferencias);
+break;
+case 'eliminarAlbumobras':
+eliminarAlbumobras($serviciosReferencias);
+break; 
+case 'insertarAlbum':
+insertarAlbum($serviciosReferencias);
+break;
+case 'modificarAlbum':
+modificarAlbum($serviciosReferencias);
+break;
+case 'eliminarAlbum':
+eliminarAlbum($serviciosReferencias);
+break; 
 
 }
 
 /* Fin */
 /* nuevo */
 
+function insertarAlbumobras($serviciosReferencias) {
+$refobras = $_POST['refobras'];
+$refalbum = $_POST['refalbum'];
+$res = $serviciosReferencias->insertarAlbumobras($refobras,$refalbum);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Huvo un error al insertar datos';
+}
+}
+function modificarAlbumobras($serviciosReferencias) {
+$id = $_POST['id'];
+$refobras = $_POST['refobras'];
+$refalbum = $_POST['refalbum'];
+$res = $serviciosReferencias->modificarAlbumobras($id,$refobras,$refalbum);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarAlbumobras($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarAlbumobras($id);
+echo $res;
+} 
 
+function insertarAlbum($serviciosReferencias) {
+	$banda = $_POST['banda'];
+	$album = $_POST['album'];
+	$genero = $_POST['genero'];
+	$res = $serviciosReferencias->insertarAlbum($banda,$album,$genero);
+	
+	if ((integer)$res > 0) {
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
+}
+function modificarAlbum($serviciosReferencias) {
+	$id = $_POST['id'];
+	$banda = $_POST['banda'];
+	$album = $_POST['album'];
+	$genero = $_POST['genero'];
+	$res = $serviciosReferencias->modificarAlbum($id,$banda,$album,$genero);
+	
+	if ($res == true) {
+		echo '';
+	} else {
+		echo 'Huvo un error al modificar datos';
+	}
+}
+
+function eliminarAlbum($serviciosReferencias) {
+	$id = $_POST['id'];
+	$res = $serviciosReferencias->eliminarAlbum($id);
+	echo $res;
+} 
 
 function insertarCategorias($serviciosReferencias) { 
 	$descripcion = $_POST['descripcion']; 
@@ -296,7 +371,18 @@ function insertarCategorias($serviciosReferencias) {
 	$monto = $_POST['monto']; 
 	$pocentajeretenido = $_POST['pocentajeretenido']; 
 	
-	$res = $serviciosReferencias->insertarCategorias($descripcion,$refobras,$refcuponeras,$porcentaje,$monto,$pocentajeretenido); 
+	if (isset($_POST['aplicar'])) { 
+		$aplicar = 1; 
+	} else { 
+		$aplicar = 0; 
+	}
+	
+	if ($aplicar == 0) {
+		$res = $serviciosReferencias->insertarCategorias($descripcion,$refobras,$refcuponeras,$porcentaje,$monto,$pocentajeretenido); 
+	} else {
+		$res = $serviciosReferencias->insertarCategoriasMasivo($descripcion,$refobras,$refcuponeras,$porcentaje,$monto,$pocentajeretenido); 
+	}
+	
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
@@ -332,17 +418,17 @@ function eliminarCategorias($serviciosReferencias) {
 function insertarPromosobras($serviciosReferencias) { 
 	$descripcion = $_POST['descripcion']; 
 	$refobras = $_POST['refobras']; 
-	$vignciadesde = $_POST['vignciadesde']; 
+	$vigenciadesde = $_POST['vigenciadesde']; 
 	$vigenciahasta = $_POST['vigenciahasta']; 
 	$porcentaje = $_POST['porcentaje']; 
 	$monto = $_POST['monto']; 
 	
-	$res = $serviciosReferencias->insertarPromosobras($descripcion,$refobras,$vignciadesde,$vigenciahasta,$porcentaje,$monto); 
+	$res = $serviciosReferencias->insertarPromosobras($descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto); 
 	
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos';	 
+		echo 'Huvo un error al insertar datos ';	 
 	} 
 } 
 
@@ -350,12 +436,12 @@ function modificarPromosobras($serviciosReferencias) {
 	$id = $_POST['id']; 
 	$descripcion = $_POST['descripcion']; 
 	$refobras = $_POST['refobras']; 
-	$vignciadesde = $_POST['vignciadesde']; 
+	$vigenciadesde = $_POST['vigenciadesde']; 
 	$vigenciahasta = $_POST['vigenciahasta']; 
 	$porcentaje = $_POST['porcentaje']; 
 	$monto = $_POST['monto']; 
 	
-	$res = $serviciosReferencias->modificarPromosobras($id,$descripcion,$refobras,$vignciadesde,$vigenciahasta,$porcentaje,$monto); 
+	$res = $serviciosReferencias->modificarPromosobras($id,$descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto); 
 	
 	if ($res == true) { 
 		echo ''; 
@@ -864,41 +950,45 @@ $res = $serviciosReferencias->eliminarDatosbancos($id);
 echo $res; 
 } 
 function insertarDomicilios($serviciosReferencias) { 
-$refpersonal = $_POST['refpersonal']; 
-$calle = $_POST['calle']; 
-$nro = $_POST['nro']; 
-$piso = $_POST['piso']; 
-$departamento = $_POST['departamento']; 
-$codigopostal = $_POST['codigopostal']; 
-$localidad = $_POST['localidad']; 
-$provincia = $_POST['provincia']; 
-$telefonoparticular = $_POST['telefonoparticular']; 
-$telefonocelular = $_POST['telefonocelular']; 
-$res = $serviciosReferencias->insertarDomicilios($refpersonal,$calle,$nro,$piso,$departamento,$codigopostal,$localidad,$provincia,$telefonoparticular,$telefonocelular); 
-if ((integer)$res > 0) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al insertar datos';	 
-} 
+	$refpersonal = $_POST['refpersonal']; 
+	$calle = $_POST['calle']; 
+	$nro = $_POST['nro']; 
+	$piso = $_POST['piso']; 
+	$departamento = $_POST['departamento']; 
+	$codigopostal = $_POST['codigopostal']; 
+	$localidad = $_POST['localidad']; 
+	$provincia = $_POST['provincia']; 
+	$telefonoparticular = $_POST['telefonoparticular']; 
+	$telefonocelular = $_POST['telefonocelular']; 
+	
+	$res = $serviciosReferencias->insertarDomicilios($refpersonal,$calle,$nro,$piso,$departamento,$codigopostal,$localidad,$provincia,$telefonoparticular,$telefonocelular); 
+	
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos ';	 
+	} 
 } 
 function modificarDomicilios($serviciosReferencias) { 
-$id = $_POST['id']; 
-$refpersonal = $_POST['refpersonal']; 
-$calle = $_POST['calle']; 
-$nro = $_POST['nro']; 
-$piso = $_POST['piso']; 
-$departamento = $_POST['departamento']; 
-$codigopostal = $_POST['codigopostal']; 
-$localidad = $_POST['localidad']; 
-$provincia = $_POST['provincia']; 
-$telefonoparticular = $_POST['telefonoparticular']; 
-$telefonocelular = $_POST['telefonocelular']; 
-$res = $serviciosReferencias->modificarDomicilios($id,$refpersonal,$calle,$nro,$piso,$departamento,$codigopostal,$localidad,$provincia,$telefonoparticular,$telefonocelular); 
-if ($res == true) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al modificar datos'; 
-} 
+	$id = $_POST['id']; 
+	$refpersonal = $_POST['refpersonal']; 
+	$calle = $_POST['calle']; 
+	$nro = $_POST['nro']; 
+	$piso = $_POST['piso']; 
+	$departamento = $_POST['departamento']; 
+	$codigopostal = $_POST['codigopostal']; 
+	$localidad = $_POST['localidad']; 
+	$provincia = $_POST['provincia']; 
+	$telefonoparticular = $_POST['telefonoparticular']; 
+	$telefonocelular = $_POST['telefonocelular']; 
+	
+	$res = $serviciosReferencias->modificarDomicilios($id,$refpersonal,$calle,$nro,$piso,$departamento,$codigopostal,$localidad,$provincia,$telefonoparticular,$telefonocelular); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
 } 
 function eliminarDomicilios($serviciosReferencias) { 
 $id = $_POST['id']; 

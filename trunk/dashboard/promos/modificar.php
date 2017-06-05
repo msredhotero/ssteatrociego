@@ -22,45 +22,40 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Categorias",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Obras",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerCategoriasPorId($id);
+$resResultado = $serviciosReferencias->traerPromosobrasPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Categoria";
+$singular = "Promo";
 
-$plural = "Categorias";
+$plural = "Promos";
 
-$eliminar = "eliminarCategorias";
+$eliminar = "eliminarPromosobras";
 
-$modificar = "modificarCategorias";
+$modificar = "modificarPromosobras";
 
-$idTabla = "idcategoria";
+$idTabla = "idpromoobra";
 
 $tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbcategorias";
+$tabla 			= "dbpromosobras";
 
-$lblCambio	 	= array("pocentajeretenido","refobras","refcuponeras");
-$lblreemplazo	= array("Comisión %","Obras","Cuponera");
-
+$lblCambio	 	= array("refobras","vigenciadesde","vigenciahasta");
+$lblreemplazo	= array("Obra","Vig. Desde","Vig. Hasta");
 
 $resObras	=	$serviciosReferencias->traerObras();
-$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resObras,array(1,3),' - Valor Entrada: ', mysql_result($resResultado,0,'refobras'));
+$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resObras,array(1,3),' - Valor Entrada: ',mysql_result($resResultado,0,'refobras') );
 
-$resCuponera=	$serviciosReferencias->traerCuponeras();
-$cadRef2 	= 	$serviciosFunciones->devolverSelectBoxActivo($resCuponera,array(1),'', mysql_result($resResultado,0,'refcuponeras'));
-
-
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-$refCampo 	=  array("refobras","refcuponeras");
+$refdescripcion = array(0=>$cadRef);
+$refCampo 	=  array("refobras");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -141,7 +136,9 @@ if ($_SESSION['refroll_predio'] != 1) {
         </div>
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
-        	
+        	<div class="alert alert-info">
+            	<p><span class="glyphicon glyphicon-info-sign"></span> Recuerde que los montos o porcentaje que se cargue, sera el valor real o sera un porcentaje de descuento. Si cargan monto y porcentaje solo tomara el monto como bueno. El valor "0" no significa nada a tomar en cuenta. Para cargar una entrada con valor cero en porcentaje poner 100%.</p>
+            </div>
 			<div class="row">
 			<?php echo $formulario; ?>
             </div>
@@ -199,6 +196,8 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 
+
+	
 	$('.volver').click(function(event){
 		 
 		url = "index.php";

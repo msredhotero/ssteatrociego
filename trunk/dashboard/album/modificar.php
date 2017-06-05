@@ -22,45 +22,40 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Categorias",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Album",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerCategoriasPorId($id);
+$resResultado = $serviciosReferencias->traerAlbumPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Categoria";
+$singular = "Album";
 
-$plural = "Categorias";
+$plural = "Album";
 
-$eliminar = "eliminarCategorias";
+$eliminar = "eliminarAlbum";
 
-$modificar = "modificarCategorias";
+$modificar = "modificarAlbum";
 
-$idTabla = "idcategoria";
+$idTabla = "idalbum";
 
 $tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbcategorias";
+$tabla 			= "tbalbum";
 
-$lblCambio	 	= array("pocentajeretenido","refobras","refcuponeras");
-$lblreemplazo	= array("Comisión %","Obras","Cuponera");
-
-
-$resObras	=	$serviciosReferencias->traerObras();
-$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resObras,array(1,3),' - Valor Entrada: ', mysql_result($resResultado,0,'refobras'));
-
-$resCuponera=	$serviciosReferencias->traerCuponeras();
-$cadRef2 	= 	$serviciosFunciones->devolverSelectBoxActivo($resCuponera,array(1),'', mysql_result($resResultado,0,'refcuponeras'));
+$lblCambio	 	= array();
+$lblreemplazo	= array();
 
 
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-$refCampo 	=  array("refobras","refcuponeras");
+$cadRef 	= '';
+
+$refdescripcion = array();
+$refCampo 	=  array();
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -198,7 +193,9 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <script type="text/javascript">
 $(document).ready(function(){
+	
 
+	
 	$('.volver').click(function(event){
 		 
 		url = "index.php";

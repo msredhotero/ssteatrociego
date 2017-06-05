@@ -22,33 +22,38 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Uvas",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Categorias",$_SESSION['refroll_predio'],'');
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Uva";
+$singular = "Categoria";
 
-$plural = "Uvas";
+$plural = "Categorias";
 
 $eliminar = "eliminarCategorias";
 
 $insertar = "insertarCategorias";
 
-$tituloWeb = "Gestión: Vinoteca";
+$tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "tbcategorias";
+$tabla 			= "dbcategorias";
 
-$lblCambio	 	= array("esegreso");
-$lblreemplazo	= array("Es Egreso");
+$lblCambio	 	= array("pocentajeretenido","refobras","refcuponeras");
+$lblreemplazo	= array("Comisión %","Obras","Cuponera");
 
 
-$cadRef 	= '';
+$resObras	=	$serviciosReferencias->traerObras();
+$cadRef 	= 	$serviciosFunciones->devolverSelectBox($resObras,array(1,3),' - Valor Entrada: ');
 
-$refdescripcion = array();
-$refCampo 	=  array();
+$resCuponera=	$serviciosReferencias->traerCuponeras();
+$cadRef2 	= 	$serviciosFunciones->devolverSelectBox($resCuponera,array(1),'');
+
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
+$refCampo 	=  array("refobras","refcuponeras");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -56,8 +61,11 @@ $refCampo 	=  array();
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
 $cabeceras 		= "	<th>Descripción</th>
-					<th>Es Egreso</th>
-					<th>Activo</th>";
+					<th>Obra</th>
+					<th>Cuponera</th>
+					<th>Porccentaje</th>
+					<th>Monto</th>
+					<th>Comisión %</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -66,7 +74,7 @@ $cabeceras 		= "	<th>Descripción</th>
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerCategorias(),0);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerCategorias(),6);
 
 
 
@@ -124,72 +132,10 @@ if ($_SESSION['refroll_predio'] != 1) {
       });
     </script>
     
-    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzxyoH5wuPmahQIZLUBjPfDuu_cUHUBQY"
-  type="text/javascript"></script>
-    <style type="text/css">
-		#map
-		{
-			width: 100%;
-			height: 600px;
-			border: 1px solid #d0d0d0;
-		}
-  
-		
-	</style>
-    <script>
-	/* AIzaSyBzxyoH5wuPmahQIZLUBjPfDuu_cUHUBQY */
-		var map;
-		var markers = [];
-	 function localize() {
-
-			
-		var mapDiv = document.getElementById('map');
-		var laPlata= {lat: -34.9205283, lng: -57.9531703};
-		var map = new google.maps.Map(mapDiv, {
-			zoom: 13,
-			center: new google.maps.LatLng(-34.9205283, -57.9531703)
-		});
-		
-		//var latitud = map.coords.latitude;
-		//var longitud = map.coords.longitude;
-		/*
-		google.maps.event.addDomListener(mapDiv, 'click', function(e) {
-			window.alert('click en el mapa');
-		});
-		*/
-		map.addListener('click', function(e) {
-			
-			if (markers.length > 0) {
-				clearMarkers();
-			}
-			$('#latitud').val(e.latLng.lat());
-			$('#longitud').val(e.latLng.lng());	
-			placeMarkerAndPanTo(e.latLng, map);
-		});
-	 }
-	 
-		function placeMarkerAndPanTo(latLng, map) {
-			var marker = new google.maps.Marker({
-				position: latLng,
-				map: map
-			});
-			markers.push(marker);
-			map.panTo(latLng);
-			
-		}
-	
-	function clearMarkers() {
-		for (var i = 0; i < markers.length; i++) {
-			markers[i].setMap(null);
-		}
-	}
-		
-
- </script>-->
  
 </head>
 
-<body onLoad="localize()">
+<body>
 
  <?php echo $resMenu; ?>
 
@@ -204,15 +150,15 @@ if ($_SESSION['refroll_predio'] != 1) {
         </div>
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
+            <div class="alert alert-info">
+            	<p><span class="glyphicon glyphicon-info-sign"></span> Recuerde que los montos o porcentaje que se cargue, sera el valor real o sera un porcentaje de descuento. Si cargan monto y porcentaje solo tomara el monto como bueno. El valor "0" no significa nada a tomar en cuenta. Para cargar una entrada con valor cero en porcentaje poner 100%.</p>
+            </div>
         	<div class="row">
 			<?php echo $formulario; ?>
+            
             </div>
-            <!--
-            <div class="row">
-            	<div id="map" ></div>
+            <input type="checkbox" name="aplicar" id="aplicar" /> Aplicar a todas las Obras (se aplicara este valor a cada una de las obras activas)
 
-            </div>
-            -->
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
                 
@@ -227,9 +173,6 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <ul class="list-inline" style="margin-top:15px;">
                     <li>
                         <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Guardar</button>
-                    </li>
-                    <li>
-                        <button type="button" class="btn btn-danger" id="eliminarMasivo" style="margin-left:0px;">Eliminar Masivo</button>
                     </li>
                 </ul>
                 </div>

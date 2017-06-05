@@ -22,50 +22,49 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Categorias",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Personal",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerCategoriasPorId($id);
+$resResultado = $serviciosReferencias->traerDatosbancosPorPersona($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Categoria";
+$singular = "Banco";
 
-$plural = "Categorias";
+$plural = "Bancos";
 
-$eliminar = "eliminarCategorias";
+$eliminar = "eliminarDatosbancos";
 
-$modificar = "modificarCategorias";
+$modificar = "modificarDatosbancos";
 
-$idTabla = "idcategoria";
+$idTabla = "iddatobanco";
+
+$insertar = "insertarDatosbancos";
 
 $tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbcategorias";
+$tabla 			= "dbdatosbancos";
 
-$lblCambio	 	= array("pocentajeretenido","refobras","refcuponeras");
-$lblreemplazo	= array("Comisión %","Obras","Cuponera");
+$lblCambio	 	= array("refpersonal","nrocuenta","tipoproducto","formaoperar");
+$lblreemplazo	= array("Persona","Nro. Cuenta","Tipo Producto","Forma de Operar");
 
+$resPersona	=	$serviciosReferencias->traerPersonalPorId($id);
+$cadRef 	= 	$serviciosFunciones->devolverSelectBox($resPersona,array(3,4),', ');
 
-$resObras	=	$serviciosReferencias->traerObras();
-$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resObras,array(1,3),' - Valor Entrada: ', mysql_result($resResultado,0,'refobras'));
-
-$resCuponera=	$serviciosReferencias->traerCuponeras();
-$cadRef2 	= 	$serviciosFunciones->devolverSelectBoxActivo($resCuponera,array(1),'', mysql_result($resResultado,0,'refcuponeras'));
-
-
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-$refCampo 	=  array("refobras","refcuponeras");
+$refdescripcion = array(0=>$cadRef);
+$refCampo 	=  array("refpersonal");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-
-$formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
+if (mysql_num_rows($resResultado)>0) {
+	$formulario 	= $serviciosFunciones->camposTablaModificar(mysql_result($resResultado,0,0), $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+} else {
+	$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+}
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -159,12 +158,25 @@ if ($_SESSION['refroll_predio'] != 1) {
             <div class="row">
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-top:15px;">
+                    <?php
+					if (mysql_num_rows($resResultado)>0) {
+					?>
                     <li>
+                    	
                         <button type="button" class="btn btn-warning" id="cargar" style="margin-left:0px;">Modificar</button>
                     </li>
                     <li>
-                        <button type="button" class="btn btn-danger varborrar" id="<?php echo $id; ?>" style="margin-left:0px;">Eliminar</button>
+                        <button type="button" class="btn btn-danger varborrar" id="<?php echo mysql_result($resResultado,0,0); ?>" style="margin-left:0px;">Eliminar</button>
                     </li>
+					<?php
+                    } else {
+                    ?>
+                    <li>
+                    <button type="button" class="btn btn-success" id="cargar" style="margin-left:0px;">Agregar</button>
+                    </li>
+                    <?php
+                    }
+                    ?>
                     <li>
                         <button type="button" class="btn btn-default volver" style="margin-left:0px;">Volver</button>
                     </li>
@@ -199,6 +211,8 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 
+
+	
 	$('.volver').click(function(event){
 		 
 		url = "index.php";
@@ -257,12 +271,10 @@ $(document).ready(function(){
 		 
 	 		}); //fin del dialogo para eliminar
 	
-	
-	<?php 
+
+	<?php
 		echo $serviciosHTML->validacion($tabla);
-	
 	?>
-	
 
 	
 	
@@ -304,8 +316,8 @@ $(document).ready(function(){
 												
 											});
 											$("#load").html('');
-											//url = "index.php";
-											//$(location).attr('href',url);
+											url = "index.php";
+											$(location).attr('href',url);
                                             
 											
                                         } else {

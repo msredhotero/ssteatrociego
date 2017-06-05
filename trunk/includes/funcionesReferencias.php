@@ -252,6 +252,108 @@ function zerofill($valor, $longitud){
 
 
 
+/* PARA Album */
+
+function insertarAlbum($banda,$album,$genero) {
+$sql = "insert into tbalbum(idalbum,banda,album,genero)
+values ('','".utf8_decode($banda)."','".utf8_decode($album)."','".utf8_decode($genero)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarAlbum($id,$banda,$album,$genero) {
+$sql = "update tbalbum
+set
+banda = '".utf8_decode($banda)."',album = '".utf8_decode($album)."',genero = '".utf8_decode($genero)."'
+where idalbum =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarAlbum($id) {
+$sql = "delete from tbalbum where idalbum =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAlbum() {
+$sql = "select
+a.idalbum,
+a.banda,
+a.album,
+a.genero
+from tbalbum a
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAlbumPorId($id) {
+$sql = "select idalbum,banda,album,genero from tbalbum where idalbum =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: tbalbum*/
+
+/* PARA Albumobras */
+
+function insertarAlbumobras($refobras,$refalbum) {
+$sql = "insert into dbalbumobras(idalbumobra,refobras,refalbum)
+values ('',".$refobras.",".$refalbum.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarAlbumobras($id,$refobras,$refalbum) {
+$sql = "update dbalbumobras
+set
+refobras = ".$refobras.",refalbum = ".$refalbum."
+where idalbumobra =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarAlbumobras($id) {
+$sql = "delete from dbalbumobras where idalbumobra =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAlbumobras() {
+$sql = "select
+a.idalbumobra,
+a.refobras,
+a.refalbum
+from dbalbumobras a
+inner join dbobras obr ON obr.idobra = a.refobras
+inner join tbsalas sa ON sa.idsala = obr.refsalas
+inner join tbalbum alb ON alb.idalbum = a.refalbum
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAlbumobrasPorId($id) {
+$sql = "select idalbumobra,refobras,refalbum from dbalbumobras where idalbumobra =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbalbumobras*/
+
+
+
 /* PARA Clientes */
 
 function insertarClientes($nombrecompleto,$cuil,$dni,$direccion,$telefono,$email,$observaciones) { 
@@ -444,6 +546,12 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+function traerDatosbancosPorPersona($idPersona) { 
+$sql = "select iddatobanco,refpersonal,cbu,nrocuenta,tipoproducto,formaoperar,fechacrea,usuacrea,fechamodi,usuamodi from dbdatosbancos where refpersonal =".$idPersona; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
 /* Fin */
 /* /* Fin de la Tabla: dbdatosbancos*/
 
@@ -452,7 +560,7 @@ return $res;
 
 function insertarDomicilios($refpersonal,$calle,$nro,$piso,$departamento,$codigopostal,$localidad,$provincia,$telefonoparticular,$telefonocelular) { 
 $sql = "insert into dbdomicilios(iddomicilio,refpersonal,calle,nro,piso,departamento,codigopostal,localidad,provincia,telefonoparticular,telefonocelular) 
-values ('',".$refpersonal.",'".utf8_decode($calle)."','".utf8_decode($nro)."',".$piso.",'".utf8_decode($departamento)."','".utf8_decode($codigopostal)."','".utf8_decode($localidad)."','".utf8_decode($provincia)."','".utf8_decode($telefonoparticular)."','".utf8_decode($telefonocelular)."')"; 
+values ('',".$refpersonal.",'".utf8_decode($calle)."','".utf8_decode($nro)."',".($piso == '' ? 'NULL' : $piso).",'".utf8_decode($departamento)."','".utf8_decode($codigopostal)."','".utf8_decode($localidad)."','".utf8_decode($provincia)."','".utf8_decode($telefonoparticular)."','".utf8_decode($telefonocelular)."')"; 
 $res = $this->query($sql,1); 
 return $res; 
 } 
@@ -461,7 +569,7 @@ return $res;
 function modificarDomicilios($id,$refpersonal,$calle,$nro,$piso,$departamento,$codigopostal,$localidad,$provincia,$telefonoparticular,$telefonocelular) { 
 $sql = "update dbdomicilios 
 set 
-refpersonal = ".$refpersonal.",calle = '".utf8_decode($calle)."',nro = '".utf8_decode($nro)."',piso = ".$piso.",departamento = '".utf8_decode($departamento)."',codigopostal = '".utf8_decode($codigopostal)."',localidad = '".utf8_decode($localidad)."',provincia = '".utf8_decode($provincia)."',telefonoparticular = '".utf8_decode($telefonoparticular)."',telefonocelular = '".utf8_decode($telefonocelular)."' 
+refpersonal = ".$refpersonal.",calle = '".utf8_decode($calle)."',nro = '".utf8_decode($nro)."',piso = ".($piso == '' ? 'NULL' : $piso).",departamento = '".utf8_decode($departamento)."',codigopostal = '".utf8_decode($codigopostal)."',localidad = '".utf8_decode($localidad)."',provincia = '".utf8_decode($provincia)."',telefonoparticular = '".utf8_decode($telefonoparticular)."',telefonocelular = '".utf8_decode($telefonocelular)."' 
 where iddomicilio =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -500,6 +608,12 @@ return $res;
 
 function traerDomiciliosPorId($id) { 
 $sql = "select iddomicilio,refpersonal,calle,nro,piso,departamento,codigopostal,localidad,provincia,telefonoparticular,telefonocelular from dbdomicilios where iddomicilio =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+function traerDomiciliosPorPersona($idPersona) { 
+$sql = "select iddomicilio,refpersonal,calle,nro,piso,departamento,codigopostal,localidad,provincia,telefonoparticular,telefonocelular from dbdomicilios where refpersonal =".$idPersona; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -890,6 +1004,21 @@ $sql = "insert into dbcategorias(idcategoria,descripcion,refobras,refcuponeras,p
 values ('','".utf8_decode($descripcion)."',".$refobras.",".$refcuponeras.",".$porcentaje.",".$monto.",".$pocentajeretenido.")"; 
 $res = $this->query($sql,1); 
 return $res; 
+}
+
+function insertarCategoriasMasivo($descripcion,$refobras,$refcuponeras,$porcentaje,$monto,$pocentajeretenido) { 
+$sql = "insert into dbcategorias(idcategoria,descripcion,refobras,refcuponeras,porcentaje,monto,pocentajeretenido)
+		select
+		'',
+		'".utf8_decode($descripcion)."',
+		o.idobra,
+		".$refcuponeras.",
+		".$porcentaje.",
+		".$monto.",
+		".$pocentajeretenido."
+		from		dbobras o"; 
+$res = $this->query($sql,1); 
+return $res; 
 } 
 
 
@@ -914,11 +1043,13 @@ function traerCategorias() {
 $sql = "select 
 c.idcategoria,
 c.descripcion,
-c.refobras,
-c.refcuponeras,
+obr.nombre as obra,
+cup.nombre as cuponera,
 c.porcentaje,
 c.monto,
-c.pocentajeretenido
+c.pocentajeretenido,
+c.refobras,
+c.refcuponeras
 from dbcategorias c 
 inner join dbobras obr ON obr.idobra = c.refobras 
 inner join tbsalas sa ON sa.idsala = obr.refsalas 
@@ -941,18 +1072,18 @@ return $res;
 
 /* PARA Promosobras */
 
-function insertarPromosobras($descripcion,$refobras,$vignciadesde,$vigenciahasta,$porcentaje,$monto) { 
-$sql = "insert into dbpromosobras(idpromoobra,descripcion,refobras,vignciadesde,vigenciahasta,porcentaje,monto) 
-values ('','".utf8_decode($descripcion)."',".$refobras.",'".utf8_decode($vignciadesde)."','".utf8_decode($vigenciahasta)."',".$porcentaje.",".$monto.")"; 
+function insertarPromosobras($descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto) { 
+$sql = "insert into dbpromosobras(idpromoobra,descripcion,refobras,vigenciadesde,vigenciahasta,porcentaje,monto) 
+values ('','".utf8_decode($descripcion)."',".$refobras.",'".utf8_decode($vigenciadesde)."','".utf8_decode($vigenciahasta)."',".($porcentaje == '' ? 0 : $porcentaje).",".($monto == '' ? 0 : $monto).")"; 
 $res = $this->query($sql,1); 
 return $res; 
 } 
 
 
-function modificarPromosobras($id,$descripcion,$refobras,$vignciadesde,$vigenciahasta,$porcentaje,$monto) { 
+function modificarPromosobras($id,$descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto) { 
 $sql = "update dbpromosobras 
 set 
-descripcion = '".utf8_decode($descripcion)."',refobras = ".$refobras.",vignciadesde = '".utf8_decode($vignciadesde)."',vigenciahasta = '".utf8_decode($vigenciahasta)."',porcentaje = ".$porcentaje.",monto = ".$monto." 
+descripcion = '".utf8_decode($descripcion)."',refobras = ".$refobras.",vigenciadesde = '".utf8_decode($vigenciadesde)."',vigenciahasta = '".utf8_decode($vigenciahasta)."',porcentaje = ".$porcentaje.",monto = ".$monto." 
 where idpromoobra =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -971,7 +1102,7 @@ $sql = "select
 p.idpromoobra,
 p.descripcion,
 p.refobras,
-p.vignciadesde,
+p.vigenciadesde,
 p.vigenciahasta,
 p.porcentaje,
 p.monto
@@ -985,7 +1116,7 @@ return $res;
 
 
 function traerPromosobrasPorId($id) { 
-$sql = "select idpromoobra,descripcion,refobras,vignciadesde,vigenciahasta,porcentaje,monto from dbpromosobras where idpromoobra =".$id; 
+$sql = "select idpromoobra,descripcion,refobras,vigenciadesde,vigenciahasta,porcentaje,monto from dbpromosobras where idpromoobra =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -996,33 +1127,33 @@ return $res;
 
 /* PARA Ventas */
 
-function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras) { 
-$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras) 
-values ('','".utf8_decode($numero)."',".$reftipopago.",'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".$refcategorias.",".$refpromosobras.")"; 
-$res = $this->query($sql,1); 
-return $res; 
-} 
+function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum) {
+$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum)
+values ('','".utf8_decode($numero)."',".$reftipopago.",'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".$refcategorias.",".$refpromosobras.",".$refobras.",".$refalbum.")";
+$res = $this->query($sql,1);
+return $res;
+}
 
 
-function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras) { 
-$sql = "update dbventas 
-set 
-numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',refcategorias = ".$refcategorias.",refpromosobras = ".$refpromosobras." 
-where idventa =".$id; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
+function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum) {
+$sql = "update dbventas
+set
+numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',refcategorias = ".$refcategorias.",refpromosobras = ".$refpromosobras.",refobras = ".$refobras.",refalbum = ".$refalbum."
+where idventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
 
 
-function eliminarVentas($id) { 
-$sql = "delete from dbventas where idventa =".$id; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
+function eliminarVentas($id) {
+$sql = "delete from dbventas where idventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
 
 
-function traerVentas() { 
-$sql = "select 
+function traerVentas() {
+$sql = "select
 v.idventa,
 v.numero,
 v.reftipopago,
@@ -1031,20 +1162,23 @@ v.total,
 v.cancelado,
 v.usuario,
 v.refcategorias,
-v.refpromosobras
-from dbventas v 
-inner join tbtipopago tip ON tip.idtipopago = v.reftipopago 
-order by 1"; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
+v.refpromosobras,
+v.refobras,
+v.refalbum
+from dbventas v
+inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
 
 
-function traerVentasPorId($id) { 
-$sql = "select idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras from dbventas where idventa =".$id; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
+function traerVentasPorId($id) {
+$sql = "select idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum from dbventas where idventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
 
 /* Fin */
 /* /* Fin de la Tabla: dbventas*/

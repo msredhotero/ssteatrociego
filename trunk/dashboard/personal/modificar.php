@@ -22,40 +22,43 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Obras",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Personal",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerObrasPorId($id);
+$resResultado = $serviciosReferencias->traerPersonalPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Obra";
+$singular = "Personal";
 
-$plural = "Obras";
+$plural = "Personal";
 
-$eliminar = "eliminarObras";
+$eliminar = "eliminarPersonal";
 
-$modificar = "modificarObras";
+$modificar = "modificarPersonal";
 
-$idTabla = "idobra";
+$idTabla = "idpersonal";
 
 $tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbobras";
+$tabla 			= "dbpersonal";
 
-$lblCambio	 	= array("refsalas","valorentrada","cantpulicidad","valorpulicidad","valorticket","costotranscciontarjetaiva","porcentajeargentores","porcentajereparto","porcentajeretencion");
-$lblreemplazo	= array("Sala","Valor Entrada","Cant. para Publicidad","Valor Publicidad","Valor Ticket","Costo Trans. Tarj. IVA","% Argentores","% Reparto","% Retencion");
+$lblCambio	 	= array("reftipodocumento","nrodocumento","fechanacimiento","refestadocivil","paisorigen");
+$lblreemplazo	= array("Tipo Documento","Número Documento","Fecha Nacimiento","Estado Civil","País Origen");
 
-$resSalas	=	$serviciosReferencias->traerSalas();
-$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resSalas,array(1),'',mysql_result($resResultado,0,'refsalas'));
+$resTipoDoc	=	$serviciosReferencias->traerTipodocumento();
+$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resTipoDoc,array(1),'', mysql_result($resResultado,0,'reftipodocumento'));
 
-$refdescripcion = array(0=>$cadRef);
-$refCampo 	=  array("refsalas");
+$resEstadoC =	$serviciosReferencias->traerEstadocivil();
+$cadRef2	=	$serviciosFunciones->devolverSelectBoxActivo($resEstadoC,array(1),'', mysql_result($resResultado,0,'refestadocivil'));
+
+$refdescripcion = array(0=>$cadRef, 1=>$cadRef2);
+$refCampo 	=  array("reftipodocumento","refestadocivil");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -194,11 +197,8 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 
-	<?php
-		$serviciosFunciones->jsBit('activo',mysql_result($resResultado,0,'activo'));
-	?>
 	
-	$('#fechacreacion').val('<?php echo mysql_result($resResultado,0,'fechacreacion'); ?>');
+	$('#fechacrea').val('<?php echo mysql_result($resResultado,0,'fechacrea'); ?>');
 	$('#fechamodi').val('<?php echo date('Y-m-d'); ?>');
 	$('#usuacrea').val('<?php echo mysql_result($resResultado,0,'usuacrea'); ?>');
 	$('#usuamodi').val('<?php echo $_SESSION['nombre_predio']; ?>');
