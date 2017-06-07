@@ -22,58 +22,56 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Obras",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Boleteria",$_SESSION['refroll_predio'],'');
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Obra";
+$singular = "Venta";
 
-$plural = "Obras";
+$plural = "Ventas";
 
-$eliminar = "eliminarObras";
+$eliminar = "eliminarVentas";
 
-$insertar = "insertarObras";
+$insertar = "insertarVentas";
 
 $tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbobras";
+$tabla 			= "dbpromosobras";
 
-$lblCambio	 	= array("refsalas","valorentrada","cantpulicidad","valorpulicidad","valorticket","costotranscciontarjetaiva","porcentajeargentores","porcentajereparto","porcentajeretencion");
-$lblreemplazo	= array("Sala","Valor Entrada","Cant. para Publicidad","Valor Publicidad","Valor Ticket","Costo Trans. Tarj. IVA","% Argentores","% Reparto","% Retencion");
+$lblCambio	 	= array("refobras","vigenciadesde","vigenciahasta");
+$lblreemplazo	= array("Obra","Vig. Desde","Vig. Hasta");
 
-$resSalas	=	$serviciosReferencias->traerSalas();
-$cadRef 	= 	$serviciosFunciones->devolverSelectBox($resSalas,array(1),'');
+$resObras	=	$serviciosReferencias->traerObras();
+$cadRef 	= 	$serviciosFunciones->devolverSelectBox($resObras,array(1,3),' - Valor Entrada: ');
 
 $refdescripcion = array(0=>$cadRef);
-$refCampo 	=  array("refsalas");
+$refCampo 	=  array("refobras");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
 
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
-$cabeceras 		= "	<th>Sala</th>
-					<th>Valor Entrada</th>
-					<th>Cant. para Publicidad</th>
-					<th>Valor Publicidad</th>
-					<th>Valor Ticket</th>
-					<th>Costo Trans. Tarj. IVA</th>
-					<th>% Argentores</th>
-					<th>% Reparto</th>
-					<th>% Retencion</th>
-					<th>Activo</th>";
+$cabeceras 		= "	<th>Descripcion</th>
+					<th>Obra</th>
+					<th>Vig. Desde</th>
+					<th>Vig. Hasta</th>
+					<th>Porccentaje</th>
+					<th>Monto</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
+
+
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerObras(),10);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPromosobras(),6);
 
-$lstAlbum		= $serviciosFunciones->devolverSelectBox($serviciosReferencias->traerAlbum(),array(1,2),' - ');
+
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -115,7 +113,7 @@ if ($_SESSION['refroll_predio'] != 1) {
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
-	<link rel="stylesheet" href="../../css/chosen.css">
+	
     
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
@@ -128,7 +126,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         $('#navigation').perfectScrollbar();
       });
     </script>
-
+    
  
 </head>
 
@@ -147,35 +145,12 @@ if ($_SESSION['refroll_predio'] != 1) {
         </div>
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
-        	<div class="row">
-			<?php echo $formulario; ?>
+            <div class="alert alert-info">
+            	<p><span class="glyphicon glyphicon-info-sign"></span> Recuerde que los montos o porcentaje que se cargue, sera el valor real o sera un porcentaje de descuento. Si cargan monto y porcentaje solo tomara el monto como bueno. El valor "0" no significa nada a tomar en cuenta. Para cargar una entrada con valor cero en porcentaje poner 100%.</p>
             </div>
+        	<div class="row">
             
-            <hr>
-            
-            <div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
-            	<div class="form-group col-md-6" style="display:'.$lblOculta.'">
-                    <label for="buscarcontacto" class="control-label" style="text-align:left">Buscar Album</label>
-                    <div class="input-group col-md-12">
-                        
-                        <select data-placeholder="selecione el Album..." id="buscarcontacto" name="buscarcontacto" class="chosen-select" tabindex="2" style="width:300px;">
-                            <option value=""></option>
-                            <?php echo utf8_decode($lstAlbum); ?>
-                        </select>
-                        <button type="button" class="btn btn-success" id="asignarContacto"><span class="glyphicon glyphicon-share-alt"></span> Asignar Album</button>
-                    </div>
-                </div>
-                
-                <div class="form-group col-md-6">
-                    <label for="contactosasignados" class="control-label" style="text-align:left">Album Asignados</label>
-                    <div class="input-group col-md-12">
-                        <ul class="list-inline" id="lstContact">
-                        
-                        </ul>
-                        
-                    </div>
-                </div>
-                
+			<?php echo $formulario; ?>
             </div>
 
             <div class='row' style="margin-left:25px; margin-right:25px;">
@@ -268,32 +243,6 @@ $(document).ready(function(){
 	$('#fechamodi').val('');
 	$('#usuacrea').val('<?php echo $_SESSION['nombre_predio']; ?>');
 	$('#usuamodi').val('');
-	
-	$('#asignarContacto').click(function(e) {
-		//alert($('#buscarcontacto option:selected').html());
-		if (existeAsiganado('user'+$('#buscarcontacto').chosen().val()) == 0) {
-			$('#lstContact').prepend('<li class="user'+ $('#buscarcontacto').chosen().val() +'"><input id="user'+ $('#buscarcontacto').chosen().val() +'" class="form-control checkLstContactos" checked type="checkbox" required="" style="width:50px;" name="user'+ $('#buscarcontacto').chosen().val() +'"><p>' + $('#buscarcontacto option:selected').html() + ' </p></li>');
-		}
-	});
-	
-	function existeAsiganado(id) {
-		var existe = 0;	
-		$('#lstContact li input').each(function (index, value) { 
-		  if (id == $(this).attr('id')) {
-			return existe = 1;  
-		  }
-		});
-		
-		return existe;
-	}
-	
-	$("#lstContact").on("click",'.checkLstContactos', function(){
-		usersid =  $(this).attr("id");
-		
-		if  (!($(this).prop('checked'))) {
-			$('.'+usersid).remove();	
-		}
-	});
 	
 	$('#eliminarMasivo').click( function(){
       		url = "borrarMasivo.php";
@@ -435,34 +384,35 @@ $(document).ready(function(){
 });
 </script>
 
-<script type="text/javascript">
-$('.form_date').datetimepicker({
-	language:  'es',
-	weekStart: 1,
-	todayBtn:  1,
-	autoclose: 1,
-	todayHighlight: 1,
-	startView: 2,
-	minView: 2,
-	forceParse: 0,
-	format: 'dd/mm/yyyy'
-});
-</script>
+<script>
+  $(function() {
+	  $.datepicker.regional['es'] = {
+ closeText: 'Cerrar',
+ prevText: '<Ant',
+ nextText: 'Sig>',
+ currentText: 'Hoy',
+ monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+ dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+ dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+ dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+ weekHeader: 'Sm',
+ dateFormat: 'dd/mm/yy',
+ firstDay: 1,
+ isRTL: false,
+ showMonthAfterYear: false,
+ yearSuffix: ''
+ };
+ $.datepicker.setDefaults($.datepicker.regional['es']);
+ 
+    $( "#vigenciadesde" ).datepicker();
 
-<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
-<script type="text/javascript">
-    var config = {
-      '.chosen-select'           : {},
-      '.chosen-select-deselect'  : {allow_single_deselect:true},
-      '.chosen-select-no-single' : {disable_search_threshold:10},
-      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
-      '.chosen-select-width'     : {width:"95%"}
-    }
-    for (var selector in config) {
-      $(selector).chosen(config[selector]);
-    }
+    $( "#vigenciadesde" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 	
-	
+	$( "#vigenciahasta" ).datepicker();
+
+    $( "#vigenciahasta" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+  });
   </script>
 <?php } ?>
 </body>

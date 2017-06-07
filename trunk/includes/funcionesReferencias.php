@@ -327,6 +327,12 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function eliminarAlbumobrasPorObra($idObra) {
+$sql = "delete from dbalbumobras where refobras =".$idObra;
+$res = $this->query($sql,0);
+return $res;
+}
+
 
 function traerAlbumobras() {
 $sql = "select
@@ -337,6 +343,21 @@ from dbalbumobras a
 inner join dbobras obr ON obr.idobra = a.refobras
 inner join tbsalas sa ON sa.idsala = obr.refsalas
 inner join tbalbum alb ON alb.idalbum = a.refalbum
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerAlbumobrasPorObra($idObra) {
+$sql = "select
+a.idalbumobra,
+a.refobras,
+a.refalbum
+from dbalbumobras a
+inner join dbobras obr ON obr.idobra = a.refobras
+inner join tbsalas sa ON sa.idsala = obr.refsalas
+inner join tbalbum alb ON alb.idalbum = a.refalbum
+where obr.idobra = ".$idObra."
 order by 1";
 $res = $this->query($sql,0);
 return $res;

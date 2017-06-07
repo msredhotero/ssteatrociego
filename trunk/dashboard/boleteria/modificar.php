@@ -14,66 +14,53 @@ include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 
-$serviciosFunciones 	= new Servicios();
-$serviciosUsuario 		= new ServiciosUsuarios();
-$serviciosHTML 			= new ServiciosHTML();
+$serviciosFunciones = new Servicios();
+$serviciosUsuario 	= new ServiciosUsuarios();
+$serviciosHTML 		= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Obras",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Obras",$_SESSION['refroll_predio'],'');
+
+
+$id = $_GET['id'];
+
+$resResultado = $serviciosReferencias->traerPromosobrasPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Obra";
+$singular = "Promo";
 
-$plural = "Obras";
+$plural = "Promos";
 
-$eliminar = "eliminarObras";
+$eliminar = "eliminarPromosobras";
 
-$insertar = "insertarObras";
+$modificar = "modificarPromosobras";
+
+$idTabla = "idpromoobra";
 
 $tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbobras";
+$tabla 			= "dbpromosobras";
 
-$lblCambio	 	= array("refsalas","valorentrada","cantpulicidad","valorpulicidad","valorticket","costotranscciontarjetaiva","porcentajeargentores","porcentajereparto","porcentajeretencion");
-$lblreemplazo	= array("Sala","Valor Entrada","Cant. para Publicidad","Valor Publicidad","Valor Ticket","Costo Trans. Tarj. IVA","% Argentores","% Reparto","% Retencion");
+$lblCambio	 	= array("refobras","vigenciadesde","vigenciahasta");
+$lblreemplazo	= array("Obra","Vig. Desde","Vig. Hasta");
 
-$resSalas	=	$serviciosReferencias->traerSalas();
-$cadRef 	= 	$serviciosFunciones->devolverSelectBox($resSalas,array(1),'');
+$resObras	=	$serviciosReferencias->traerObras();
+$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resObras,array(1,3),' - Valor Entrada: ',mysql_result($resResultado,0,'refobras') );
 
 $refdescripcion = array(0=>$cadRef);
-$refCampo 	=  array("refsalas");
+$refCampo 	=  array("refobras");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
+$formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-
-/////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
-$cabeceras 		= "	<th>Sala</th>
-					<th>Valor Entrada</th>
-					<th>Cant. para Publicidad</th>
-					<th>Valor Publicidad</th>
-					<th>Valor Ticket</th>
-					<th>Costo Trans. Tarj. IVA</th>
-					<th>% Argentores</th>
-					<th>% Reparto</th>
-					<th>% Retencion</th>
-					<th>Activo</th>";
-
-//////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-
-$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerObras(),10);
-
-$lstAlbum		= $serviciosFunciones->devolverSelectBox($serviciosReferencias->traerAlbum(),array(1,2),' - ');
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -115,7 +102,11 @@ if ($_SESSION['refroll_predio'] != 1) {
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
-	<link rel="stylesheet" href="../../css/chosen.css">
+	<style type="text/css">
+		
+  
+		
+	</style>
     
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
@@ -128,8 +119,6 @@ if ($_SESSION['refroll_predio'] != 1) {
         $('#navigation').perfectScrollbar();
       });
     </script>
-
- 
 </head>
 
 <body>
@@ -142,42 +131,19 @@ if ($_SESSION['refroll_predio'] != 1) {
 
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Carga de <?php echo $plural; ?></p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Modificar <?php echo $singular; ?></p>
         	
         </div>
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
-        	<div class="row">
+        	<div class="alert alert-info">
+            	<p><span class="glyphicon glyphicon-info-sign"></span> Recuerde que los montos o porcentaje que se cargue, sera el valor real o sera un porcentaje de descuento. Si cargan monto y porcentaje solo tomara el monto como bueno. El valor "0" no significa nada a tomar en cuenta. Para cargar una entrada con valor cero en porcentaje poner 100%.</p>
+            </div>
+			<div class="row">
 			<?php echo $formulario; ?>
             </div>
             
-            <hr>
             
-            <div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
-            	<div class="form-group col-md-6" style="display:'.$lblOculta.'">
-                    <label for="buscarcontacto" class="control-label" style="text-align:left">Buscar Album</label>
-                    <div class="input-group col-md-12">
-                        
-                        <select data-placeholder="selecione el Album..." id="buscarcontacto" name="buscarcontacto" class="chosen-select" tabindex="2" style="width:300px;">
-                            <option value=""></option>
-                            <?php echo utf8_decode($lstAlbum); ?>
-                        </select>
-                        <button type="button" class="btn btn-success" id="asignarContacto"><span class="glyphicon glyphicon-share-alt"></span> Asignar Album</button>
-                    </div>
-                </div>
-                
-                <div class="form-group col-md-6">
-                    <label for="contactosasignados" class="control-label" style="text-align:left">Album Asignados</label>
-                    <div class="input-group col-md-12">
-                        <ul class="list-inline" id="lstContact">
-                        
-                        </ul>
-                        
-                    </div>
-                </div>
-                
-            </div>
-
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
                 
@@ -191,9 +157,14 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-top:15px;">
                     <li>
-                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Guardar</button>
+                        <button type="button" class="btn btn-warning" id="cargar" style="margin-left:0px;">Modificar</button>
                     </li>
-                    
+                    <li>
+                        <button type="button" class="btn btn-danger varborrar" id="<?php echo $id; ?>" style="margin-left:0px;">Eliminar</button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn btn-default volver" style="margin-left:0px;">Volver</button>
+                    </li>
                 </ul>
                 </div>
             </div>
@@ -201,32 +172,19 @@ if ($_SESSION['refroll_predio'] != 1) {
     	</div>
     </div>
     
-    <div class="boxInfoLargo">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;"><?php echo $plural; ?> Cargados</p>
-        	
-        </div>
-    	<div class="cuerpoBox">
-        	<?php echo $lstCargados; ?>
-            
-    	</div>
-    </div>
-    
-    
-
-    
     
    
 </div>
 
 
 </div>
+
 <div id="dialog2" title="Eliminar <?php echo $singular; ?>">
     	<p>
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
             ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
         </p>
-        <p><strong>Importante: </strong>Si elimina el <?php echo $singular; ?> se perderan todos los datos de este</p>
+        <p><strong>Importante: </strong>Si elimina el equipo se perderan todos los datos de este</p>
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
@@ -237,73 +195,16 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <script type="text/javascript">
 $(document).ready(function(){
-	var table = $('#example').dataTable({
-		"order": [[ 0, "asc" ]],
-		"language": {
-			"emptyTable":     "No hay datos cargados",
-			"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-			"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-			"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-			"infoPostFix":    "",
-			"thousands":      ",",
-			"lengthMenu":     "Mostrar _MENU_ filas",
-			"loadingRecords": "Cargando...",
-			"processing":     "Procesando...",
-			"search":         "Buscar:",
-			"zeroRecords":    "No se encontraron resultados",
-			"paginate": {
-				"first":      "Primero",
-				"last":       "Ultimo",
-				"next":       "Siguiente",
-				"previous":   "Anterior"
-			},
-			"aria": {
-				"sortAscending":  ": activate to sort column ascending",
-				"sortDescending": ": activate to sort column descending"
-			}
-		  }
-	} );
+
+
 	
-	$('#fechacreacion').val('<?php echo date('Y-m-d'); ?>');
-	$('#fechamodi').val('');
-	$('#usuacrea').val('<?php echo $_SESSION['nombre_predio']; ?>');
-	$('#usuamodi').val('');
+	$('.volver').click(function(event){
+		 
+		url = "index.php";
+		$(location).attr('href',url);
+	});//fin del boton modificar
 	
-	$('#asignarContacto').click(function(e) {
-		//alert($('#buscarcontacto option:selected').html());
-		if (existeAsiganado('user'+$('#buscarcontacto').chosen().val()) == 0) {
-			$('#lstContact').prepend('<li class="user'+ $('#buscarcontacto').chosen().val() +'"><input id="user'+ $('#buscarcontacto').chosen().val() +'" class="form-control checkLstContactos" checked type="checkbox" required="" style="width:50px;" name="user'+ $('#buscarcontacto').chosen().val() +'"><p>' + $('#buscarcontacto option:selected').html() + ' </p></li>');
-		}
-	});
-	
-	function existeAsiganado(id) {
-		var existe = 0;	
-		$('#lstContact li input').each(function (index, value) { 
-		  if (id == $(this).attr('id')) {
-			return existe = 1;  
-		  }
-		});
-		
-		return existe;
-	}
-	
-	$("#lstContact").on("click",'.checkLstContactos', function(){
-		usersid =  $(this).attr("id");
-		
-		if  (!($(this).prop('checked'))) {
-			$('.'+usersid).remove();	
-		}
-	});
-	
-	$('#eliminarMasivo').click( function(){
-      		url = "borrarMasivo.php";
-			$(location).attr('href',url);
-      });
-	
-	
-	$('#activo').prop( "checked", true );
-	
-	$("#example").on("click",'.varborrar', function(){
+	$('.varborrar').click(function(event){
 		  usersid =  $(this).attr("id");
 		  if (!isNaN(usersid)) {
 			$("#idEliminar").val(usersid);
@@ -316,17 +217,6 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton eliminar
-	
-	$("#example").on("click",'.varmodificar', function(){
-		  usersid =  $(this).attr("id");
-		  if (!isNaN(usersid)) {
-			
-			url = "modificar.php?id=" + usersid;
-			$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton modificar
 
 	 $( "#dialog2" ).dialog({
 		 	
@@ -365,7 +255,8 @@ $(document).ready(function(){
 		 
 		 
 	 		}); //fin del dialogo para eliminar
-			
+	
+	
 	<?php 
 		echo $serviciosHTML->validacion($tabla);
 	
@@ -404,7 +295,7 @@ $(document).ready(function(){
                                             $(".alert").removeClass("alert-danger");
 											$(".alert").removeClass("alert-info");
                                             $(".alert").addClass("alert-success");
-                                            $(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong><?php echo $singular; ?></strong>. ');
+                                            $(".alert").html('<strong>Ok!</strong> Se modifico exitosamente el <strong><?php echo $singular; ?></strong>. ');
 											$(".alert").delay(3000).queue(function(){
 												/*aca lo que quiero hacer 
 												  después de los 2 segundos de retraso*/
@@ -412,8 +303,8 @@ $(document).ready(function(){
 												
 											});
 											$("#load").html('');
-											url = "index.php";
-											$(location).attr('href',url);
+											//url = "index.php";
+											//$(location).attr('href',url);
                                             
 											
                                         } else {
@@ -448,22 +339,6 @@ $('.form_date').datetimepicker({
 	format: 'dd/mm/yyyy'
 });
 </script>
-
-<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
-<script type="text/javascript">
-    var config = {
-      '.chosen-select'           : {},
-      '.chosen-select-deselect'  : {allow_single_deselect:true},
-      '.chosen-select-no-single' : {disable_search_threshold:10},
-      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
-      '.chosen-select-width'     : {width:"95%"}
-    }
-    for (var selector in config) {
-      $(selector).chosen(config[selector]);
-    }
-	
-	
-  </script>
 <?php } ?>
 </body>
 </html>

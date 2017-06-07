@@ -1028,60 +1028,84 @@ $res = $serviciosReferencias->eliminarGastosobras($id);
 echo $res; 
 } 
 function insertarObras($serviciosReferencias) { 
-$nombre = $_POST['nombre']; 
-$refsalas = $_POST['refsalas']; 
-$valorentrada = $_POST['valorentrada']; 
-$cantpulicidad = $_POST['cantpulicidad']; 
-$valorpulicidad = $_POST['valorpulicidad']; 
-$valorticket = $_POST['valorticket']; 
-$costotranscciontarjetaiva = $_POST['costotranscciontarjetaiva']; 
-$porcentajeargentores = $_POST['porcentajeargentores']; 
-$porcentajereparto = $_POST['porcentajereparto']; 
-$porcentajeretencion = $_POST['porcentajeretencion']; 
-$fechacreacion = $_POST['fechacreacion']; 
-$usuacrea = $_POST['usuacrea']; 
-$fechamodi = $_POST['fechamodi']; 
-$usuamodi = $_POST['usuamodi']; 
-if (isset($_POST['activo'])) { 
-$activo	= 1; 
-} else { 
-$activo = 0; 
+	$nombre = $_POST['nombre']; 
+	$refsalas = $_POST['refsalas']; 
+	$valorentrada = $_POST['valorentrada']; 
+	$cantpulicidad = $_POST['cantpulicidad']; 
+	$valorpulicidad = $_POST['valorpulicidad']; 
+	$valorticket = $_POST['valorticket']; 
+	$costotranscciontarjetaiva = $_POST['costotranscciontarjetaiva']; 
+	$porcentajeargentores = $_POST['porcentajeargentores']; 
+	$porcentajereparto = $_POST['porcentajereparto']; 
+	$porcentajeretencion = $_POST['porcentajeretencion']; 
+	$fechacreacion = $_POST['fechacreacion']; 
+	$usuacrea = $_POST['usuacrea']; 
+	$fechamodi = $_POST['fechamodi']; 
+	$usuamodi = $_POST['usuamodi']; 
+	
+	if (isset($_POST['activo'])) { 
+		$activo	= 1; 
+	} else { 
+		$activo = 0; 
+	} 
+	
+	$res = $serviciosReferencias->insertarObras($nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
+	
+	if ((integer)$res > 0) { 
+		$resUser = $serviciosReferencias->traerAlbum();
+		$cad = 'user';
+		while ($rowFS = mysql_fetch_array($resUser)) {
+			if (isset($_POST[$cad.$rowFS[0]])) {
+				$serviciosReferencias->insertarAlbumobras($res,$rowFS[0]);
+			}
+		}
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	 
+	} 
 } 
-$res = $serviciosReferencias->insertarObras($nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
-if ((integer)$res > 0) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al insertar datos';	 
-} 
-} 
+
+
 function modificarObras($serviciosReferencias) { 
-$id = $_POST['id']; 
-$nombre = $_POST['nombre']; 
-$refsalas = $_POST['refsalas']; 
-$valorentrada = $_POST['valorentrada']; 
-$cantpulicidad = $_POST['cantpulicidad']; 
-$valorpulicidad = $_POST['valorpulicidad']; 
-$valorticket = $_POST['valorticket']; 
-$costotranscciontarjetaiva = $_POST['costotranscciontarjetaiva']; 
-$porcentajeargentores = $_POST['porcentajeargentores']; 
-$porcentajereparto = $_POST['porcentajereparto']; 
-$porcentajeretencion = $_POST['porcentajeretencion']; 
-$fechacreacion = $_POST['fechacreacion']; 
-$usuacrea = $_POST['usuacrea']; 
-$fechamodi = $_POST['fechamodi']; 
-$usuamodi = $_POST['usuamodi']; 
-if (isset($_POST['activo'])) { 
-$activo	= 1; 
-} else { 
-$activo = 0; 
+	$id = $_POST['id']; 
+	$nombre = $_POST['nombre']; 
+	$refsalas = $_POST['refsalas']; 
+	$valorentrada = $_POST['valorentrada']; 
+	$cantpulicidad = $_POST['cantpulicidad']; 
+	$valorpulicidad = $_POST['valorpulicidad']; 
+	$valorticket = $_POST['valorticket']; 
+	$costotranscciontarjetaiva = $_POST['costotranscciontarjetaiva']; 
+	$porcentajeargentores = $_POST['porcentajeargentores']; 
+	$porcentajereparto = $_POST['porcentajereparto']; 
+	$porcentajeretencion = $_POST['porcentajeretencion']; 
+	$fechacreacion = $_POST['fechacreacion']; 
+	$usuacrea = $_POST['usuacrea']; 
+	$fechamodi = $_POST['fechamodi']; 
+	$usuamodi = $_POST['usuamodi']; 
+	
+	if (isset($_POST['activo'])) { 
+		$activo	= 1; 
+	} else { 
+		$activo = 0; 
+	} 
+	
+	$res = $serviciosReferencias->modificarObras($id,$nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
+	if ($res == true) { 
+		$serviciosReferencias->eliminarAlbumobrasPorObra($id);
+			$resUser = $serviciosReferencias->traerAlbum();
+			$cad = 'user';
+			while ($rowFS = mysql_fetch_array($resUser)) {
+				if (isset($_POST[$cad.$rowFS[0]])) {
+					$serviciosReferencias->insertarAlbumobras($id,$rowFS[0]);
+				}
+			}
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
 } 
-$res = $serviciosReferencias->modificarObras($id,$nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
-if ($res == true) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al modificar datos'; 
-} 
-} 
+
+
 function eliminarObras($serviciosReferencias) { 
 $id = $_POST['id']; 
 $res = $serviciosReferencias->eliminarObras($id); 

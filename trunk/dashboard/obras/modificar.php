@@ -62,6 +62,38 @@ $refCampo 	=  array("refsalas");
 $formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
 
+
+$lstAlbum	= $serviciosFunciones->devolverSelectBox($serviciosReferencias->traerAlbum(),array(1,2),' - ');
+$resContactos = $serviciosReferencias->traerAlbum();
+
+$resContactosCountries = $serviciosReferencias->traerAlbumobrasPorObra($id);
+
+
+	while ($subrow = mysql_fetch_array($resContactosCountries)) {
+			$arrayFS[] = $subrow;
+	}
+
+
+
+$cadUser = '<ul class="list-inline" id="lstContact">';
+while ($rowFS = mysql_fetch_array($resContactos)) {
+	$check = '';
+	if (mysql_num_rows($resContactosCountries)>0) {
+		foreach ($arrayFS as $item) {
+			if (stripslashes($item['refalbum']) == $rowFS[0]) {
+				$check = 'checked';	
+				$cadUser = $cadUser.'<li class="user'.$rowFS[0].'">'.'<input id="user'.$rowFS[0].'" '.$check.' class="form-control checkLstContactos" type="checkbox" required="" style="width:50px;" name="user'.$rowFS[0].'"><p>'.$rowFS[1]." - ".$rowFS[2].'</p>'."</li>";
+			}
+		}
+	}
+	
+
+
+}
+
+$cadUser = $cadUser."</ul>";
+
+
 if ($_SESSION['refroll_predio'] != 1) {
 
 } else {
@@ -102,11 +134,7 @@ if ($_SESSION['refroll_predio'] != 1) {
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
-	<style type="text/css">
-		
-  
-		
-	</style>
+	<link rel="stylesheet" href="../../css/chosen.css">
     
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
@@ -141,6 +169,30 @@ if ($_SESSION['refroll_predio'] != 1) {
 			<?php echo $formulario; ?>
             </div>
             
+            <hr>
+            
+            <div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
+            	<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+                    <label for="buscarcontacto" class="control-label" style="text-align:left">Buscar Album</label>
+                    <div class="input-group col-md-12">
+                        
+                        <select data-placeholder="selecione el Contacto..." id="buscarcontacto" name="buscarcontacto" class="chosen-select" tabindex="2" style="width:300px;">
+                            <option value=""></option>
+                            <?php echo utf8_decode($lstAlbum); ?>
+                        </select>
+                        <button type="button" class="btn btn-success" id="asignarContacto"><span class="glyphicon glyphicon-share-alt"></span> Asignar Album</button>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                    <label for="contactosasignados" class="control-label" style="text-align:left">Album Asignados</label>
+                    <div class="input-group col-md-12">
+                        <?php echo $cadUser; ?>
+                        
+                    </div>
+                </div>
+                
+            </div>
             
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
@@ -222,6 +274,33 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton eliminar
+	
+	$('#asignarContacto').click(function(e) {
+		//alert($('#buscarcontacto option:selected').html());
+		if (existeAsiganado('user'+$('#buscarcontacto').chosen().val()) == 0) {
+			$('#lstContact').prepend('<li class="user'+ $('#buscarcontacto').chosen().val() +'"><input id="user'+ $('#buscarcontacto').chosen().val() +'" class="form-control checkLstContactos" checked type="checkbox" required="" style="width:50px;" name="user'+ $('#buscarcontacto').chosen().val() +'"><p>' + $('#buscarcontacto option:selected').html() + ' </p></li>');
+		}
+	});
+	
+	
+	function existeAsiganado(id) {
+		var existe = 0;	
+		$('#lstContact li input').each(function (index, value) { 
+		  if (id == $(this).attr('id')) {
+			return existe = 1;  
+		  }
+		});
+		
+		return existe;
+	}
+	
+	$("#lstContact").on("click",'.checkLstContactos', function(){
+		usersid =  $(this).attr("id");
+		
+		if  (!($(this).prop('checked'))) {
+			$('.'+usersid).remove();	
+		}
+	});
 
 	 $( "#dialog2" ).dialog({
 		 	
@@ -344,6 +423,22 @@ $('.form_date').datetimepicker({
 	format: 'dd/mm/yyyy'
 });
 </script>
+
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+	
+	
+  </script>
 <?php } ?>
 </body>
 </html>
