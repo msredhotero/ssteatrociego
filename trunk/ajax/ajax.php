@@ -299,9 +299,58 @@ case 'eliminarAlbum':
 eliminarAlbum($serviciosReferencias);
 break; 
 
+
+////////////////////////////////*****    AUTO-COMPLETAR   *******/////////////////////////////////////
+case 'traerPromosPorObras':
+	traerPromosPorObras($serviciosReferencias, $serviciosFunciones);
+break;
+case 'traerCategoriasPorObras':
+	traerCategoriasPorObras($serviciosReferencias, $serviciosFunciones);
+break;
+case 'traerAlbumPorObras':
+	traerAlbumPorObras($serviciosReferencias, $serviciosFunciones);
+break;
+case 'traerCategoriasPromocionesPorObras':
+	traerCategoriasPromocionesPorObras($serviciosReferencias, $serviciosFunciones);
+break;
+
+////////////////////////////////*****    FIN AUTO-COMPLETAR   *******/////////////////////////////////////
 }
 
 /* Fin */
+
+
+
+
+////////////////////////////////*****    AUTO-COMPLETAR   *******/////////////////////////////////////
+function	traerPromosPorObras($serviciosReferencias, $serviciosFunciones) {
+	$idObra	=	$_POST['idObra'];
+	$datos	=	$serviciosFunciones->devolverSelectBoxArray( $serviciosReferencias->traerPromosobrasActivosPorObra($idObra),array(1,5,6),array(' - Porcentaje: ','% - Monto: ', ''),'--- Promociones ---');
+	echo $datos;
+}
+
+function	traerCategoriasPorObras($serviciosReferencias, $serviciosFunciones) {
+	$idObra	=	$_POST['idObra'];
+	$datos	=	$serviciosFunciones->devolverSelectBoxArray( $serviciosReferencias->traerCategoriasPorObra($idObra),array(1,3,4,5),array(' - Cuponera: ',' - Monto: ',' - Porcentaje:',''),'--- Categorias ---');
+	echo $datos;	
+}
+
+function	traerCategoriasPromocionesPorObras($serviciosReferencias, $serviciosFunciones) {
+	$idObra	=	$_POST['idObra'];
+	$datosCategorias	=	$serviciosFunciones->devolverSelectBoxArray( $serviciosReferencias->traerCategoriasPorObra($idObra),array(1,3,4,5),array(' - Cuponera: ',' - Monto: ',' - Porcentaje:',''),'--- Categorias ---');
+	$datosPromociones	=	$serviciosFunciones->devolverSelectBoxArray( $serviciosReferencias->traerPromosobrasActivosPorObra($idObra),array(1,5,6),array(' - Porcentaje: ','% - Monto: ', ''),'--- Promociones ---');
+	echo $datosCategorias.$datosPromociones;	
+}
+
+function	traerAlbumPorObras($serviciosReferencias, $serviciosFunciones) {
+	$idObra	=	$_POST['idObra'];
+	$datos	=	$serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerAlbumobrasPorObra($idObra),array(3,4),' - ');
+	echo $datos;	
+}
+
+////////////////////////////////*****    FIN AUTO-COMPLETAR   *******/////////////////////////////////////
+
+
 /* nuevo */
 
 function insertarAlbumobras($serviciosReferencias) {

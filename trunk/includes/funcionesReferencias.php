@@ -352,7 +352,9 @@ function traerAlbumobrasPorObra($idObra) {
 $sql = "select
 a.idalbumobra,
 a.refobras,
-a.refalbum
+a.refalbum,
+alb.banda,
+alb.album
 from dbalbumobras a
 inner join dbobras obr ON obr.idobra = a.refobras
 inner join tbsalas sa ON sa.idsala = obr.refsalas
@@ -1080,6 +1082,27 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+function traerCategoriasPorObra($idObra) { 
+$sql = "select 
+c.idcategoria,
+c.descripcion,
+obr.nombre as obra,
+cup.nombre as cuponera,
+c.porcentaje,
+c.monto,
+c.pocentajeretenido,
+c.refobras,
+c.refcuponeras
+from dbcategorias c 
+inner join dbobras obr ON obr.idobra = c.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+inner join tbcuponeras cup ON cup.idcuponera = c.refcuponeras 
+where	obr.idobra = ".$idObra."
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
 
 function traerCategoriasPorId($id) { 
 $sql = "select idcategoria,descripcion,refobras,refcuponeras,porcentaje,monto,pocentajeretenido from dbcategorias where idcategoria =".$id; 
@@ -1130,6 +1153,24 @@ p.monto
 from dbpromosobras p 
 inner join dbobras obr ON obr.idobra = p.refobras 
 inner join tbsalas sa ON sa.idsala = obr.refsalas 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+function traerPromosobrasActivosPorObra($idObra) { 
+$sql = "select 
+p.idpromoobra,
+p.descripcion,
+p.refobras,
+p.vigenciadesde,
+p.vigenciahasta,
+p.porcentaje,
+p.monto
+from dbpromosobras p 
+inner join dbobras obr ON obr.idobra = p.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+where	obr.idobra = ".$idObra." and (p.vigenciadesde <= now() and p.vigenciahasta >= now() or (p.vigenciahasta = '0000-00-00' or p.vigenciahasta is null))
 order by 1"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -1189,6 +1230,40 @@ v.refalbum
 from dbventas v
 inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
 order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerVentasPorDia($fecha) {
+	$sql = "select
+v.idventa,
+v.numero,
+v.fecha,
+tip.descripcion,
+v.total,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+o.nombre as obra,
+pr.descripcion as promo,
+cat.descripcion as categoria,
+cup.nombre as cuponera,
+a.banda as banda,
+a.album as album,
+v.reftipopago,
+v.refobras,
+v.refcategorias,
+v.refpromosobras,
+v.refalbum,
+v.usuario
+from dbventas v
+inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbobras o ON o.idobra = v.refobras
+left join dbpromosobras pr ON pr.idpromoobra = v.refpromosobras
+left join dbcategorias cat ON cat.idcategoria = v.refcategorias and o.idobra = cat.refobras
+left join tbcuponeras cup ON cup.idcuponera = cat.refcuponeras
+left join dbalbumobras ao ON ao.refobras = o.idobra
+left join tbalbum a ON a.idalbum = ao.refalbum
+where	v.fecha = '".$fecha."'
+order by 1 desc";
 $res = $this->query($sql,0);
 return $res;
 }

@@ -39,16 +39,16 @@ $tituloWeb = "Gestión: Teatro Ciego";
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbpromosobras";
+$tabla 			= "dbventas";
 
-$lblCambio	 	= array("refobras","vigenciadesde","vigenciahasta");
-$lblreemplazo	= array("Obra","Vig. Desde","Vig. Hasta");
+$lblCambio	 	= array();
+$lblreemplazo	= array();
 
-$resObras	=	$serviciosReferencias->traerObras();
-$cadRef 	= 	$serviciosFunciones->devolverSelectBox($resObras,array(1,3),' - Valor Entrada: ');
 
-$refdescripcion = array(0=>$cadRef);
-$refCampo 	=  array("refobras");
+$cadRef 	= '';
+
+$refdescripcion = array();
+$refCampo 	=  array();
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -61,15 +61,21 @@ $cabeceras 		= "	<th>Descripcion</th>
 					<th>Vig. Hasta</th>
 					<th>Porccentaje</th>
 					<th>Monto</th>";
-
+$cabeceras2 		= "	<th>Numero</th>
+                    <th>Fecha</th>
+                    <th>Tipo Pago</th>
+					<th>Total</th>
+					<th>Cliente</th>
+                    <th>Cancelada</th>";	
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
 
 
-$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$lstTipoPago  = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerTipopago(),array(1),'');
+$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerObras(),array(1,3),' - Valor Entrada:');
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPromosobras(),6);
+$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),96);
 
 
 
@@ -113,7 +119,7 @@ if ($_SESSION['refroll_predio'] != 1) {
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
-	
+	<link rel="stylesheet" href="../../css/chosen.css">
     
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
@@ -145,12 +151,62 @@ if ($_SESSION['refroll_predio'] != 1) {
         </div>
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
-            <div class="alert alert-info">
-            	<p><span class="glyphicon glyphicon-info-sign"></span> Recuerde que los montos o porcentaje que se cargue, sera el valor real o sera un porcentaje de descuento. Si cargan monto y porcentaje solo tomara el monto como bueno. El valor "0" no significa nada a tomar en cuenta. Para cargar una entrada con valor cero en porcentaje poner 100%.</p>
-            </div>
+            
         	<div class="row">
             
-			<?php echo $formulario; ?>
+				<div class="form-group col-md-6" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Función <span style="color:#F00;">*</span></label>
+                    <div class="input-group col-md-12">
+	                    <select data-placeholder="selecione la Obra..." id="refobras" name="refobras" class="chosen-select" tabindex="2" style="width:100%;">
+                            
+                            <?php echo $lstFunciones; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                
+                <div class="form-group col-md-6" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Tipo Pago <span style="color:#F00;">*</span></label>
+                    <div class="input-group col-md-12">
+	                    <select data-placeholder="selecione el Tipo de Pago..." id="reftipopago" name="reftipopago" class="chosen-select" tabindex="2" style="width:100%;">
+                            
+                            <?php echo $lstTipoPago; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                
+                <div class="form-group col-md-6 col-xs-6">
+                    <label for="vigenciadesde" class="control-label" style="text-align:left">Fecha</label>
+                    <div class="input-group col-md-6 col-xs-12">
+                        <input class="form-control" name="fecha" id="fecha" type="text" value="<?php echo date('Y-m-d'); ?>"/>
+                    </div>
+                    
+                </div>
+                
+                <div class="form-group col-md-6" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Album</label>
+                    <div class="input-group col-md-12">
+	                    <select data-placeholder="selecione el Album..." id="refalbum" name="refalbum" class="form-control" />
+                            
+                            
+                        </select>
+                    </div>
+                </div>
+                
+                
+                <div class="form-group col-md-6" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Categorias - Promociones</label>
+                    <div class="input-group col-md-12">
+	                    <select placeholder="selecione la Categoria..." id="refcategoriaspromociones" name="refcategoriaspromociones" class="form-control" />
+                            
+                            
+                        </select>
+                    </div>
+                </div>
+                
+                
+
             </div>
 
             <div class='row' style="margin-left:25px; margin-right:25px;">
@@ -182,7 +238,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox">
-        	<?php echo $lstCargados; ?>
+        	<?php echo $lstVentas; ?>
             
     	</div>
     </div>
@@ -243,14 +299,7 @@ $(document).ready(function(){
 	$('#fechamodi').val('');
 	$('#usuacrea').val('<?php echo $_SESSION['nombre_predio']; ?>');
 	$('#usuamodi').val('');
-	
-	$('#eliminarMasivo').click( function(){
-      		url = "borrarMasivo.php";
-			$(location).attr('href',url);
-      });
-	
-	
-	$('#activo').prop( "checked", true );
+
 	
 	$("#example").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
@@ -276,6 +325,31 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton modificar
+	
+	
+	function traerAutocomplete(idObra, funcion, contenedor) {
+		$.ajax({
+			data:  {idObra: idObra, accion: funcion},
+					url:   '../../ajax/ajax.php',
+					type:  'post',
+			beforeSend: function () {
+			
+			},
+			success:  function (response) {
+				$('#'+contenedor).html(response);
+			
+			}
+		});		
+	}
+
+	$('#refobras').change(function() {
+		traerAutocomplete($(this).val(), 'traerCategoriasPromocionesPorObras', 'refcategoriaspromociones');
+		traerAutocomplete($(this).val(), 'traerAlbumPorObras', 'refalbum');	
+	});
+	
+	$('#refobras').change(function() {
+		
+	});
 
 	 $( "#dialog2" ).dialog({
 		 	
@@ -315,14 +389,7 @@ $(document).ready(function(){
 		 
 	 		}); //fin del dialogo para eliminar
 			
-	<?php 
-		echo $serviciosHTML->validacion($tabla);
-	
-	?>
-	
 
-	
-	
 	//al enviar el formulario
     $('#cargar').click(function(){
 		
@@ -405,15 +472,26 @@ $(document).ready(function(){
  };
  $.datepicker.setDefaults($.datepicker.regional['es']);
  
-    $( "#vigenciadesde" ).datepicker();
+    $( "#fecha" ).datepicker();
 
-    $( "#vigenciadesde" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+    $( "#fecha" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 	
-	$( "#vigenciahasta" ).datepicker();
 
-    $( "#vigenciahasta" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
   });
   </script>
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+  </script>  
 <?php } ?>
 </body>
 </html>
