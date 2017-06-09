@@ -250,7 +250,15 @@ function zerofill($valor, $longitud){
  return $res;
 }
 
+function existeDevuelveId($sql) {
 
+	$res = $this->query($sql,0);
+	
+	if (mysql_num_rows($res)>0) {
+		return mysql_result($res,0,0);	
+	}
+	return 0;
+}
 
 /* PARA Album */
 
@@ -791,6 +799,12 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+function traerValorEntrada($idObra) {
+	$sql = "select valorentrada from dbobras where idobra =".$id; 
+	$res = $this->existeDevuelveId($sql); 
+	return $res; 
+}
+
 /* Fin */
 /* /* Fin de la Tabla: dbobras*/
 
@@ -1110,6 +1124,18 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+
+function traerDescuentoPorcentualCategorias($idCategorias) { 
+	$sql = "select porcentaje from dbcategorias where idcategoria =".$idCategorias; 
+	$res = $this->existeDevuelveId($sql); 
+	return $res; 
+} 
+
+function traerDescuentoMontoCategorias($idCategorias) { 
+	$sql = "select monto from dbcategorias where idcategoria =".$idCategorias; 
+	$res = $this->existeDevuelveId($sql); 
+	return $res; 
+}
 /* Fin */
 /* /* Fin de la Tabla: dbcategorias*/
 
@@ -1183,28 +1209,41 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+
+function traerDescuentoPorcentualPromociones($idPromo) { 
+	$sql = "select porcentaje from dbpromosobras where idpromoobra =".$idPromo; 
+	$res = $this->existeDevuelveId($sql); 
+	return $res; 
+} 
+
+function traerDescuentoMontoPromociones($idPromo) { 
+	$sql = "select monto from dbpromosobras where idpromoobra =".$idPromo; 
+	$res = $this->existeDevuelveId($sql); 
+	return $res; 
+}
+
 /* Fin */
 /* /* Fin de la Tabla: dbpromosobras*/
 
 
 /* PARA Ventas */
 
-function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum) {
-$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum)
-values ('','".utf8_decode($numero)."',".$reftipopago.",'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".$refcategorias.",".$refpromosobras.",".$refobras.",".$refalbum.")";
+function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi) {
+$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum,monto,porcentaje,observacion,fechacreacion,usuacrea,fechamodi,usuamodi)
+values ('','".utf8_decode($numero)."',".$reftipopago.",'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".($refcategorias == '' ? 0 : $refcategorias).",".($refpromosobras == '' ? 0 : $refpromosobras).",".$refobras.",".($refalbum == '' ? 0 : $refalbum).",".($monto == '' ? 0 : $monto).",".($porcentaje == '' ? 0 : $porcentaje).",'".utf8_decode($observacion)."','".($fechacreacion)."','".utf8_decode($usuacrea)."','".($fechamodi)."','".utf8_decode($usuamodi)."')";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum) {
+function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi) {
 $sql = "update dbventas
 set
-numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',refcategorias = ".$refcategorias.",refpromosobras = ".$refpromosobras.",refobras = ".$refobras.",refalbum = ".$refalbum."
+numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',refcategorias = ".$refcategorias.",refpromosobras = ".$refpromosobras.",refobras = ".$refobras.",refalbum = ".$refalbum.",monto = ".$monto.",porcentaje = ".$porcentaje.",observacion = '".utf8_decode($observacion)."',fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."'
 where idventa =".$id;
 $res = $this->query($sql,0);
 return $res;
-}
+} 
 
 
 function eliminarVentas($id) {

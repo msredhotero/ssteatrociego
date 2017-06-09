@@ -133,6 +133,12 @@ if ($_SESSION['refroll_predio'] != 1) {
       });
     </script>
     
+    <style>
+		option {
+			padding: 2px 3px;
+		}
+	</style>
+    
  
 </head>
 
@@ -152,8 +158,8 @@ if ($_SESSION['refroll_predio'] != 1) {
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
             
-        	<div class="row">
-            
+        
+            <div class="row">
 				<div class="form-group col-md-6" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Función <span style="color:#F00;">*</span></label>
                     <div class="input-group col-md-12">
@@ -165,7 +171,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
                 
                 
-                <div class="form-group col-md-6" style="display:block">
+                <div class="form-group col-md-4" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Tipo Pago <span style="color:#F00;">*</span></label>
                     <div class="input-group col-md-12">
 	                    <select data-placeholder="selecione el Tipo de Pago..." id="reftipopago" name="reftipopago" class="chosen-select" tabindex="2" style="width:100%;">
@@ -176,15 +182,23 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
                 
                 
-                <div class="form-group col-md-6 col-xs-6">
+                <div class="form-group col-md-2 col-xs-4" style="display:block">
                     <label for="vigenciadesde" class="control-label" style="text-align:left">Fecha</label>
-                    <div class="input-group col-md-6 col-xs-12">
+                    <div class="input-group col-md-12 col-xs-12">
                         <input class="form-control" name="fecha" id="fecha" type="text" value="<?php echo date('Y-m-d'); ?>"/>
                     </div>
                     
                 </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
+                    <div class="input-group col-md-12">
+	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required type="number" value="1">
+                    </div>
+                </div>
                 
-                <div class="form-group col-md-6" style="display:block">
+                <div class="form-group col-md-5" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Album</label>
                     <div class="input-group col-md-12">
 	                    <select data-placeholder="selecione el Album..." id="refalbum" name="refalbum" class="form-control" />
@@ -195,7 +209,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
                 
                 
-                <div class="form-group col-md-6" style="display:block">
+                <div class="form-group col-md-5" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Categorias - Promociones</label>
                     <div class="input-group col-md-12">
 	                    <select placeholder="selecione la Categoria..." id="refcategoriaspromociones" name="refcategoriaspromociones" class="form-control" />
@@ -205,9 +219,36 @@ if ($_SESSION['refroll_predio'] != 1) {
                     </div>
                 </div>
                 
+                <div class="row">
+                <div class="col-md-12">
+                <ul class="list-inline" style="margin-left:15px;">
+                    <li>
+                    	Total:
+                    </li>
+                    <li>
+						<input id="total" style="padding:12px; font-size:1.5em; width:150px;" name="total" placeholder="Paga con..." readonly required type="text" value="0">
+                    </li>
+                    <li>
+                    	Paga con:
+                    </li>
+                    <li>
+						<input id="paga" style="padding:12px; font-size:1.5em; width:150px;" name="paga" placeholder="Paga con..." required type="text" value="0">
+                    </li>
+                    <li>
+                    	Su vuelto:
+                    </li>
+                    <li>
+						<input id="vuelto" style="padding:12px; font-size:1.5em; width:150px;" name="vuelto" readonly placeholder="Su vuelto..." required type="text" value="0">
+                    </li>
+                    
+                </ul>
+                </div>
+            </div>
+            
+            </div>
                 
 
-            </div>
+           
 
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
@@ -217,7 +258,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 
                 </div>
             </div>
-            
+            <input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
             <div class="row">
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-top:15px;">
@@ -295,6 +336,34 @@ $(document).ready(function(){
 		  }
 	} );
 	
+	
+	function devolverPosicionPromos() {
+		var i = 0;
+		$("#refcategoriaspromociones").each(function(){
+
+			$(this).children("option").each(function(){
+				i = i + 1;
+				if ( $(this).html() == '--- Promociones ---') {
+						
+					return false;
+				}
+				
+			});
+		});	
+		return i;
+	}
+	
+	$('#refcategoriaspromociones').change(function() {
+		var indiceSelect = $(this).prop('selectedIndex');
+		if (indiceSelect > devolverPosicionPromos()) {
+			//voy por las promociones	
+			
+		} else {
+			//voy por las categorias
+			
+		}
+	});
+	
 	$('#fechacreacion').val('<?php echo date('Y-m-d'); ?>');
 	$('#fechamodi').val('');
 	$('#usuacrea').val('<?php echo $_SESSION['nombre_predio']; ?>');
@@ -337,6 +406,21 @@ $(document).ready(function(){
 			},
 			success:  function (response) {
 				$('#'+contenedor).html(response);
+			
+			}
+		});		
+	}
+	
+	function generarTotal(idDescuento, funcion, contenedor) {
+		$.ajax({
+			data:  {id: idDescuento, accion: funcion},
+					url:   '../../ajax/ajax.php',
+					type:  'post',
+			beforeSend: function () {
+			
+			},
+			success:  function (response) {
+				$('#total').html($('#total').val());
 			
 			}
 		});		
@@ -475,6 +559,7 @@ $(document).ready(function(){
     $( "#fecha" ).datepicker();
 
     $( "#fecha" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+	$( "#fecha" ).datepicker("setDate", 'getDate');
 	
 
   });

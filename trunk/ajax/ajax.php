@@ -315,6 +315,19 @@ case 'traerCategoriasPromocionesPorObras':
 break;
 
 ////////////////////////////////*****    FIN AUTO-COMPLETAR   *******/////////////////////////////////////
+
+////////////////////////////////*****    Solo para que traigan valores   *******/////////////////////////////////////
+case 'traerValorEntrada':
+	traerValorEntrada($serviciosReferencias, $serviciosFunciones);
+	break;
+case 'traerDescuentoCategoria':
+	traerDescuentoCategoria($serviciosReferencias, $serviciosFunciones);
+	break;
+case 'traerDescuentoPromociones':
+	traerDescuentoPromociones($serviciosReferencias, $serviciosFunciones);
+	break;
+////////////////////////////////*****    FIN   *******/////////////////////////////////////
+
 }
 
 /* Fin */
@@ -349,6 +362,74 @@ function	traerAlbumPorObras($serviciosReferencias, $serviciosFunciones) {
 }
 
 ////////////////////////////////*****    FIN AUTO-COMPLETAR   *******/////////////////////////////////////
+
+////////////////////////////////*****    Solo para que traigan valores   *******/////////////////////////////////////
+function traerValorEntrada($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	echo $serviciosReferencias->traerValorEntrada($id);
+}
+
+function traerDescuentoPorcentualCategorias($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	echo $serviciosReferencias->traerDescuentoPorcentualCategorias($id);
+}
+
+function traerDescuentoMontoCategorias($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	echo $serviciosReferencias->traerDescuentoMontoCategorias($id);
+}
+
+function traerDescuentoPorcentualPromociones($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	echo $serviciosReferencias->traerDescuentoPorcentualPromociones($id);
+}
+
+function traerDescuentoMontoPromociones($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	echo $serviciosReferencias->traerDescuentoMontoPromociones($id);
+}
+
+function traerDescuentoPromociones($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	$porcentaje	 = $serviciosReferencias->traerDescuentoPorcentualPromociones($id);
+	$monto		 = $serviciosReferencias->traerDescuentoMontoPromociones($id);
+	
+	if ($monto >0) {
+		echo $monto;	
+	} else {
+		if ($porcentaje > 0) {
+			echo $porcentaje;
+		} else {
+			echo 0;	
+		}
+	}
+}
+
+function traerDescuentoCategorias($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	$porcentaje	 = $serviciosReferencias->traerDescuentoPorcentualCategorias($id);
+	$monto		 = $serviciosReferencias->traerDescuentoMontoCategorias($id);
+	
+	if ($monto >0) {
+		echo $monto;	
+	} else {
+		if ($porcentaje > 0) {
+			echo $porcentaje;
+		} else {
+			echo 0;	
+		}
+	}
+}
+
+
+////////////////////////////////*****    FIN   *******/////////////////////////////////////
 
 
 /* nuevo */
