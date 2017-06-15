@@ -355,12 +355,13 @@ $(document).ready(function(){
 	
 	$('#refcategoriaspromociones').change(function() {
 		var indiceSelect = $(this).prop('selectedIndex');
+		alert(devolverPosicionPromos());
 		if (indiceSelect > devolverPosicionPromos()) {
 			//voy por las promociones	
-			
+			alert($('#refcategoriaspromociones option:eq('+indiceSelect+')').val());  // To select via value
 		} else {
 			//voy por las categorias
-			
+			alert($('#refcategoriaspromociones option:eq('+indiceSelect+')').val());  // To select via value
 		}
 	});
 	
@@ -431,9 +432,7 @@ $(document).ready(function(){
 		traerAutocomplete($(this).val(), 'traerAlbumPorObras', 'refalbum');	
 	});
 	
-	$('#refobras').change(function() {
-		
-	});
+
 
 	 $( "#dialog2" ).dialog({
 		 	
