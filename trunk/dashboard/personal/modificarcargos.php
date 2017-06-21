@@ -14,64 +14,63 @@ include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 
-$serviciosFunciones 	= new Servicios();
-$serviciosUsuario 		= new ServiciosUsuarios();
-$serviciosHTML 			= new ServiciosHTML();
+$serviciosFunciones = new Servicios();
+$serviciosUsuario 	= new ServiciosUsuarios();
+$serviciosHTML 		= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Promos",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Personal",$_SESSION['refroll_predio'],'');
+
+
+$id = $_GET['id'];
+
+$resResultado = $serviciosReferencias->traerPersonalcargosPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Promo";
+$singular = "Cargo";
 
-$plural = "Promos";
+$plural = "Cargos";
 
-$eliminar = "eliminarPromosobras";
+$eliminar = "eliminarPersonalcargos";
 
-$insertar = "insertarPromosobras";
+$modificar = "modificarPersonalcargos";
+
+$idTabla = "idpersonalcargo";
+
+$insertar = "insertarPersonalcargos";
 
 $tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbpromosobras";
+$tabla 			= "dbpersonalcargos";
 
-$lblCambio	 	= array("refobras","vigenciadesde","vigenciahasta");
-$lblreemplazo	= array("Obra","Vig. Desde","Vig. Hasta");
+$lblCambio	 	= array("refpersonal","reftiposcargos","refcooperativa","fechaalta","fechabaja","fechabajatentativa");
+$lblreemplazo	= array("Persona","Tipo Cargo","Cooperativas","Fecha Alta","Fecha Baja","Fecha Baja Tentativa");
 
-$resObras	=	$serviciosReferencias->traerObras();
-$cadRef 	= 	$serviciosFunciones->devolverSelectBox($resObras,array(1,3),' - Valor Entrada: ');
+$resPersona	=	$serviciosReferencias->traerPersonalPorId(mysql_result($resResultado,0,'refpersonal'));
+$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resPersona,array(3,4),', ', mysql_result($resResultado,0,'refpersonal'));
 
-$refdescripcion = array(0=>$cadRef);
-$refCampo 	=  array("refobras");
+$resTipoC	=	$serviciosReferencias->traerTiposcargos();
+$cadRef2 	= 	$serviciosFunciones->devolverSelectBoxActivo($resTipoC,array(1),'', mysql_result($resResultado,0,'reftiposcargos'));
+
+$resCoopera	=	$serviciosReferencias->traerCooperativas();
+$cadRef3 	= 	$serviciosFunciones->devolverSelectBoxActivo($resCoopera,array(1),'', mysql_result($resResultado,0,'refcooperativa'));
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
+$refCampo 	=  array("refpersonal","reftiposcargos","refcooperativa");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-
-
-
-/////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
-$cabeceras 		= "	<th>Descripcion</th>
-					<th>Obra</th>
-					<th>Vig. Desde</th>
-					<th>Vig. Hasta</th>
-					<th>Porccentaje</th>
-					<th>Monto</th>";
-
-//////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-
-
-
-$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPromosobras(),6);
-
-
+if (mysql_num_rows($resResultado)>0) {
+	$formulario 	= $serviciosFunciones->camposTablaModificar(mysql_result($resResultado,0,0), $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+} else {
+	$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+}
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -113,7 +112,11 @@ if ($_SESSION['refroll_predio'] != 1) {
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
-	
+	<style type="text/css">
+		
+  
+		
+	</style>
     
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
@@ -126,8 +129,6 @@ if ($_SESSION['refroll_predio'] != 1) {
         $('#navigation').perfectScrollbar();
       });
     </script>
-    
- 
 </head>
 
 <body>
@@ -140,19 +141,17 @@ if ($_SESSION['refroll_predio'] != 1) {
 
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Carga de <?php echo $plural; ?></p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Modificar <?php echo $singular; ?></p>
         	
         </div>
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
-            <div class="alert alert-info">
-            	<p><span class="glyphicon glyphicon-info-sign"></span> Recuerde que los montos o porcentaje que se cargue, sera el valor real o sera un porcentaje de descuento. Si cargan monto y porcentaje solo tomara el monto como bueno. El valor "0" no significa nada a tomar en cuenta. Para cargar una entrada con valor cero en porcentaje poner 100%.</p>
-            </div>
-        	<div class="row">
-            
+        	
+			<div class="row">
 			<?php echo $formulario; ?>
             </div>
-
+            
+            
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
                 
@@ -165,10 +164,28 @@ if ($_SESSION['refroll_predio'] != 1) {
             <div class="row">
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-top:15px;">
+                    <?php
+					if (mysql_num_rows($resResultado)>0) {
+					?>
                     <li>
-                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Guardar</button>
+                    	
+                        <button type="button" class="btn btn-warning" id="cargar" style="margin-left:0px;">Modificar</button>
                     </li>
-                    
+                    <li>
+                        <button type="button" class="btn btn-danger varborrar" id="<?php echo mysql_result($resResultado,0,0); ?>" style="margin-left:0px;">Eliminar</button>
+                    </li>
+					<?php
+                    } else {
+                    ?>
+                    <li>
+                    <button type="button" class="btn btn-success" id="cargar" style="margin-left:0px;">Agregar</button>
+                    </li>
+                    <?php
+                    }
+                    ?>
+                    <li>
+                        <button type="button" class="btn btn-default volver" style="margin-left:0px;">Volver</button>
+                    </li>
                 </ul>
                 </div>
             </div>
@@ -176,32 +193,19 @@ if ($_SESSION['refroll_predio'] != 1) {
     	</div>
     </div>
     
-    <div class="boxInfoLargo">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;"><?php echo $plural; ?> Cargados</p>
-        	
-        </div>
-    	<div class="cuerpoBox">
-        	<?php echo $lstCargados; ?>
-            
-    	</div>
-    </div>
-    
-    
-
-    
     
    
 </div>
 
 
 </div>
+
 <div id="dialog2" title="Eliminar <?php echo $singular; ?>">
     	<p>
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
             ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
         </p>
-        <p><strong>Importante: </strong>Si elimina el <?php echo $singular; ?> se perderan todos los datos de este</p>
+        <p><strong>Importante: </strong>Si elimina el equipo se perderan todos los datos de este</p>
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
@@ -212,47 +216,16 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <script type="text/javascript">
 $(document).ready(function(){
-	var table = $('#example').dataTable({
-		"order": [[ 0, "asc" ]],
-		"language": {
-			"emptyTable":     "No hay datos cargados",
-			"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-			"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-			"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-			"infoPostFix":    "",
-			"thousands":      ",",
-			"lengthMenu":     "Mostrar _MENU_ filas",
-			"loadingRecords": "Cargando...",
-			"processing":     "Procesando...",
-			"search":         "Buscar:",
-			"zeroRecords":    "No se encontraron resultados",
-			"paginate": {
-				"first":      "Primero",
-				"last":       "Ultimo",
-				"next":       "Siguiente",
-				"previous":   "Anterior"
-			},
-			"aria": {
-				"sortAscending":  ": activate to sort column ascending",
-				"sortDescending": ": activate to sort column descending"
-			}
-		  }
-	} );
+
+
 	
-	$('#fechacreacion').val('<?php echo date('Y-m-d'); ?>');
-	$('#fechamodi').val('');
-	$('#usuacrea').val('<?php echo $_SESSION['nombre_predio']; ?>');
-	$('#usuamodi').val('');
+	$('.volver').click(function(event){
+		 
+		url = "index.php";
+		$(location).attr('href',url);
+	});//fin del boton modificar
 	
-	$('#eliminarMasivo').click( function(){
-      		url = "borrarMasivo.php";
-			$(location).attr('href',url);
-      });
-	
-	
-	$('#activo').prop( "checked", true );
-	
-	$("#example").on("click",'.varborrar', function(){
+	$('.varborrar').click(function(event){
 		  usersid =  $(this).attr("id");
 		  if (!isNaN(usersid)) {
 			$("#idEliminar").val(usersid);
@@ -265,17 +238,6 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton eliminar
-	
-	$("#example").on("click",'.varmodificar', function(){
-		  usersid =  $(this).attr("id");
-		  if (!isNaN(usersid)) {
-			
-			url = "modificar.php?id=" + usersid;
-			$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton modificar
 
 	 $( "#dialog2" ).dialog({
 		 	
@@ -314,12 +276,11 @@ $(document).ready(function(){
 		 
 		 
 	 		}); //fin del dialogo para eliminar
-			
-	<?php 
+	
+
+	<?php
 		echo $serviciosHTML->validacion($tabla);
-	
 	?>
-	
 
 	
 	
@@ -353,7 +314,7 @@ $(document).ready(function(){
                                             $(".alert").removeClass("alert-danger");
 											$(".alert").removeClass("alert-info");
                                             $(".alert").addClass("alert-success");
-                                            $(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong><?php echo $singular; ?></strong>. ');
+                                            $(".alert").html('<strong>Ok!</strong> Se modifico exitosamente el <strong><?php echo $singular; ?></strong>. ');
 											$(".alert").delay(3000).queue(function(){
 												/*aca lo que quiero hacer 
 												  después de los 2 segundos de retraso*/
@@ -361,7 +322,7 @@ $(document).ready(function(){
 												
 											});
 											$("#load").html('');
-											url = "index.php";
+											url = "cargos.php?id="+<?php echo mysql_result($resResultado,0,'refpersonal'); ?>;
 											$(location).attr('href',url);
                                             
 											
@@ -405,15 +366,23 @@ $(document).ready(function(){
  };
  $.datepicker.setDefaults($.datepicker.regional['es']);
  
-    $( "#vigenciadesde" ).datepicker();
+    $("#fechabaja" ).datepicker();
 
-    $( "#vigenciadesde" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+    $("#fechabaja" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 
-    $( "#vigenciadesde" ).datepicker("setDate", "getDate" );
+    $("#fechabaja").datepicker("setDate", "<?php echo mysql_result($resResultado,0,'fechabaja'); ?>" );
 	
-	$( "#vigenciahasta" ).datepicker();
+	$("#fechaalta" ).datepicker();
 
-    $( "#vigenciahasta" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+    $("#fechaalta" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+
+    $("#fechaalta").datepicker("setDate", "<?php echo mysql_result($resResultado,0,'fechaalta'); ?>" );
+
+    $("#fechabajatentativa" ).datepicker();
+
+    $("#fechabajatentativa" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+
+    $("#fechabajatentativa").datepicker("setDate", "<?php echo mysql_result($resResultado,0,'fechabajatentativa'); ?>" );
   });
   </script>
 <?php } ?>

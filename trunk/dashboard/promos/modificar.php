@@ -326,19 +326,41 @@ $(document).ready(function(){
 });
 </script>
 
-<script type="text/javascript">
-$('.form_date').datetimepicker({
-	language:  'es',
-	weekStart: 1,
-	todayBtn:  1,
-	autoclose: 1,
-	todayHighlight: 1,
-	startView: 2,
-	minView: 2,
-	forceParse: 0,
-	format: 'dd/mm/yyyy'
-});
-</script>
+<script>
+  $(function() {
+	  $.datepicker.regional['es'] = {
+ closeText: 'Cerrar',
+ prevText: '<Ant',
+ nextText: 'Sig>',
+ currentText: 'Hoy',
+ monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+ dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+ dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+ dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+ weekHeader: 'Sm',
+ dateFormat: 'dd/mm/yy',
+ firstDay: 1,
+ isRTL: false,
+ showMonthAfterYear: false,
+ yearSuffix: ''
+ };
+ $.datepicker.setDefaults($.datepicker.regional['es']);
+ 
+    $( "#vigenciadesde" ).datepicker();
+
+    $( "#vigenciadesde" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+
+    $('#vigenciadesde').datepicker("setDate", "<?php echo mysql_result($resResultado,0,'vigenciadesde'); ?>" );
+	
+	$( "#vigenciahasta" ).datepicker();
+
+    $( "#vigenciahasta" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+
+    $('#vigenciahasta').datepicker("setDate", "<?php echo mysql_result($resResultado,0,'vigenciahasta'); ?>" );
+
+  });
+  </script>
 <?php } ?>
 </body>
 </html>
