@@ -31,6 +31,9 @@ switch ($accion) {
 	case 'registrar':
 		registrar($serviciosUsuarios);
         break;
+	case 'recuperar':
+		recuperar($serviciosUsuarios);
+		break;
 
 
 case 'insertarCajadiaria':
@@ -326,6 +329,9 @@ case 'traerDescuentoCategoria':
 case 'traerDescuentoPromociones':
 	traerDescuentoPromociones($serviciosReferencias, $serviciosFunciones);
 	break;
+case 'traerTotal':
+	traerTotal($serviciosReferencias);
+	break;
 ////////////////////////////////*****    FIN   *******/////////////////////////////////////
 
 }
@@ -333,6 +339,116 @@ case 'traerDescuentoPromociones':
 /* Fin */
 
 
+///////////////////////////////****  VENTAS  ********************///////////////////////////////////
+function insertarVentas($serviciosReferencias) { 
+	$numero = $serviciosReferencias->generarNroVenta(); 
+	$reftipopago = $_POST['reftipopago']; 
+	$fecha = $_POST['fecha']; 
+	$total = $_POST['total']; 
+	
+	$cantidad = $_POST['cantidadbuscar'];
+	
+	$cancelado = 0;  
+	
+	$usuario = $_POST['usuario']; 
+	$refcategorias = $_POST['refcategorias']; 
+	$refpromosobras = $_POST['refpromosobras']; 
+	$refobras = $_POST['refobras']; 
+	$refalbum = $_POST['refalbum']; 
+	
+	$fechacreacion = date('Y-m-d'); 
+	$usuacrea = $_POST['usuario'];
+	$fechamodi = ''; 
+	$usuamodi = '';
+	
+	if ($refcategorias != 0) {
+		$refDescuento = $serviciosReferencias->traerCategoriasPorId($refcategorias);
+		$monto = mysql_result($refDescuento,0,'monto'); 
+		$porcentaje = mysql_result($refDescuento,0,'porcentaje');
+	} else {
+	
+		if ($refpromosobras != 0) {
+			$refDescuento = $serviciosReferencias->traerPromosobrasPorId($refpromosobras);
+			$monto = mysql_result($refDescuento,0,'monto'); 
+			$porcentaje = mysql_result($refDescuento,0,'porcentaje');
+		} else {
+			$monto = 0; 
+			$porcentaje = 0;
+		}
+	}
+	
+	$resObras = $serviciosReferencias->traerObrasPorId($refobras);
+	$valorentrada = mysql_result($resObras,0,'valorentrada');
+	
+	$observacion = $_POST['observaciones'];
+	
+	$res = $serviciosReferencias->insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad); 
+	
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	 
+	} 
+} 
+
+
+
+function modificarVentas($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$numero = $_POST['numero']; 
+	$reftipopago = $_POST['reftipopago']; 
+	$fecha = $_POST['fecha']; 
+	$total = $_POST['total']; 
+	$cantidad = $_POST['cantidadbuscar'];
+	
+	if (isset($_POST['cancelado'])) { 
+		$cancelado	= 1; 
+	} else { 
+		$cancelado = 0; 
+	} 
+	
+	$usuario = $_POST['usuario']; 
+	if (isset($_POST['refcategorias'])) { 
+		$refcategorias = $_POST['refcategorias'];
+	} else { 
+		$refcategorias = 0; 
+	}
+	 
+	if (isset($_POST['refpromosobras'])) { 
+		$refpromosobras = $_POST['refpromosobras']; 
+	} else { 
+		$refpromosobras = 0; 
+	}
+	 
+	$refobras = $_POST['refobras']; 
+	
+	if (isset($_POST['refalbum'])) { 
+		$refalbum = $_POST['refalbum']; 
+	} else { 
+		$refalbum = 0; 
+	}
+	 
+	$monto = $_POST['monto']; 
+	$porcentaje = $_POST['porcentaje']; 
+	$valorentrada = $_POST['valorentrada'];
+	$observacion = $_POST['observacion']; 
+	$fechacreacion = $_POST['fechacreacion']; 
+	$usuacrea = $_POST['usuacrea']; 
+	$fechamodi = date('Y-m-d'); 
+	$usuamodi = $_POST['usuamodi']; 
+	
+	$res = $serviciosReferencias->modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
+} 
+
+
+
+//////////////////////////////***  FIN VENTAS  ****/////////////////////////////////////////////////
 
 
 ////////////////////////////////*****    AUTO-COMPLETAR   *******/////////////////////////////////////
@@ -359,6 +475,40 @@ function	traerAlbumPorObras($serviciosReferencias, $serviciosFunciones) {
 	$idObra	=	$_POST['idObra'];
 	$datos	=	$serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerAlbumobrasPorObra($idObra),array(3,4),' - ');
 	echo $datos;	
+}
+
+function traerTotal($serviciosReferencias) {
+	$idDescuento = $_POST['id'];
+	$idObra		 = $_POST['idObra'];
+	$tipoDescuento = $_POST['tipoDescuento'];	
+	$cantidad	=	$_POST['cantidad'];
+	
+	$refObra = $serviciosReferencias->traerObrasPorId($idObra);
+	
+	$total = mysql_result($refObra,0,'valorentrada');
+	
+	if ($idDescuento != '') {
+		if ($tipoDescuento == 1) {
+			//categorias
+			$refDescuento 	= $serviciosReferencias->traerCategoriasPorId($idDescuento);	
+		} else {
+			//promos
+			$refDescuento	= $serviciosReferencias->traerPromosobrasPorId($idDescuento);
+		}
+		
+		$monto			= mysql_result($refDescuento,0,'monto');
+		$porcentaje		= mysql_result($refDescuento,0,'porcentaje');
+		
+		if (($monto > 0) && ($monto != '')) {
+			$total = (float)$monto;	
+		} else {
+			if ($porcentaje > 0) {
+				$total = (float)$total - ((float)$total * (float)$porcentaje / 100);	
+			}
+		}
+	}
+	
+	echo round($cantidad * $total,2,PHP_ROUND_HALF_UP);
 }
 
 ////////////////////////////////*****    FIN AUTO-COMPLETAR   *******/////////////////////////////////////
@@ -1579,6 +1729,14 @@ function registrar($serviciosUsuarios) {
 	} else {
 		echo $res;	
 	}
+}
+
+function recuperar($serviciosUsuarios) {
+	$email		=		$_POST['email'];
+	
+	$res		=	$serviciosUsuarios->recuperar($email);
+	
+	echo $res;
 }
 
 

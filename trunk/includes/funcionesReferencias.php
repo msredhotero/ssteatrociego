@@ -703,6 +703,12 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+function traerGastosobrasPorObra($idObra) { 
+$sql = "select idgastoobra,descripcion,monto,refobras,fechacreacion,usuacrea from dbgastosobras where refobras =".$idObra; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
 /* Fin */
 /* /* Fin de la Tabla: dbgastosobras*/
 
@@ -800,7 +806,7 @@ return $res;
 } 
 
 function traerValorEntrada($idObra) {
-	$sql = "select valorentrada from dbobras where idobra =".$id; 
+	$sql = "select valorentrada from dbobras where idobra =".$idObra; 
 	$res = $this->existeDevuelveId($sql); 
 	return $res; 
 }
@@ -1228,18 +1234,31 @@ function traerDescuentoMontoPromociones($idPromo) {
 
 /* PARA Ventas */
 
-function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi) {
-$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum,monto,porcentaje,observacion,fechacreacion,usuacrea,fechamodi,usuamodi)
-values ('','".utf8_decode($numero)."',".$reftipopago.",'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".($refcategorias == '' ? 0 : $refcategorias).",".($refpromosobras == '' ? 0 : $refpromosobras).",".$refobras.",".($refalbum == '' ? 0 : $refalbum).",".($monto == '' ? 0 : $monto).",".($porcentaje == '' ? 0 : $porcentaje).",'".utf8_decode($observacion)."','".($fechacreacion)."','".utf8_decode($usuacrea)."','".($fechamodi)."','".utf8_decode($usuamodi)."')";
+function generarNroVenta() {
+	$sql = "select max(idventa) as id from dbventas";	
+	$res = $this->query($sql,0);
+	
+	if (mysql_num_rows($res)>0) {
+		$nro = 'CC'.str_pad(mysql_result($res,0,0)+1, 8, "0", STR_PAD_LEFT);
+	} else {
+		$nro = 'TC00000001';
+	}
+	
+	return $nro;
+}
+
+function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad) {
+$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum,monto,porcentaje,valorentrada,observacion,fechacreacion,usuacrea,fechamodi,usuamodi,cantidad)
+values ('','".utf8_decode($numero)."',".$reftipopago.",'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".($refcategorias == '' ? 0 : $refcategorias).",".($refpromosobras == '' ? 0 : $refpromosobras).",".$refobras.",".($refalbum == '' ? 0 : $refalbum).",".($monto == '' ? 0 : $monto).",".($porcentaje == '' ? 0 : $porcentaje).",".($valorentrada == '' ? 0 : $valorentrada).",'".utf8_decode($observacion)."','".($fechacreacion)."','".utf8_decode($usuacrea)."','".($fechamodi)."','".utf8_decode($usuamodi)."',".($cantidad == '' ? 1 : $cantidad).")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi) {
+function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad) {
 $sql = "update dbventas
 set
-numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',refcategorias = ".$refcategorias.",refpromosobras = ".$refpromosobras.",refobras = ".$refobras.",refalbum = ".$refalbum.",monto = ".$monto.",porcentaje = ".$porcentaje.",observacion = '".utf8_decode($observacion)."',fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."'
+numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',refcategorias = ".($refcategorias == '' ? 0 : $refcategorias).",refpromosobras = ".($refpromosobras == '' ? 0 : $refpromosobras).",refobras = ".$refobras.",refalbum = ".($refalbum == '' ? 0 : $refalbum).",monto = ".($monto == '' ? 0 : $monto).",porcentaje = ".($porcentaje == '' ? 0 : $porcentaje).",valorentrada = ".($valorentrada == '' ? 0 : $valorentrada).",observacion = '".utf8_decode($observacion)."',fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',cantidad = ".($cantidad == '' ? 1 : $cantidad)."
 where idventa =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -1279,6 +1298,8 @@ v.idventa,
 v.numero,
 v.fecha,
 tip.descripcion,
+v.cantidad,
+v.valorentrada,
 v.total,
 (case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
 o.nombre as obra,
@@ -1300,7 +1321,7 @@ left join dbpromosobras pr ON pr.idpromoobra = v.refpromosobras
 left join dbcategorias cat ON cat.idcategoria = v.refcategorias and o.idobra = cat.refobras
 left join tbcuponeras cup ON cup.idcuponera = cat.refcuponeras
 left join dbalbumobras ao ON ao.refobras = o.idobra
-left join tbalbum a ON a.idalbum = ao.refalbum
+left join tbalbum a ON a.idalbum = v.refalbum
 where	v.fecha = '".$fecha."'
 order by 1 desc";
 $res = $this->query($sql,0);
@@ -1308,11 +1329,11 @@ return $res;
 }
 
 
-function traerVentasPorId($id) {
-$sql = "select idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum from dbventas where idventa =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
+function traerVentasPorId($id) { 
+$sql = "select idventa,numero,reftipopago,fecha,total,(case when cancelado=1 then 'Si' else 'No' end) as cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum,monto,porcentaje,valorentrada,observacion,fechacreacion,usuacrea,fechamodi,usuamodi,cantidad from dbventas where idventa =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
 
 
 /* Fin */

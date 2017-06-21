@@ -162,12 +162,15 @@ class Servicios {
 				$idresultados = "resultados";
 				break;
 			case 91:
-				$cantidad = 5;
+				//obras
+				$cantidad = 10;
 				$classMod = 'varmodificar';
 				$classEli = 'varborrar';
-				$classEditar = 'vardetalle';
+				$classEditar = 'vargastos';
+				$classVer	  = 'varver';
 				$iconoEditar = 'glyphicon glyphicon-gift';
-				$lblEditar	  = 'Produtos';
+				$lblEditar	  = 'Gastos';
+				$lblVer = 'Ver';
 				$idresultados = "resultados";
 				break;
 			default:

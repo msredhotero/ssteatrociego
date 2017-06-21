@@ -103,12 +103,6 @@ $servicios = new Servicios();
         				return $error;
         		}
 				
-				$('body').keyup(function(e) {
-					if(e.keyCode == 13) {
-						$("#login").click();
-					}
-				});
-				
 				
 				$("#login").click(function(event) {
         			
@@ -116,9 +110,7 @@ $servicios = new Servicios();
         				{
         						$.ajax({
                                 data:  {email:		$("#email").val(),
-										pass:		$("#pass").val(),
-										idempresa:	$('#idempresa').val(),
-										accion:		'login'},
+										accion:		'recuperar'},
                                 url:   'ajax/ajax.php',
                                 type:  'post',
                                 beforeSend: function () {
@@ -135,7 +127,8 @@ $servicios = new Servicios();
                                             $("#load").html('');
 
                                         } else {
-											url = "dashboard/";
+											alert('Se envio el email correctamente');
+											url = "index.php";
 											$(location).attr('href',url);
 										}
                                         
@@ -183,7 +176,11 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 3px #33
             </div>
 			<form role="form" class="form-horizontal">
               
-
+			  <div class="form-group">
+              	<label for="importante" style="color:#000;text-align:left;">Se le enviara un email a su casilla con la contraseña.</label>
+              </div>
+              
+              
               <div class="form-group">
                 <label for="usuario" class="col-md-2 control-label" style="color:#363636;text-align:left;">E-Mail</label>
                 <div class="col-lg-7">
@@ -192,23 +189,11 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 3px #33
                 </div>
               </div>
 
-              <div class="form-group">
-                <label for="ejemplo_password_2" class="col-md-2 control-label" style="color:#363636;text-align:left;">Contraseña</label>
-                <div class="col-lg-7">
-                  <input type="password" class="form-control" id="pass" name="pass" 
-                         placeholder="password">
-                </div>
-              </div>
-              
-              
-              
-              <div class="form-group">
-              	<label for="olvido" class="control-label" style="color:#363636">¿Has olvidado tu contraseña?. <a href="recuperarpasswor.php">Recuperar.</a></label>
-              </div>
+
              
               <div class="form-group">
                 <div class="col-md-12">
-                  <button type="button" class="btn btn-default" id="login">Login</button>
+                  <button type="button" class="btn btn-default" id="login">Recuperar</button>
                 </div>
               </div>
 				

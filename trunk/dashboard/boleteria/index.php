@@ -61,12 +61,20 @@ $cabeceras 		= "	<th>Descripcion</th>
 					<th>Vig. Hasta</th>
 					<th>Porccentaje</th>
 					<th>Monto</th>";
+					
 $cabeceras2 		= "	<th>Numero</th>
                     <th>Fecha</th>
                     <th>Tipo Pago</th>
+					<th>Cant.</th>
+					<th>Valor Entrada</th>
 					<th>Total</th>
-					<th>Cliente</th>
-                    <th>Cancelada</th>";	
+					<th>Cancelada</th>
+					<th>Obra</th>
+                    <th>Promo</th>
+					<th>Categoria</th>
+					<th>Cuponera</th>
+					<th>Banda</th>
+					<th>Album</th>";	
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -75,7 +83,7 @@ $cabeceras2 		= "	<th>Numero</th>
 $lstTipoPago  = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerTipopago(),array(1),'');
 $lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerObras(),array(1,3),' - Valor Entrada:');
 
-$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),96);
+$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),13);
 
 
 
@@ -219,9 +227,13 @@ if ($_SESSION['refroll_predio'] != 1) {
                     </div>
                 </div>
                 
-                <div class="row">
+                
+                
+                
+                <div class="row" style="margin-top:15px;">
+                <hr>
                 <div class="col-md-12">
-                <ul class="list-inline" style="margin-left:15px;">
+                <ul class="list-inline" style="margin-left:15px;margin-top:15px;">
                     <li>
                     	Total:
                     </li>
@@ -243,6 +255,13 @@ if ($_SESSION['refroll_predio'] != 1) {
                     
                 </ul>
                 </div>
+                <div class="form-group col-md-12 col-xs-12" style="display:block; padding-left:35px; padding-right:35px;">
+                    <label for="observacionces" class="control-label" style="text-align:left">Observaciones</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                        <textarea type="text" rows="5" cols="6" class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese las Observaciones..." required=""></textarea>
+                    </div>
+                    
+                </div>
             </div>
             
             </div>
@@ -259,6 +278,9 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
             </div>
             <input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
+            <input type="hidden" id="refcategorias" name="refcategorias" value="0"/>
+            <input type="hidden" id="refpromosobras" name="refpromosobras" value="0"/>
+            <input type="hidden" name="usuario" id="usuario" value="<?php echo utf8_encode($_SESSION['nombre_predio']); ?>" />
             <div class="row">
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-top:15px;">
@@ -336,6 +358,10 @@ $(document).ready(function(){
 		  }
 	} );
 	
+	$('#paga').change(function(e) {
+        $('#vuelto').val(($(this).val() - $('#total').val()).toFixed(2));
+    });
+	
 	
 	function devolverPosicionPromos() {
 		var i = 0;
@@ -355,13 +381,34 @@ $(document).ready(function(){
 	
 	$('#refcategoriaspromociones').change(function() {
 		var indiceSelect = $(this).prop('selectedIndex');
-		alert(devolverPosicionPromos());
-		if (indiceSelect > devolverPosicionPromos()) {
-			//voy por las promociones	
-			alert($('#refcategoriaspromociones option:eq('+indiceSelect+')').val());  // To select via value
+		var idDescuento = 0;
+
+		idDescuento = $('#refcategoriaspromociones option:eq('+indiceSelect+')').val();	
+		if ((indiceSelect + 1) > devolverPosicionPromos()) {
+			//voy por las promociones
+			generarTotal(idDescuento, 2, $('#refobras').val(), $('#cantidadbuscar').val());
+			$('#refpromosobras').val(idDescuento);
+			$('#refcategorias').val(0);
 		} else {
 			//voy por las categorias
-			alert($('#refcategoriaspromociones option:eq('+indiceSelect+')').val());  // To select via value
+			generarTotal(idDescuento, 1, $('#refobras').val(), $('#cantidadbuscar').val());
+			$('#refpromosobras').val(0);
+			$('#refcategorias').val(idDescuento);
+		}
+	});
+	
+	$('#cantidadbuscar').change(function() {
+		var indiceSelect = $('#refcategoriaspromociones').prop('selectedIndex');
+		var idDescuento = 0;
+
+		idDescuento = $('#refcategoriaspromociones option:eq('+indiceSelect+')').val();	
+		if ((indiceSelect + 1) > devolverPosicionPromos()) {
+			//voy por las promociones
+			generarTotal(idDescuento, 2, $('#refobras').val(), $('#cantidadbuscar').val());
+			
+		} else {
+			//voy por las categorias
+			generarTotal(idDescuento, 1, $('#refobras').val(), $('#cantidadbuscar').val());
 		}
 	});
 	
@@ -412,16 +459,20 @@ $(document).ready(function(){
 		});		
 	}
 	
-	function generarTotal(idDescuento, funcion, contenedor) {
+	function generarTotal(idDescuento, tipoDescuento, idObra, cantidad) {
 		$.ajax({
-			data:  {id: idDescuento, accion: funcion},
+			data:  {id: idDescuento, 
+					tipoDescuento: tipoDescuento, 
+					idObra: idObra,
+					cantidad: cantidad,
+					accion: 'traerTotal'},
 					url:   '../../ajax/ajax.php',
 					type:  'post',
 			beforeSend: function () {
 			
 			},
 			success:  function (response) {
-				$('#total').html($('#total').val());
+				$('#total').val(response);
 			
 			}
 		});		
@@ -430,6 +481,24 @@ $(document).ready(function(){
 	$('#refobras').change(function() {
 		traerAutocomplete($(this).val(), 'traerCategoriasPromocionesPorObras', 'refcategoriaspromociones');
 		traerAutocomplete($(this).val(), 'traerAlbumPorObras', 'refalbum');	
+		$('#total').val(0);
+		$('#paga').val(0);
+		$('#vuelto').val(0);
+		
+		$.ajax({
+			data:  {id: $(this).val(),
+					accion: 'traerValorEntrada'},
+					url:   '../../ajax/ajax.php',
+					type:  'post',
+			beforeSend: function () {
+			
+			},
+			success:  function (response) {
+				$('#total').val(response);
+			
+			}
+		});	
+		
 	});
 	
 
@@ -476,8 +545,7 @@ $(document).ready(function(){
 	//al enviar el formulario
     $('#cargar').click(function(){
 		
-		if (validador() == "")
-        {
+
 			//información del formulario
 			var formData = new FormData($(".formulario")[0]);
 			var message = "";
@@ -528,7 +596,7 @@ $(document).ready(function(){
                     $("#load").html('');
 				}
 			});
-		}
+		
     });
 
 });

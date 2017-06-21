@@ -20,6 +20,22 @@ function GUID()
 }
 
 
+function recuperar($email) {
+	$sqlusu = "select * from dbusuarios where email = '".trim($email)."'";
+	
+	if (trim($email) != '') {
+		$respusu = $this->query($sqlusu,0);
+		if (mysql_num_rows($respusu) > 0) {
+			//envio email	
+			$this->enviarEmail($email, 'Recupero de Password', 'Password: '.mysql_result($respusu,0,'password'),'Teatro Ciego <info@teatrociego.com>');
+			echo '';
+		} else {
+			echo 'No existe este email';	
+		}
+	} else {
+		echo 'Email incorrecto';	
+	}
+}
 function login($usuario,$pass) {
 	
 	$sqlusu = "select * from dbusuarios where email = '".$usuario."'";
@@ -255,7 +271,7 @@ function existeUsuario($usuario) {
 	}
 }
 
-function enviarEmail($destinatario,$asunto,$cuerpo) {
+function enviarEmail($destinatario,$asunto,$cuerpo, $remitente) {
 
 	
 	# Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
@@ -270,13 +286,13 @@ function enviarEmail($destinatario,$asunto,$cuerpo) {
 	$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 	
 	//dirección del remitente
-	$headers .= "From: Daniel Eduardo Duranti <info@carnesacasa.com.ar>\r\n";
+	$headers .= "From: ".$remitente."\r\n";
 	
 	//ruta del mensaje desde origen a destino
 	$headers .= "Return-path: ".$destinatario."\r\n";
 	
 	//direcciones que recibirán copia oculta
-	$headers .= "Bcc: info@carnesacasa.com.ar,msredhotero@msn.com\r\n";
+	$headers .= "";
 	
 	mail($destinatario,$asunto,$cuerpo,$headers); 	
 }
