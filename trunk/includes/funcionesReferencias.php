@@ -653,20 +653,80 @@ return $res;
 /* /* Fin de la Tabla: dbdomicilios*/
 
 
-/* PARA Gastosobras */
 
-function insertarGastosobras($refobras,$descripcion,$monto,$fechacreacion,$usuacrea) { 
-$sql = "insert into dbgastosobras(idgastoobra,refobras,descripcion,monto,fechacreacion,usuacrea) 
-values ('',".$refobras.",'".utf8_decode($descripcion)."',".$monto.",'".utf8_decode($fechacreacion)."','".utf8_decode($usuacrea)."')"; 
+/* PARA Funciones */
+
+function insertarFunciones($refobras,$refcooperativas,$horario,$refdias) { 
+$sql = "insert into dbfunciones(idfuncion,refobras,refcooperativas,horario,refdias) 
+values ('',".$refobras.",".$refcooperativas.",'".$horario."',".$refdias.")"; 
 $res = $this->query($sql,1); 
 return $res; 
 } 
 
 
-function modificarGastosobras($id,$refobras,$descripcion,$monto,$fechacreacion,$usuacrea) { 
+function modificarFunciones($id,$refobras,$refcooperativas,$horario,$refdias) { 
+$sql = "update dbfunciones 
+set 
+refobras = ".$refobras.",refcooperativas = ".$refcooperativas.",horario = '".$horario."',refdias = ".$refdias." 
+where idfuncion =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarFunciones($id) { 
+$sql = "delete from dbfunciones where idfuncion =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerFunciones() { 
+$sql = "select 
+f.idfuncion,
+obr.nombre as obra,
+sa.descripcion as sala,
+coo.descripcion as cooperativa,
+f.horario,
+dia.dia,
+f.refobras,
+f.refcooperativas,
+f.refdias
+from dbfunciones f 
+inner join dbobras obr ON obr.idobra = f.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+inner join dbcooperativas coo ON coo.idcooperativa = f.refcooperativas 
+inner join tbdias dia ON dia.iddia = f.refdias 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerFuncionesPorId($id) { 
+$sql = "select idfuncion,refobras,refcooperativas,horario,refdias from dbfunciones where idfuncion =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+/* Fin */
+/* /* Fin de la Tabla: dbfunciones*/
+
+
+/* PARA Gastosobras */
+
+function insertarGastosobras($reffunciones,$descripcion,$monto,$fecha,$fechacreacion,$usuacrea) { 
+$sql = "insert into dbgastosobras(idgastoobra,reffunciones,descripcion,monto,fecha,fechacreacion,usuacrea) 
+values ('',".$reffunciones.",'".utf8_decode($descripcion)."',".$monto.",'".($fecha)."','".($fechacreacion)."','".utf8_decode($usuacrea)."')"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
+
+function modificarGastosobras($id,$reffunciones,$descripcion,$monto,$fecha,$fechacreacion,$usuacrea) { 
 $sql = "update dbgastosobras 
 set 
-refobras = ".$refobras.",descripcion = '".utf8_decode($descripcion)."',monto = ".$monto.",fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."' 
+reffunciones = ".$reffunciones.",descripcion = '".utf8_decode($descripcion)."',monto = ".$monto.",fecha = '".($fecha)."',fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."' 
 where idgastoobra =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -683,13 +743,20 @@ return $res;
 function traerGastosobras() { 
 $sql = "select 
 g.idgastoobra,
-g.refobras,
+obr.nombre as obra,
+fu.horario,
+di.dia,
 g.descripcion,
 g.monto,
+g.fecha,
 g.fechacreacion,
-g.usuacrea
+g.usuacrea,
+g.reffunciones
 from dbgastosobras g 
-inner join dbobras obr ON obr.idobra = g.refobras 
+inner join dbfunciones fu ON fu.idfuncion = g.reffunciones
+inner join dbobras obr ON obr.idobra = fu.refobras 
+inner join dbcooperativas coo ON coo.idcooperativa = fu.refcooperativas
+inner join tbdias di ON di.iddia = fu.refdias
 inner join tbsalas sa ON sa.idsala = obr.refsalas 
 order by 1"; 
 $res = $this->query($sql,0); 
@@ -698,13 +765,34 @@ return $res;
 
 
 function traerGastosobrasPorId($id) { 
-$sql = "select idgastoobra,refobras,descripcion,monto,fechacreacion,usuacrea from dbgastosobras where idgastoobra =".$id; 
+$sql = "select idgastoobra,reffunciones,descripcion,monto,fecha,fechacreacion,usuacrea from dbgastosobras where idgastoobra =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
 
 function traerGastosobrasPorObra($idObra) { 
-$sql = "select idgastoobra,descripcion,monto,refobras,fechacreacion,usuacrea from dbgastosobras where refobras =".$idObra; 
+$sql = "SELECT 
+			g.idgastoobra,
+			fu.horario,
+			di.dia,
+			g.descripcion,
+			g.monto,
+			g.fecha,
+			g.reffunciones,
+			g.fechacreacion,
+			g.usuacrea
+		FROM
+			dbgastosobras g
+				INNER JOIN
+			dbfunciones fu ON fu.idfuncion = g.reffunciones
+				INNER JOIN
+			dbobras obr ON obr.idobra = fu.refobras
+				INNER JOIN
+			dbcooperativas coo ON coo.idcooperativa = fu.refcooperativas
+				INNER JOIN
+			tbdias di ON di.iddia = fu.refdias
+		WHERE
+			fu.refobras =".$idObra; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -978,18 +1066,18 @@ return $res;
 
 /* PARA Personalcargos */
 
-function insertarPersonalcargos($refpersonal,$reftiposcargos,$refcooperativa,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi) { 
-$sql = "insert into dbpersonalcargos(idpersonalcargo,refpersonal,reftiposcargos,refcooperativa,fechaalta,fechabaja,fechabajatentativa,puntos,monto,fechacrea,usuacrea,fechamodi,usuamodi) 
-values ('',".$refpersonal.",".$reftiposcargos.",".$refcooperativa.",".($fechaalta == '' ? NULL : "'".$fechaalta."'").",".($fechabaja == '' ? 'NULL' : "'".$fechabaja."'").",".($fechabajatentativa == '' ? 'NULL' : "'".$fechabajatentativa."'").",".$puntos.",".$monto.",'".utf8_decode($fechacrea)."','".utf8_decode($usuacrea)."','".utf8_decode($fechamodi)."','".utf8_decode($usuamodi)."')"; 
+function insertarPersonalcargos($refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi) { 
+$sql = "insert into dbpersonalcargos(idpersonalcargo,refpersonal,reftiposcargos,reffunciones,fechaalta,fechabaja,fechabajatentativa,puntos,monto,fechacrea,usuacrea,fechamodi,usuamodi) 
+values ('',".$refpersonal.",".$reftiposcargos.",".$reffunciones.",".($fechaalta == '' ? NULL : "'".$fechaalta."'").",".($fechabaja == '' ? 'NULL' : "'".$fechabaja."'").",".($fechabajatentativa == '' ? 'NULL' : "'".$fechabajatentativa."'").",".$puntos.",".$monto.",'".utf8_decode($fechacrea)."','".utf8_decode($usuacrea)."','".utf8_decode($fechamodi)."','".utf8_decode($usuamodi)."')"; 
 $res = $this->query($sql,1); 
 return $res; 
 } 
 
 
-function modificarPersonalcargos($id,$refpersonal,$reftiposcargos,$refcooperativa,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi) { 
+function modificarPersonalcargos($id,$refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi) { 
 $sql = "update dbpersonalcargos 
 set 
-refpersonal = ".$refpersonal.",reftiposcargos = ".$reftiposcargos.",refcooperativa = ".$refcooperativa.",fechaalta = '".($fechaalta == '' ? NULL : $fechaalta)."',fechabaja = ".($fechabaja == '' ? 'NULL' : "'".$fechabaja."'").",fechabajatentativa = ".($fechabajatentativa == '' ? 'NULL' : "'".$fechabajatentativa."'").",puntos = ".$puntos.",monto = ".$monto.",fechacrea = '".utf8_decode($fechacrea)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."' 
+refpersonal = ".$refpersonal.",reftiposcargos = ".$reftiposcargos.",reffunciones = ".$reffunciones.",fechaalta = '".($fechaalta == '' ? NULL : $fechaalta)."',fechabaja = ".($fechabaja == '' ? 'NULL' : "'".$fechabaja."'").",fechabajatentativa = ".($fechabajatentativa == '' ? 'NULL' : "'".$fechabajatentativa."'").",puntos = ".$puntos.",monto = ".$monto.",fechacrea = '".utf8_decode($fechacrea)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."' 
 where idpersonalcargo =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -1008,7 +1096,7 @@ $sql = "select
 p.idpersonalcargo,
 p.refpersonal,
 p.reftiposcargos,
-p.refcooperativa,
+p.reffunciones,
 p.fechaalta,
 p.fechabaja,
 p.fechabajatentativa,
@@ -1037,6 +1125,9 @@ per.nombre,
 per.nrodocumento,
 tip.cargo,
 coo.descripcion,
+o.nombre as obra,
+di.dia,
+fu.horario,
 p.fechaalta,
 p.fechabaja,
 p.fechabajatentativa,
@@ -1048,13 +1139,16 @@ p.fechamodi,
 p.usuamodi,
 p.refpersonal,
 p.reftiposcargos,
-p.refcooperativa
+p.reffunciones
 from dbpersonalcargos p 
 inner join dbpersonal per ON per.idpersonal = p.refpersonal 
 inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
 inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
 inner join tbtiposcargos tip ON tip.idtipocargo = p.reftiposcargos 
-inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativa
+inner join dbfunciones fu ON fu.idfuncion = p.reffunciones
+inner join dbcooperativas coo ON coo.idcooperativa = fu.refcooperativa
+inner join dbobras o ON o.idobra = fu.refobras
+inner join tbdias di ON di.iddia = fu.refdias
 where per.idpersonal = ".$idPersona."
 order by 1"; 
 $res = $this->query($sql,0); 
@@ -1070,6 +1164,9 @@ per.nombre,
 per.nrodocumento,
 tip.cargo,
 coo.descripcion,
+o.nombre as obra,
+di.dia,
+fu.horario,
 p.fechaalta,
 p.fechabaja,
 p.fechabajatentativa,
@@ -1081,13 +1178,16 @@ p.fechamodi,
 p.usuamodi,
 p.refpersonal,
 p.reftiposcargos,
-p.refcooperativa
+p.reffunciones
 from dbpersonalcargos p 
 inner join dbpersonal per ON per.idpersonal = p.refpersonal 
 inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
 inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
 inner join tbtiposcargos tip ON tip.idtipocargo = p.reftiposcargos 
-inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativa
+inner join dbfunciones fu ON fu.idfuncion = p.reffunciones
+inner join dbcooperativas coo ON coo.idcooperativa = fu.refcooperativa
+inner join dbobras o ON o.idobra = fu.refobras
+inner join tbdias di ON di.iddia = fu.refdias
 where per.idpersonal = ".$idPersona." and (fechabaja is null or fechabaja > now() or fechabaja = '0000-00-00')
 order by 1"; 
 $res = $this->query($sql,0); 
@@ -1096,7 +1196,7 @@ return $res;
 
 
 function traerPersonalcargosPorId($id) { 
-$sql = "select idpersonalcargo,refpersonal,reftiposcargos,refcooperativa,fechaalta,fechabaja,fechabajatentativa,puntos,monto,fechacrea,usuacrea,fechamodi,usuamodi from dbpersonalcargos where idpersonalcargo =".$id; 
+$sql = "select idpersonalcargo,refpersonal,reftiposcargos,reffunciones,fechaalta,fechabaja,fechabajatentativa,puntos,monto,fechacrea,usuacrea,fechamodi,usuamodi from dbpersonalcargos where idpersonalcargo =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -1710,6 +1810,53 @@ return $res;
 /* Fin */
 /* /* Fin de la Tabla: tbsalas*/
 
+
+/* PARA Dias */
+
+function insertarDias($dia) { 
+$sql = "insert into tbdias(iddia,dia) 
+values ('','".utf8_decode($dia)."')"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
+
+function modificarDias($id,$dia) { 
+$sql = "update tbdias 
+set 
+dia = '".utf8_decode($dia)."' 
+where iddia =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarDias($id) { 
+$sql = "delete from tbdias where iddia =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerDias() { 
+$sql = "select 
+d.iddia,
+d.dia
+from tbdias d 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerDiasPorId($id) { 
+$sql = "select iddia,dia from tbdias where iddia =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+/* Fin */
+/* /* Fin de la Tabla: tbdias*/
 
 /* PARA Tipoconceptos */
 

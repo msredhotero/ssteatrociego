@@ -169,6 +169,15 @@ class Servicios {
 				$cantidad = 10;
 				$classMod = 'varmodificar';
 				$classEli = 'varborrar';
+				$classVer	  = 'varver';
+				$lblVer = 'Ver';
+				$idresultados = "resultados";
+				break;
+			case 90:
+				//funciones
+				$cantidad = 5;
+				$classMod = 'varmodificar';
+				$classEli = 'varborrar';
 				$classEditar = 'vargastos';
 				$classVer	  = 'varver';
 				$iconoEditar = 'glyphicon glyphicon-gift';
@@ -590,7 +599,7 @@ class Servicios {
 										<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 											<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 											<div class="input-group bootstrap-timepicker col-md-6 col-xs-6">
-												<input id="timepicker2" name="'.$campo.'" class="form-control">
+												<input id="'.$campo.'" name="'.$campo.'" class="form-control">
 												<span class="input-group-addon">
 <span class="glyphicon glyphicon-time"></span>
 </span>
@@ -1230,7 +1239,7 @@ class Servicios {
 										<div class="form-group col-md-6" style="display:'.$lblOculta.'">
 											<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 											<div class="input-group bootstrap-timepicker col-md-6">
-												<input id="timepicker2" value="'.mysql_result($resMod,0,$row[0]).'" name="'.$campo.'" class="form-control">
+												<input id="'.$campo.'" value="'.mysql_result($resMod,0,$row[0]).'" name="'.$campo.'" class="form-control">
 												<span class="input-group-addon">
 <span class="glyphicon glyphicon-time"></span>
 </span>

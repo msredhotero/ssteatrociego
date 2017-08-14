@@ -302,6 +302,15 @@ case 'eliminarAlbum':
 eliminarAlbum($serviciosReferencias);
 break; 
 
+case 'insertarFunciones': 
+insertarFunciones($serviciosReferencias); 
+break; 
+case 'modificarFunciones': 
+modificarFunciones($serviciosReferencias); 
+break; 
+case 'eliminarFunciones': 
+eliminarFunciones($serviciosReferencias); 
+break; 
 
 ////////////////////////////////*****    AUTO-COMPLETAR   *******/////////////////////////////////////
 case 'traerPromosPorObras':
@@ -583,6 +592,48 @@ function traerDescuentoCategorias($serviciosReferencias) {
 
 
 /* nuevo */
+
+function insertarFunciones($serviciosReferencias) { 
+	$refobras = $_POST['refobras']; 
+	$refcooperativas = $_POST['refcooperativas']; 
+	$horario = $_POST['horario']; 
+	$refdias = $_POST['refdias']; 
+	
+	$res = $serviciosReferencias->insertarFunciones($refobras,$refcooperativas,$horario,$refdias); 
+	
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos ';	 
+	} 
+} 
+
+
+function modificarFunciones($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$refobras = $_POST['refobras']; 
+	$refcooperativas = $_POST['refcooperativas']; 
+	$horario = $_POST['horario']; 
+	$refdias = $_POST['refdias']; 
+	
+	$res = $serviciosReferencias->modificarFunciones($id,$refobras,$refcooperativas,$horario,$refdias); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
+} 
+
+
+function eliminarFunciones($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	
+	$res = $serviciosReferencias->eliminarFunciones($id); 
+	
+	echo $res; 
+} 
+
 
 function insertarAlbumobras($serviciosReferencias) {
 $refobras = $_POST['refobras'];
@@ -1274,39 +1325,53 @@ function eliminarDomicilios($serviciosReferencias) {
 $id = $_POST['id']; 
 $res = $serviciosReferencias->eliminarDomicilios($id); 
 echo $res; 
-} 
+}
+ 
 function insertarGastosobras($serviciosReferencias) { 
-$refobras = $_POST['refobras']; 
-$descripcion = $_POST['descripcion']; 
-$monto = $_POST['monto']; 
-$fechacreacion = $_POST['fechacreacion']; 
-$usuacrea = $_POST['usuacrea']; 
-$res = $serviciosReferencias->insertarGastosobras($refobras,$descripcion,$monto,$fechacreacion,$usuacrea); 
-if ((integer)$res > 0) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al insertar datos';	 
+	$reffunciones = $_POST['reffunciones']; 
+	$descripcion = $_POST['descripcion']; 
+	$monto = $_POST['monto']; 
+	$fecha = $_POST['fecha']; 
+	$fechacreacion = date('Y-m-d'); 
+	$usuacrea = $_POST['usuacrea']; 
+	
+	$res = $serviciosReferencias->insertarGastosobras($reffunciones,$descripcion,$monto,$fecha,$fechacreacion,$usuacrea); 
+	
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	 
+	} 
 } 
-} 
+
+
 function modificarGastosobras($serviciosReferencias) { 
-$id = $_POST['id']; 
-$refobras = $_POST['refobras']; 
-$descripcion = $_POST['descripcion']; 
-$monto = $_POST['monto']; 
-$fechacreacion = $_POST['fechacreacion']; 
-$usuacrea = $_POST['usuacrea']; 
-$res = $serviciosReferencias->modificarGastosobras($id,$refobras,$descripcion,$monto,$fechacreacion,$usuacrea); 
-if ($res == true) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al modificar datos'; 
+	$id = $_POST['id']; 
+	$reffunciones = $_POST['reffunciones']; 
+	$descripcion = $_POST['descripcion']; 
+	$monto = $_POST['monto']; 
+	$fecha = $_POST['fecha']; 
+	$fechacreacion = $_POST['fechacreacion']; 
+	$usuacrea = $_POST['usuacrea']; 
+	
+	$res = $serviciosReferencias->modificarGastosobras($id,$reffunciones,$descripcion,$monto,$fecha,$fechacreacion,$usuacrea); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
 } 
-} 
+
 function eliminarGastosobras($serviciosReferencias) { 
-$id = $_POST['id']; 
-$res = $serviciosReferencias->eliminarGastosobras($id); 
-echo $res; 
+	$id = $_POST['id']; 
+	
+	$res = $serviciosReferencias->eliminarGastosobras($id); 
+	
+	echo $res; 
 } 
+
+ 
 function insertarObras($serviciosReferencias) { 
 	$nombre = $_POST['nombre']; 
 	$refsalas = $_POST['refsalas']; 
@@ -1466,50 +1531,58 @@ $res = $serviciosReferencias->eliminarPersonal($id);
 echo $res; 
 } 
 function insertarPersonalcargos($serviciosReferencias) { 
-$refpersonal = $_POST['refpersonal']; 
-$reftiposcargos = $_POST['reftiposcargos']; 
-$refcooperativa = $_POST['refcooperativa']; 
-$fechaalta = $_POST['fechaalta']; 
-$fechabaja = $_POST['fechabaja']; 
-$fechabajatentativa = $_POST['fechabajatentativa']; 
-$puntos = $_POST['puntos']; 
-$monto = $_POST['monto']; 
-$fechacrea = $_POST['fechacrea']; 
-$usuacrea = $_POST['usuacrea']; 
-$fechamodi = $_POST['fechamodi']; 
-$usuamodi = $_POST['usuamodi']; 
-$res = $serviciosReferencias->insertarPersonalcargos($refpersonal,$reftiposcargos,$refcooperativa,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi); 
-if ((integer)$res > 0) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al insertar datos';	 
+	$refpersonal = $_POST['refpersonal']; 
+	$reftiposcargos = $_POST['reftiposcargos']; 
+	$reffunciones = $_POST['reffunciones']; 
+	$fechaalta = $_POST['fechaalta']; 
+	$fechabaja = $_POST['fechabaja']; 
+	$fechabajatentativa = $_POST['fechabajatentativa']; 
+	$puntos = $_POST['puntos']; 
+	$monto = $_POST['monto']; 
+	$fechacrea = date('Y-m-d'); 
+	$usuacrea = $_POST['usuacrea']; 
+	$fechamodi = date('Y-m-d'); 
+	$usuamodi = $_POST['usuamodi']; 
+	
+	$res = $serviciosReferencias->insertarPersonalcargos($refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi); 
+	
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	 
+	} 
 } 
-} 
+
+
 function modificarPersonalcargos($serviciosReferencias) { 
-$id = $_POST['id']; 
-$refpersonal = $_POST['refpersonal']; 
-$reftiposcargos = $_POST['reftiposcargos']; 
-$refcooperativa = $_POST['refcooperativa']; 
-$fechaalta = $_POST['fechaalta']; 
-$fechabaja = $_POST['fechabaja']; 
-$fechabajatentativa = $_POST['fechabajatentativa']; 
-$puntos = $_POST['puntos']; 
-$monto = $_POST['monto']; 
-$fechacrea = $_POST['fechacrea']; 
-$usuacrea = $_POST['usuacrea']; 
-$fechamodi = $_POST['fechamodi']; 
-$usuamodi = $_POST['usuamodi']; 
-$res = $serviciosReferencias->modificarPersonalcargos($id,$refpersonal,$reftiposcargos,$refcooperativa,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi); 
-if ($res == true) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al modificar datos'; 
+	$id = $_POST['id']; 
+	$refpersonal = $_POST['refpersonal']; 
+	$reftiposcargos = $_POST['reftiposcargos']; 
+	$reffunciones = $_POST['reffunciones']; 
+	$fechaalta = $_POST['fechaalta']; 
+	$fechabaja = $_POST['fechabaja']; 
+	$fechabajatentativa = $_POST['fechabajatentativa']; 
+	$puntos = $_POST['puntos']; 
+	$monto = $_POST['monto']; 
+	$fechacrea = $_POST['fechacrea']; 
+	$usuacrea = $_POST['usuacrea']; 
+	$fechamodi = $_POST['fechamodi']; 
+	$usuamodi = $_POST['usuamodi']; 
+	
+	$res = $serviciosReferencias->modificarPersonalcargos($id,$refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
 } 
-} 
+
+
 function eliminarPersonalcargos($serviciosReferencias) { 
-$id = $_POST['id']; 
-$res = $serviciosReferencias->eliminarPersonalcargos($id); 
-echo $res; 
+	$id = $_POST['id']; 
+	$res = $serviciosReferencias->eliminarPersonalcargos($id); 
+	echo $res; 
 } 
 
 
