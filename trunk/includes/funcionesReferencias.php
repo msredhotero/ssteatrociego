@@ -703,6 +703,29 @@ return $res;
 } 
 
 
+function traerFuncionesPorFuncion($id) { 
+$sql = "select 
+f.idfuncion,
+obr.nombre as obra,
+sa.descripcion as sala,
+coo.descripcion as cooperativa,
+f.horario,
+dia.dia,
+f.refobras,
+f.refcooperativas,
+f.refdias
+from dbfunciones f 
+inner join dbobras obr ON obr.idobra = f.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+inner join dbcooperativas coo ON coo.idcooperativa = f.refcooperativas 
+inner join tbdias dia ON dia.iddia = f.refdias 
+where idfuncion =".$id." 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
 function traerFuncionesPorId($id) { 
 $sql = "select idfuncion,refobras,refcooperativas,horario,refdias from dbfunciones where idfuncion =".$id; 
 $res = $this->query($sql,0); 
@@ -793,6 +816,34 @@ $sql = "SELECT
 			tbdias di ON di.iddia = fu.refdias
 		WHERE
 			fu.refobras =".$idObra; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerGastosobrasPorFuncion($idFuncion) { 
+$sql = "SELECT 
+			g.idgastoobra,
+			g.descripcion,
+			g.monto,
+			g.fecha,
+			fu.horario,
+			di.dia,
+			g.reffunciones,
+			g.fechacreacion,
+			g.usuacrea
+		FROM
+			dbgastosobras g
+				INNER JOIN
+			dbfunciones fu ON fu.idfuncion = g.reffunciones
+				INNER JOIN
+			dbobras obr ON obr.idobra = fu.refobras
+				INNER JOIN
+			dbcooperativas coo ON coo.idcooperativa = fu.refcooperativas
+				INNER JOIN
+			tbdias di ON di.iddia = fu.refdias
+		WHERE
+			fu.idfuncion =".$idFuncion; 
 $res = $this->query($sql,0); 
 return $res; 
 } 

@@ -22,67 +22,58 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Personal",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Obras",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerPersonalcargosPorPersona($id);
+$resResultado = $serviciosReferencias->traerGastosobrasPorFuncion($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Cargo";
+$singular = "Gasto-Obra";
 
-$plural = "Cargos";
+$plural = "Gastos-Obras";
 
-$eliminar = "eliminarPersonalcargos";
+$eliminar = "eliminarGastosobras";
 
-$modificar = "modificarPersonalcargos";
+$modificar = "modificarGastosobras";
 
-$idTabla = "idpersonalcargo";
+$idTabla = "idgastoobra";
 
-$insertar = "insertarPersonalcargos";
+$insertar = "insertarGastosobras";
 
 $tituloWeb = "Gestión: Teatro Ciego";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbpersonalcargos";
+$tabla 			= "dbgastosobras";
 
-$lblCambio	 	= array("refpersonal","reftiposcargos","reffunciones","fechaalta","fechabaja","fechabajatentativa");
-$lblreemplazo	= array("Persona","Tipo Cargo","Funciones","Fecha Alta","Fecha Baja","Fecha Baja Tentativa");
+$lblCambio	 	= array("reffunciones");
+$lblreemplazo	= array("Funcion");
 
-$resPersona	=	$serviciosReferencias->traerPersonalPorId($id);
-$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resPersona,array(3,4),', ',$id);
+$resObras	=	$serviciosReferencias->traerFuncionesPorFuncion($id);
+$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resObras,array(1,2,3,4),' - ',$id);
 
-$resTipoC	=	$serviciosReferencias->traerTiposcargos();
-$cadRef2 	= 	$serviciosFunciones->devolverSelectBox($resTipoC,array(1),'');
-
-$resFuncion	=	$serviciosReferencias->traerFunciones();
-$cadRef3 	= 	$serviciosFunciones->devolverSelectBox($resFuncion,array(1,4,5),' - ');
-
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
-$refCampo 	=  array("refpersonal","reftiposcargos","reffunciones");
+$refdescripcion = array(0=>$cadRef);
+$refCampo 	=  array("reffunciones");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$cabeceras 		= "	<th>Apellido</th>
-					<th>Nombre</th>
-					<th>Nro Documento</th>
-					<th>Cargo</th>
-					<th>Cooperativa</th>
-					<th>Fecha Alta</th>
-					<th>Fecha Baja</th>
-					<th>Fecha Baja Tentativa</th>
-					<th>Puntos</th>
-					<th>Monto</th>";
+/////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
+$cabeceras 		= "	<th>Descripcion</th>
+					<th>Monto</th>
+					<th>Fecha</th>";
 
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+$lblAccion = '';
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$lblAccion = 'Cargar';
 
-$lstCargos		= $serviciosReferencias->traerPersonalcargosPorPersonaTodos($id);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerGastosobrasPorFuncion($id),3);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$lstCargos,10);
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -153,7 +144,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Cargar <?php echo $singular; ?></p>
+        	<p style="color: #fff; font-size:18px; height:16px;"><?php echo $lblAccion.' '.$singular; ?></p>
         	
         </div>
     	<div class="cuerpoBox">
@@ -180,6 +171,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                     <li>
                     <button type="button" class="btn btn-success" id="cargar" style="margin-left:0px;">Agregar</button>
                     </li>
+
                     <li>
                         <button type="button" class="btn btn-default volver" style="margin-left:0px;">Volver</button>
                     </li>
@@ -189,8 +181,7 @@ if ($_SESSION['refroll_predio'] != 1) {
             </form>
     	</div>
     </div>
-
-
+    
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
         	<p style="color: #fff; font-size:18px; height:16px;"><?php echo $plural; ?> Cargados</p>
@@ -214,7 +205,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
             ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
         </p>
-        <p><strong>Importante: </strong>Si elimina el cargo solo le pondra una fecha de baja actual</p>
+        <p><strong>Importante: </strong>Si elimina el <?php echo $singular; ?> se perderan todos los datos de este</p>
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
@@ -226,10 +217,8 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 
-	$('#fechacrea').val('<?php echo date('Y-m-d'); ?>');
-	$('#fechamodi').val('');
+	$('#fechacreacion').val('<?php echo date('Y-m-d'); ?>');
 	$('#usuacrea').val('<?php echo $_SESSION['nombre_predio']; ?>');
-	$('#usuamodi').val('');
 	
 	$('.volver').click(function(event){
 		 
@@ -250,13 +239,12 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton eliminar
-
-
+	
+	
 	$('.varmodificar').click(function(event){
 		  usersid =  $(this).attr("id");
 		  if (!isNaN(usersid)) {
-
-			url = "modificarcargos.php?id=" + usersid;
+			url = "modificargastos.php?id=" + usersid;
 			$(location).attr('href',url);
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
@@ -281,7 +269,7 @@ $(document).ready(function(){
 											
 									},
 									success:  function (response) {
-											url = "index.php";
+											url = "gastos.php?id="+<?php echo $id; ?>;
 											$(location).attr('href',url);
 											
 									}
@@ -301,7 +289,6 @@ $(document).ready(function(){
 		 
 	 		}); //fin del dialogo para eliminar
 	
-
 
 
 	
@@ -343,7 +330,7 @@ $(document).ready(function(){
 												
 											});
 											$("#load").html('');
-											url = "cargos.php?id="+<?php echo $id; ?>;
+											url = "gastos.php?id="+<?php echo $id; ?>;
 											$(location).attr('href',url);
                                             
 											
@@ -366,42 +353,19 @@ $(document).ready(function(){
 });
 </script>
 
-<script>
-  $(function() {
-	  $.datepicker.regional['es'] = {
- closeText: 'Cerrar',
- prevText: '<Ant',
- nextText: 'Sig>',
- currentText: 'Hoy',
- monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
- monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
- dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
- dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
- dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
- weekHeader: 'Sm',
- dateFormat: 'dd/mm/yy',
- firstDay: 1,
- isRTL: false,
- showMonthAfterYear: false,
- yearSuffix: ''
- };
- $.datepicker.setDefaults($.datepicker.regional['es']);
- 
-    $( "#fechabaja" ).datepicker();
-
-    $( "#fechabaja" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
-	
-	$( "#fechaalta" ).datepicker();
-
-    $( "#fechaalta" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
-
-    $("#fechaalta").datepicker("setDate", "getDate" );
-
-    $( "#fechabajatentativa" ).datepicker();
-
-    $( "#fechabajatentativa" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
-  });
-  </script>
+<script type="text/javascript">
+$('.form_date').datetimepicker({
+	language:  'es',
+	weekStart: 1,
+	todayBtn:  1,
+	autoclose: 1,
+	todayHighlight: 1,
+	startView: 2,
+	minView: 2,
+	forceParse: 0,
+	format: 'dd/mm/yyyy'
+});
+</script>
 <?php } ?>
 </body>
 </html>
