@@ -63,7 +63,8 @@ $cabeceras 		= "	<th>Descripción</th>
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-
+$resPersonal	=	$serviciosReferencias->traerPersonal();
+$cadRef2 	= 	$serviciosFunciones->devolverSelectBox($resPersonal,array(2,3,4),' - ');
 
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
@@ -183,6 +184,33 @@ if ($_SESSION['refroll_predio'] != 1) {
                 
             </div>
             
+            <hr>
+            
+            <div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
+            	<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+                    <label for="buscarcontacto" class="control-label" style="text-align:left">Buscar Personas</label>
+                    <div class="input-group col-md-12">
+                        
+                        <select data-placeholder="selecione la Persona..." id="buscarpersonal" name="buscarpersonal" class="chosen-select" tabindex="2" style="width:300px;">
+                            <option value=""></option>
+                            <?php echo $cadRef2; ?>
+                        </select>
+                        <button type="button" class="btn btn-info" id="asignarPersonal"><span class="glyphicon glyphicon-share-alt"></span> Asignar Personal</button>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                    <label for="contactosasignados" class="control-label" style="text-align:left">Personal Asignado</label>
+                    <div class="input-group col-md-12">
+                        <ul class="list-inline" id="lstPersonal">
+                        
+                        </ul>
+                        
+                    </div>
+                </div>
+                
+            </div>
+            
             <div class="row">
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-top:15px;">
@@ -260,6 +288,40 @@ $(document).ready(function(){
 			$('.'+usersid).remove();	
 		}
 	});
+	
+	
+	
+	
+	
+	
+	$('#asignarPersonal').click(function(e) {
+		//alert($('#buscarcontacto option:selected').html());
+		if (existeAsiganadoPersonal('user'+$('#buscarpersonal').chosen().val()) == 0) {
+			$('#lstPersonal').prepend('<li class="personal'+ $('#buscarpersonal').chosen().val() +'"><input id="personal'+ $('#buscarpersonal').chosen().val() +'" class="form-control checkLstPersonal" checked type="checkbox" required="" style="width:50px;" name="personal'+ $('#buscarpersonal').chosen().val() +'"><p>' + $('#buscarpersonal option:selected').html() + ' </p></li>');
+		}
+	});
+	
+	
+	function existeAsiganadoPersonal(id) {
+		var existe = 0;	
+		$('#lstPersonal li input').each(function (index, value) { 
+		  if (id == $(this).attr('id')) {
+			return existe = 1;  
+		  }
+		});
+		
+		return existe;
+	}
+	
+	$("#lstPersonal").on("click",'.checkLstPersonal', function(){
+		usersid =  $(this).attr("id");
+		
+		if  (!($(this).prop('checked'))) {
+			$('.'+usersid).remove();	
+		}
+	});
+	
+	
 	
 	
 	var table = $('#example').dataTable({

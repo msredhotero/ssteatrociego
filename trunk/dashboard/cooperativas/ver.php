@@ -59,7 +59,7 @@ $refCampo 	=  array();
 
 
 $resContactosCountries = $serviciosReferencias->traerObrascooperativasPorCooperativa($id);
-
+$resContactosCountries2 = $serviciosReferencias->traerPersonalcooperativasPorCooperativa($id);
 
 $formulario 	= $serviciosFunciones->camposTablaVer($id, $idTabla,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
@@ -157,6 +157,29 @@ if ($_SESSION['refroll_predio'] != 1) {
 							
 							?>
                             	<li><?php echo $rowC['obra']; ?></li>
+                            <?php
+								}
+							?>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <div class="row" id="contMapa2" style="margin-left:25px; margin-right:25px;">
+            	
+                <div class="col-md-6">
+                	<div class="form-group col-md-12">
+                        <label class="control-label" style="text-align:left; font-size:1.2em; text-decoration:underline; margin-bottom:4px;" for="fechas">Lista de Personas asignadas</label>
+                        <div class="input-group col-md-12">
+                            <ul>
+							<?php 
+								while ($rowC = mysql_fetch_array($resContactosCountries2)) {
+							
+							?>
+                            	<li><?php echo $rowC['apellido'].' '.$rowC['nombre'].' - Nro.Doc: '.$rowC['nrodocumento']; ?></li>
                             <?php
 								}
 							?>

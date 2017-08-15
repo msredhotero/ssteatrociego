@@ -90,6 +90,41 @@ while ($rowFS = mysql_fetch_array($resContactos)) {
 
 $cadUser = $cadUser."</ul>";
 
+
+
+
+
+
+$lstContactos2	= $serviciosFunciones->devolverSelectBox($serviciosReferencias->traerPersonal(),array(2,3,4),' - ');
+$resContactos2 = $serviciosReferencias->traerPersonal();
+
+$resContactosCountries2 = $serviciosReferencias->traerPersonalcooperativasPorCooperativa($id);
+
+
+	while ($subrow2 = mysql_fetch_array($resContactosCountries2)) {
+			$arrayFS2[] = $subrow2;
+	}
+
+
+
+$cadUser2 = '<ul class="list-inline" id="lstPersonal">';
+while ($rowFS = mysql_fetch_array($resContactos2)) {
+	$check = '';
+	if (mysql_num_rows($resContactosCountries2)>0) {
+		foreach ($arrayFS2 as $item) {
+			if (stripslashes($item['refpersonal']) == $rowFS[0]) {
+				$check = 'checked';	
+				$cadUser2 = $cadUser2.'<li class="personal'.$rowFS[0].'">'.'<input id="personal'.$rowFS[0].'" '.$check.' class="form-control checkLstPersonal" type="checkbox" required="" style="width:50px;" name="personal'.$rowFS[0].'"><p>'.$rowFS[2].' '.$rowFS[3].' '.$rowFS[4].'</p>'."</li>";
+			}
+		}
+	}
+	
+
+
+}
+
+$cadUser = $cadUser."</ul>";
+
 if ($_SESSION['refroll_predio'] != 1) {
 
 } else {
@@ -202,6 +237,33 @@ if ($_SESSION['refroll_predio'] != 1) {
                 
             </div>
             
+            <hr>
+            
+            <div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
+            	<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+                    <label for="buscarcontacto" class="control-label" style="text-align:left">Buscar Personas</label>
+                    <div class="input-group col-md-12">
+                        
+                        <select data-placeholder="selecione la Persona..." id="buscarpersonal" name="buscarpersonal" class="chosen-select" tabindex="2" style="width:300px;">
+                            <option value=""></option>
+                            <?php echo $lstContactos2; ?>
+                        </select>
+                        <button type="button" class="btn btn-info" id="asignarPersonal"><span class="glyphicon glyphicon-share-alt"></span> Asignar Personal</button>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                    <label for="contactosasignados" class="control-label" style="text-align:left">Personal Asignado</label>
+                    <div class="input-group col-md-12">
+                        <ul class="list-inline" id="lstPersonal">
+                        	<?php echo $cadUser2; ?>
+                        </ul>
+                        
+                    </div>
+                </div>
+                
+            </div>
+            
             
             <div class="row">
                 <div class="col-md-12">
@@ -276,6 +338,36 @@ $(document).ready(function(){
 			$('.'+usersid).remove();	
 		}
 	});
+	
+	
+	
+	$('#asignarPersonal').click(function(e) {
+		//alert($('#buscarcontacto option:selected').html());
+		if (existeAsiganadoPersonal('personal'+$('#buscarpersonal').chosen().val()) == 0) {
+			$('#lstPersonal').prepend('<li class="personal'+ $('#buscarpersonal').chosen().val() +'"><input id="personal'+ $('#buscarpersonal').chosen().val() +'" class="form-control checkLstPersonal" checked type="checkbox" required="" style="width:50px;" name="personal'+ $('#buscarpersonal').chosen().val() +'"><p>' + $('#buscarpersonal option:selected').html() + ' </p></li>');
+		}
+	});
+	
+	
+	function existeAsiganadoPersonal(id) {
+		var existe = 0;	
+		$('#lstPersonal li input').each(function (index, value) { 
+		  if (id == $(this).attr('id')) {
+			return existe = 1;  
+		  }
+		});
+		
+		return existe;
+	}
+	
+	$("#lstPersonal").on("click",'.checkLstPersonal', function(){
+		usersid =  $(this).attr("id");
+		
+		if  (!($(this).prop('checked'))) {
+			$('.'+usersid).remove();	
+		}
+	});
+	
 	
 	$('#fechacreacion').val('<?php echo mysql_result($resResultado,0,'fechacreacion'); ?>');
 	$('#fechamodi').val('<?php echo date('Y-m-d'); ?>');

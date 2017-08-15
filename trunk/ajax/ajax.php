@@ -396,7 +396,7 @@ function insertarVentas($serviciosReferencias) {
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos';	 
+		echo 'Hubo un error al insertar datos';	 
 	} 
 } 
 
@@ -451,7 +451,7 @@ function modificarVentas($serviciosReferencias) {
 	if ($res == true) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -604,7 +604,7 @@ function insertarFunciones($serviciosReferencias) {
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos ';	 
+		echo 'Hubo un error al insertar datos ';	 
 	} 
 } 
 
@@ -621,7 +621,7 @@ function modificarFunciones($serviciosReferencias) {
 	if ($res == true) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -642,7 +642,7 @@ $res = $serviciosReferencias->insertarAlbumobras($refobras,$refalbum);
 if ((integer)$res > 0) {
 echo '';
 } else {
-echo 'Huvo un error al insertar datos';
+echo 'Hubo un error al insertar datos';
 }
 }
 function modificarAlbumobras($serviciosReferencias) {
@@ -653,7 +653,7 @@ $res = $serviciosReferencias->modificarAlbumobras($id,$refobras,$refalbum);
 if ($res == true) {
 echo '';
 } else {
-echo 'Huvo un error al modificar datos';
+echo 'Hubo un error al modificar datos';
 }
 }
 function eliminarAlbumobras($serviciosReferencias) {
@@ -671,7 +671,7 @@ function insertarAlbum($serviciosReferencias) {
 	if ((integer)$res > 0) {
 		echo '';
 	} else {
-		echo 'Huvo un error al insertar datos';
+		echo 'Hubo un error al insertar datos';
 	}
 }
 function modificarAlbum($serviciosReferencias) {
@@ -684,7 +684,7 @@ function modificarAlbum($serviciosReferencias) {
 	if ($res == true) {
 		echo '';
 	} else {
-		echo 'Huvo un error al modificar datos';
+		echo 'Hubo un error al modificar datos';
 	}
 }
 
@@ -717,7 +717,7 @@ function insertarCategorias($serviciosReferencias) {
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos';	 
+		echo 'Hubo un error al insertar datos';	 
 	} 
 } 
 
@@ -735,7 +735,7 @@ function modificarCategorias($serviciosReferencias) {
 	if ($res == true) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -759,7 +759,7 @@ function insertarPromosobras($serviciosReferencias) {
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos ';	 
+		echo 'Hubo un error al insertar datos ';	 
 	} 
 } 
 
@@ -777,7 +777,7 @@ function modificarPromosobras($serviciosReferencias) {
 	if ($res == true) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -806,7 +806,7 @@ function insertarCuponeras($serviciosReferencias) {
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos';	 
+		echo 'Hubo un error al insertar datos';	 
 	} 
 } 
 
@@ -829,7 +829,7 @@ function modificarCuponeras($serviciosReferencias) {
 	if ($res == true) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -851,7 +851,7 @@ $res = $serviciosReferencias->insertarClientes($nombrecompleto,$cuil,$dni,$direc
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	
+echo 'Hubo un error al insertar datos';	
 } 
 } 
 function modificarClientes($serviciosReferencias) { 
@@ -867,7 +867,7 @@ $res = $serviciosReferencias->modificarClientes($id,$nombrecompleto,$cuil,$dni,$
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarClientes($serviciosReferencias) { 
@@ -919,7 +919,7 @@ $res = $serviciosReferencias->insertarProveedores($nombre,$cuit,$dni,$direccion,
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	
+echo 'Hubo un error al insertar datos';	
 } 
 } 
 function modificarProveedores($serviciosReferencias) { 
@@ -936,7 +936,7 @@ $res = $serviciosReferencias->modificarProveedores($id,$nombre,$cuit,$dni,$direc
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarProveedores($serviciosReferencias) { 
@@ -954,7 +954,7 @@ $res = $serviciosReferencias->insertarUsuarios($usuario,$password,$refroles,$ema
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	
+echo 'Hubo un error al insertar datos';	
 } 
 } 
 function modificarUsuarios($serviciosReferencias) { 
@@ -968,7 +968,7 @@ $res = $serviciosReferencias->modificarUsuarios($id,$usuario,$password,$refroles
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarUsuarios($serviciosReferencias) { 
@@ -988,7 +988,7 @@ $res = $serviciosReferencias->insertarPredio_menu($url,$icono,$nombre,$Orden,$ho
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	
+echo 'Hubo un error al insertar datos';	
 } 
 } 
 function modificarPredio_menu($serviciosReferencias) { 
@@ -1003,7 +1003,7 @@ $res = $serviciosReferencias->modificarPredio_menu($id,$url,$icono,$nombre,$Orde
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarPredio_menu($serviciosReferencias) { 
@@ -1020,7 +1020,7 @@ $res = $serviciosReferencias->insertarEstados($estado,$icono);
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	
+echo 'Hubo un error al insertar datos';	
 } 
 } 
 function modificarEstados($serviciosReferencias) { 
@@ -1031,7 +1031,7 @@ $res = $serviciosReferencias->modificarEstados($id,$estado,$icono);
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarEstados($serviciosReferencias) { 
@@ -1051,7 +1051,7 @@ $res = $serviciosReferencias->insertarRoles($descripcion,$activo);
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	
+echo 'Hubo un error al insertar datos';	
 } 
 } 
 function modificarRoles($serviciosReferencias) { 
@@ -1066,7 +1066,7 @@ $res = $serviciosReferencias->modificarRoles($id,$descripcion,$activo);
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarRoles($serviciosReferencias) { 
@@ -1080,7 +1080,7 @@ $res = $serviciosReferencias->insertarTipopago($descripcion);
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	
+echo 'Hubo un error al insertar datos';	
 } 
 } 
 function modificarTipopago($serviciosReferencias) { 
@@ -1090,7 +1090,7 @@ $res = $serviciosReferencias->modificarTipopago($id,$descripcion);
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarTipopago($serviciosReferencias) { 
@@ -1117,7 +1117,7 @@ function insertarCajadiaria($serviciosReferencias) {
 	if ((integer)$res > 0) {
 		echo '';
 	} else {
-		echo 'Huvo un error al insertar datos';
+		echo 'Hubo un error al insertar datos';
 	}
 }
 
@@ -1142,7 +1142,7 @@ $res = $serviciosReferencias->modificarCajadiaria($id,$fecha,$inicio,$fin);
 if ($res == true) {
 echo '';
 } else {
-echo 'Huvo un error al modificar datos';
+echo 'Hubo un error al modificar datos';
 }
 }
 function eliminarCajadiaria($serviciosReferencias) {
@@ -1193,9 +1193,17 @@ function insertarCooperativas($serviciosReferencias) {
 					}
 				}
 				
+		$resPersonal = $serviciosReferencias->traerPersonal();
+				$cad = 'personal';
+				while ($rowFS = mysql_fetch_array($resPersonal)) {
+					if (isset($_POST[$cad.$rowFS[0]])) {
+						$serviciosReferencias->insertarPersonalcooperativas($rowFS[0],$res);
+					}
+				}
+				
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos';	 
+		echo 'Hubo un error al insertar datos';	 
 	} 
 } 
 
@@ -1228,9 +1236,18 @@ function modificarCooperativas($serviciosReferencias) {
 			}
 		}
 		
+		$serviciosReferencias->eliminarPersonalcooperativasPorCooperativa($id);
+		$resPersonal = $serviciosReferencias->traerPersonal();
+		$cad = 'personal';
+		while ($rowFS = mysql_fetch_array($resPersonal)) {
+			if (isset($_POST[$cad.$rowFS[0]])) {
+				$serviciosReferencias->insertarPersonalcooperativas($rowFS[0],$res);
+			}
+		}
+		
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -1254,7 +1271,7 @@ $res = $serviciosReferencias->insertarDatosbancos($refpersonal,$cbu,$nrocuenta,$
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	 
+echo 'Hubo un error al insertar datos';	 
 } 
 } 
 function modificarDatosbancos($serviciosReferencias) { 
@@ -1272,7 +1289,7 @@ $res = $serviciosReferencias->modificarDatosbancos($id,$refpersonal,$cbu,$nrocue
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarDatosbancos($serviciosReferencias) { 
@@ -1297,7 +1314,7 @@ function insertarDomicilios($serviciosReferencias) {
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos ';	 
+		echo 'Hubo un error al insertar datos ';	 
 	} 
 } 
 function modificarDomicilios($serviciosReferencias) { 
@@ -1318,7 +1335,7 @@ function modificarDomicilios($serviciosReferencias) {
 	if ($res == true) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 function eliminarDomicilios($serviciosReferencias) { 
@@ -1340,7 +1357,7 @@ function insertarGastosobras($serviciosReferencias) {
 	if ((integer)$res > 0) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos';	 
+		echo 'Hubo un error al insertar datos';	 
 	} 
 } 
 
@@ -1359,7 +1376,7 @@ function modificarGastosobras($serviciosReferencias) {
 	if ($res == true) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -1406,7 +1423,7 @@ function insertarObras($serviciosReferencias) {
 		}
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al insertar datos';	 
+		echo 'Hubo un error al insertar datos';	 
 	} 
 } 
 
@@ -1446,7 +1463,7 @@ function modificarObras($serviciosReferencias) {
 			}
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -1463,7 +1480,7 @@ $res = $serviciosReferencias->insertarObrascooperativas($refobras,$refcooperativ
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	 
+echo 'Hubo un error al insertar datos';	 
 } 
 } 
 function modificarObrascooperativas($serviciosReferencias) { 
@@ -1474,7 +1491,7 @@ $res = $serviciosReferencias->modificarObrascooperativas($id,$refobras,$refcoope
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarObrascooperativas($serviciosReferencias) { 
@@ -1500,7 +1517,7 @@ $res = $serviciosReferencias->insertarPersonal($reftipodocumento,$nrodocumento,$
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	 
+echo 'Hubo un error al insertar datos';	 
 } 
 } 
 function modificarPersonal($serviciosReferencias) { 
@@ -1522,7 +1539,7 @@ $res = $serviciosReferencias->modificarPersonal($id,$reftipodocumento,$nrodocume
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarPersonal($serviciosReferencias) { 
@@ -1544,13 +1561,18 @@ function insertarPersonalcargos($serviciosReferencias) {
 	$fechamodi = date('Y-m-d'); 
 	$usuamodi = $_POST['usuamodi']; 
 	
-	$res = $serviciosReferencias->insertarPersonalcargos($refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi); 
 	
-	if ((integer)$res > 0) { 
-		echo ''; 
-	} else { 
-		echo 'Huvo un error al insertar datos';	 
-	} 
+	
+	if ($serviciosReferencias->existeCargo($refpersonal,$reffunciones)>0) {
+		echo 'El cargo ya existe para esa funcion';
+	} else {
+		$res = $serviciosReferencias->insertarPersonalcargos($refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi); 
+		if ((integer)$res > 0) { 
+			echo ''; 
+		} else { 
+			echo 'Hubo un error al insertar datos';	 
+		} 
+	}
 } 
 
 
@@ -1574,7 +1596,7 @@ function modificarPersonalcargos($serviciosReferencias) {
 	if ($res == true) { 
 		echo ''; 
 	} else { 
-		echo 'Huvo un error al modificar datos'; 
+		echo 'Hubo un error al modificar datos'; 
 	} 
 } 
 
@@ -1598,7 +1620,7 @@ $res = $serviciosReferencias->insertarEstadocivil($estadocivil,$activo);
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	 
+echo 'Hubo un error al insertar datos';	 
 } 
 } 
 function modificarEstadocivil($serviciosReferencias) { 
@@ -1613,7 +1635,7 @@ $res = $serviciosReferencias->modificarEstadocivil($id,$estadocivil,$activo);
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarEstadocivil($serviciosReferencias) { 
@@ -1637,7 +1659,7 @@ $res = $serviciosReferencias->insertarSalas($descripcion,$capacidad,$activa);
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	 
+echo 'Hubo un error al insertar datos';	 
 } 
 } 
 function modificarSalas($serviciosReferencias) { 
@@ -1653,7 +1675,7 @@ $res = $serviciosReferencias->modificarSalas($id,$descripcion,$capacidad,$activa
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarSalas($serviciosReferencias) { 
@@ -1672,7 +1694,7 @@ $res = $serviciosReferencias->insertarTipoconceptos($tipoconcepto,$activo);
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	 
+echo 'Hubo un error al insertar datos';	 
 } 
 } 
 function modificarTipoconceptos($serviciosReferencias) { 
@@ -1687,7 +1709,7 @@ $res = $serviciosReferencias->modificarTipoconceptos($id,$tipoconcepto,$activo);
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarTipoconceptos($serviciosReferencias) { 
@@ -1706,7 +1728,7 @@ $res = $serviciosReferencias->insertarTipodocumento($tipodocumento,$activo);
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	 
+echo 'Hubo un error al insertar datos';	 
 } 
 } 
 function modificarTipodocumento($serviciosReferencias) { 
@@ -1721,7 +1743,7 @@ $res = $serviciosReferencias->modificarTipodocumento($id,$tipodocumento,$activo)
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarTipodocumento($serviciosReferencias) { 
@@ -1743,7 +1765,7 @@ $res = $serviciosReferencias->insertarTiposcargos($cargo,$activo);
 if ((integer)$res > 0) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al insertar datos';	 
+echo 'Hubo un error al insertar datos';	 
 } 
 } 
 function modificarTiposcargos($serviciosReferencias) { 
@@ -1758,7 +1780,7 @@ $res = $serviciosReferencias->modificarTiposcargos($id,$cargo,$activo);
 if ($res == true) { 
 echo ''; 
 } else { 
-echo 'Huvo un error al modificar datos'; 
+echo 'Hubo un error al modificar datos'; 
 } 
 } 
 function eliminarTiposcargos($serviciosReferencias) { 

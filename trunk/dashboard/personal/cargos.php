@@ -66,16 +66,16 @@ $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
 $refCampo 	=  array("refpersonal","reftiposcargos","reffunciones");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$cabeceras 		= "	<th>Apellido</th>
-					<th>Nombre</th>
-					<th>Nro Documento</th>
-					<th>Cargo</th>
+$cabeceras 		= "	<th>Cargo</th>
 					<th>Cooperativa</th>
 					<th>Fecha Alta</th>
 					<th>Fecha Baja</th>
 					<th>Fecha Baja Tentativa</th>
 					<th>Puntos</th>
-					<th>Monto</th>";
+					<th>Monto</th>
+					<th>Funcion</th>
+					<th>Horario</th>
+					<th>Dia</th>";
 
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
@@ -281,7 +281,7 @@ $(document).ready(function(){
 											
 									},
 									success:  function (response) {
-											url = "index.php";
+											url = "cargos.php?id="<?php echo $id; ?>;
 											$(location).attr('href',url);
 											
 									}
@@ -335,7 +335,7 @@ $(document).ready(function(){
                                             $(".alert").removeClass("alert-danger");
 											$(".alert").removeClass("alert-info");
                                             $(".alert").addClass("alert-success");
-                                            $(".alert").html('<strong>Ok!</strong> Se modifico exitosamente el <strong><?php echo $singular; ?></strong>. ');
+                                            $(".alert").html('<strong>Ok!</strong> Se genero exitosamente el <strong><?php echo $singular; ?></strong>. ');
 											$(".alert").delay(3000).queue(function(){
 												/*aca lo que quiero hacer 
 												  después de los 2 segundos de retraso*/

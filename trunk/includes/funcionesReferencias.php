@@ -1114,8 +1114,170 @@ return $res;
 /* Fin */
 /* /* Fin de la Tabla: dbpersonal*/
 
+/* PARA Personalcooperativas */
+
+function insertarPersonalcooperativas($refpersonal,$refcooperativas) { 
+$sql = "insert into dbpersonalcooperativas(idpersonalcooperativa,refpersonal,refcooperativas) 
+values ('',".$refpersonal.",".$refcooperativas.")"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
+
+function modificarPersonalcooperativas($id,$refpersonal,$refcooperativas) { 
+$sql = "update dbpersonalcooperativas 
+set 
+refpersonal = ".$refpersonal.",refcooperativas = ".$refcooperativas." 
+where idpersonalcooperativa =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarPersonalcooperativas($id) { 
+$sql = "delete from dbpersonalcooperativas where idpersonalcooperativa =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarPersonalcooperativasPorCooperativa($idCooperativa) { 
+$sql = "delete from dbpersonalcooperativas where refcooperativas =".$idCooperativa; 
+$res = $this->query($sql,0); 
+return $res; 
+}
+
+
+function traerPersonalcooperativas() { 
+$sql = "select 
+p.idpersonalcooperativa,
+p.refpersonal,
+p.refcooperativas
+from dbpersonalcooperativas p 
+inner join dbpersonal per ON per.idpersonal = p.refpersonal 
+inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
+inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
+inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativas 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerPersonalcooperativasPorPersonal($idPersonal) { 
+	$sql = "select 
+	p.idpersonalcooperativa,
+	per.nrodocumento,
+	per.apellido,
+	per.nombre,
+	coo.descripcion as cooperativa,
+	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
+	p.refpersonal,
+	p.refcooperativas
+	from dbpersonalcooperativas p 
+	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
+	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
+	inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
+	inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativas 
+	where p.refpersonal = ".$idPersonal."
+	order by coo.descripcion"; 
+	
+	$res = $this->query($sql,0); 
+	return $res; 
+} 
+
+
+function traerPersonalcooperativasPorPersonalCooperativaActiva($idPersonal) { 
+	$sql = "select 
+	p.idpersonalcooperativa,
+	per.nrodocumento,
+	per.apellido,
+	per.nombre,
+	coo.descripcion as cooperativa,
+	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
+	p.refpersonal,
+	p.refcooperativas
+	from dbpersonalcooperativas p 
+	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
+	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
+	inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
+	inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativas 
+	where p.refpersonal = ".$idPersonal." and coo.activo = 1
+	order by coo.descripcion"; 
+	
+	$res = $this->query($sql,0); 
+	return $res; 
+} 
+
+
+function traerPersonalcooperativasPorPersonalCooperativaInactiva($idPersonal) { 
+	$sql = "select 
+	p.idpersonalcooperativa,
+	per.nrodocumento,
+	per.apellido,
+	per.nombre,
+	coo.descripcion as cooperativa,
+	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
+	p.refpersonal,
+	p.refcooperativas
+	from dbpersonalcooperativas p 
+	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
+	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
+	inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
+	inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativas 
+	where p.refpersonal = ".$idPersonal." and coo.activo = 0
+	order by coo.descripcion"; 
+	
+	$res = $this->query($sql,0); 
+	return $res; 
+}
+
+
+function traerPersonalcooperativasPorCooperativa($idCooperativa) { 
+	$sql = "select 
+	p.idpersonalcooperativa,
+	per.nrodocumento,
+	per.apellido,
+	per.nombre,
+	coo.descripcion as cooperativa,
+	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
+	p.refpersonal,
+	p.refcooperativas
+	from dbpersonalcooperativas p 
+	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
+	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
+	inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
+	inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativas 
+	where coo.idcooperativa = ".$idCooperativa."
+	order by per.apellido,	per.nombre"; 
+	
+	$res = $this->query($sql,0); 
+	return $res; 
+} 
+
+
+function traerPersonalcooperativasPorId($id) { 
+$sql = "select idpersonalcooperativa,refpersonal,refcooperativas from dbpersonalcooperativas where idpersonalcooperativa =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+/* Fin */
+/* /* Fin de la Tabla: dbpersonalcooperativas*/
+
 
 /* PARA Personalcargos */
+function existeCargo($refpersonal,$reffunciones) {
+	$sql = "select idpersonalcargo from dbpersonalcargos where refpersonal=".$refpersonal." and reffunciones=".$reffunciones." and (fechabaja is null or fechabaja > now())";
+	$res = $this->query($sql,0); 
+	
+	if (mysql_num_rows($res)>0) {
+		return 1;	
+	}
+	
+	return 0;
+}
+
 
 function insertarPersonalcargos($refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi) { 
 $sql = "insert into dbpersonalcargos(idpersonalcargo,refpersonal,reftiposcargos,reffunciones,fechaalta,fechabaja,fechabajatentativa,puntos,monto,fechacrea,usuacrea,fechamodi,usuamodi) 
@@ -1171,19 +1333,19 @@ return $res;
 function traerPersonalcargosPorPersonaTodos($idPersona) { 
 $sql = "select 
 p.idpersonalcargo,
-per.apellido,
-per.nombre,
-per.nrodocumento,
 tip.cargo,
 coo.descripcion,
-o.nombre as obra,
-di.dia,
-fu.horario,
 p.fechaalta,
 p.fechabaja,
 p.fechabajatentativa,
 p.puntos,
 p.monto,
+o.nombre as obra,
+fu.horario,
+di.dia,
+per.apellido,
+per.nombre,
+per.nrodocumento,
 p.fechacrea,
 p.usuacrea,
 p.fechamodi,
@@ -1197,7 +1359,7 @@ inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento
 inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
 inner join tbtiposcargos tip ON tip.idtipocargo = p.reftiposcargos 
 inner join dbfunciones fu ON fu.idfuncion = p.reffunciones
-inner join dbcooperativas coo ON coo.idcooperativa = fu.refcooperativa
+inner join dbcooperativas coo ON coo.idcooperativa = fu.refcooperativas
 inner join dbobras o ON o.idobra = fu.refobras
 inner join tbdias di ON di.iddia = fu.refdias
 where per.idpersonal = ".$idPersona."
@@ -1236,7 +1398,7 @@ inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento
 inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
 inner join tbtiposcargos tip ON tip.idtipocargo = p.reftiposcargos 
 inner join dbfunciones fu ON fu.idfuncion = p.reffunciones
-inner join dbcooperativas coo ON coo.idcooperativa = fu.refcooperativa
+inner join dbcooperativas coo ON coo.idcooperativa = fu.refcooperativas
 inner join dbobras o ON o.idobra = fu.refobras
 inner join tbdias di ON di.iddia = fu.refdias
 where per.idpersonal = ".$idPersona." and (fechabaja is null or fechabaja > now() or fechabaja = '0000-00-00')
