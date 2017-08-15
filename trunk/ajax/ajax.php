@@ -166,6 +166,11 @@ break;
 case 'eliminarObras': 
 eliminarObras($serviciosReferencias); 
 break; 
+
+case 'traerSaldoPuntosObras':
+	traerSaldoPuntosObras($serviciosReferencias);
+	break;
+
 case 'insertarObrascooperativas': 
 insertarObrascooperativas($serviciosReferencias); 
 break; 
@@ -1388,6 +1393,14 @@ function eliminarGastosobras($serviciosReferencias) {
 	echo $res; 
 } 
 
+
+function traerSaldoPuntosObras($serviciosReferencias) {
+	$idObra =	$_POST['idobra']; 
+	
+	$res = $serviciosReferencias->traerSaldoPuntosObras($idObra); 
+	
+	echo $res; 
+}
  
 function insertarObras($serviciosReferencias) { 
 	$nombre = $_POST['nombre']; 
@@ -1591,13 +1604,25 @@ function modificarPersonalcargos($serviciosReferencias) {
 	$fechamodi = $_POST['fechamodi']; 
 	$usuamodi = $_POST['usuamodi']; 
 	
-	$res = $serviciosReferencias->modificarPersonalcargos($id,$refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi); 
+	$resCargo = $serviciosReferencias->traerPersonalcargosPorId($id);
 	
-	if ($res == true) { 
-		echo ''; 
-	} else { 
-		echo 'Hubo un error al modificar datos'; 
-	} 
+	if (mysql_result($resCargo,0,'reffunciones') == $reffunciones) {
+		$existe = 0;	
+	} else {
+		$existe = $serviciosReferencias->existeCargo($refpersonal,$reffunciones);
+	}
+	
+	if ($existe == 0) {
+		$res = $serviciosReferencias->modificarPersonalcargos($id,$refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi); 
+		
+		if ($res == true) { 
+			echo ''; 
+		} else { 
+			echo 'Hubo un error al modificar datos'; 
+		} 
+	} else {
+		echo 'Ya existe el cargo para esa funcion'; 	
+	}
 } 
 
 

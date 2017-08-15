@@ -1029,7 +1029,8 @@ function traerObrascooperativasPorObra($idObra) {
 $sql = "select 
 o.idobracooperativa,
 o.refobras,
-o.refcooperativas
+o.refcooperativas,
+coo.puntos
 from dbobrascooperativas o 
 inner join dbobras obr ON obr.idobra = o.refobras 
 inner join tbsalas sa ON sa.idsala = obr.refsalas 
@@ -1279,6 +1280,28 @@ function existeCargo($refpersonal,$reffunciones) {
 }
 
 
+function traerSaldoPuntosObras($idObra) {
+	$sql = "select (coo.puntos - sum(pc.puntos)) as saldo
+				from dbpersonalcargos pc 
+				inner join dbfunciones ff on ff.idfuncion = pc.reffunciones 
+				inner join dbobras o ON o.idobra = ff.refobras 
+				inner join dbpersonal p ON p.idpersonal = pc.refpersonal and (pc.fechabaja is null or pc.fechabaja > now())
+				inner join dbobrascooperativas oc ON oc.refobras = o.idobra
+				inner join dbcooperativas coo ON coo.idcooperativa = oc.refcooperativas
+				where o.idobra = ".$idObra."
+				group by coo.puntos";	
+	
+	$res = $this->query($sql,0); 
+				
+	if (mysql_num_rows($res)>0) {
+		return mysql_result($res,0,0);	
+	}
+	
+	$cooperativa = $this->traerObrascooperativasPorObra($idObra);
+	
+	return mysql_result($cooperativa,0,'puntos');
+}
+
 function insertarPersonalcargos($refpersonal,$reftiposcargos,$reffunciones,$fechaalta,$fechabaja,$fechabajatentativa,$puntos,$monto,$fechacrea,$usuacrea,$fechamodi,$usuamodi) { 
 $sql = "insert into dbpersonalcargos(idpersonalcargo,refpersonal,reftiposcargos,reffunciones,fechaalta,fechabaja,fechabajatentativa,puntos,monto,fechacrea,usuacrea,fechamodi,usuamodi) 
 values ('',".$refpersonal.",".$reftiposcargos.",".$reffunciones.",".($fechaalta == '' ? NULL : "'".$fechaalta."'").",".($fechabaja == '' ? 'NULL' : "'".$fechabaja."'").",".($fechabajatentativa == '' ? 'NULL' : "'".$fechabajatentativa."'").",".$puntos.",".$monto.",'".utf8_decode($fechacrea)."','".utf8_decode($usuacrea)."','".utf8_decode($fechamodi)."','".utf8_decode($usuamodi)."')"; 
@@ -1415,7 +1438,7 @@ return $res;
 } 
 
 function traerPersonalcargosPorPersona($idPersona) { 
-$sql = "select idpersonalcargo,refpersonal,reftiposcargos,refcooperativa,fechaalta,fechabaja,fechabajatentativa,puntos,monto,fechacrea,usuacrea,fechamodi,usuamodi from dbpersonalcargos where refpersonal =".$idPersona; 
+$sql = "select idpersonalcargo,refpersonal,reftiposcargos,reffunciones,fechaalta,fechabaja,fechabajatentativa,puntos,monto,fechacrea,usuacrea,fechamodi,usuamodi from dbpersonalcargos where refpersonal =".$idPersona; 
 $res = $this->query($sql,0); 
 return $res; 
 } 

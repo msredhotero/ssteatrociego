@@ -50,8 +50,8 @@ $tituloWeb = "Gestión: Teatro Ciego";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpersonalcargos";
 
-$lblCambio	 	= array("refpersonal","reftiposcargos","refcooperativa","fechaalta","fechabaja","fechabajatentativa");
-$lblreemplazo	= array("Persona","Tipo Cargo","Cooperativas","Fecha Alta","Fecha Baja","Fecha Baja Tentativa");
+$lblCambio	 	= array("refpersonal","reftiposcargos","reffunciones","fechaalta","fechabaja","fechabajatentativa");
+$lblreemplazo	= array("Persona","Tipo Cargo","Funciones","Fecha Alta","Fecha Baja","Fecha Baja Tentativa");
 
 $resPersona	=	$serviciosReferencias->traerPersonalPorId(mysql_result($resResultado,0,'refpersonal'));
 $cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resPersona,array(3,4),', ', mysql_result($resResultado,0,'refpersonal'));
@@ -59,11 +59,11 @@ $cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resPersona,array(3,4),
 $resTipoC	=	$serviciosReferencias->traerTiposcargos();
 $cadRef2 	= 	$serviciosFunciones->devolverSelectBoxActivo($resTipoC,array(1),'', mysql_result($resResultado,0,'reftiposcargos'));
 
-$resCoopera	=	$serviciosReferencias->traerCooperativas();
-$cadRef3 	= 	$serviciosFunciones->devolverSelectBoxActivo($resCoopera,array(1),'', mysql_result($resResultado,0,'refcooperativa'));
+$resFunciones	=	$serviciosReferencias->traerFunciones();
+$cadRef3 	= 	$serviciosFunciones->devolverSelectBoxActivo($resFunciones,array(3,4,5),' - ', mysql_result($resResultado,0,'reffunciones'));
 
 $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
-$refCampo 	=  array("refpersonal","reftiposcargos","refcooperativa");
+$refCampo 	=  array("refpersonal","reftiposcargos","reffunciones");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 if (mysql_num_rows($resResultado)>0) {
@@ -221,7 +221,7 @@ $(document).ready(function(){
 	
 	$('.volver').click(function(event){
 		 
-		url = "index.php";
+		url = "cargos.php?id="+<?php echo mysql_result($resResultado,0,'refpersonal'); ?>;
 		$(location).attr('href',url);
 	});//fin del boton modificar
 	

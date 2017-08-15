@@ -160,6 +160,9 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<form class="form-inline formulario" role="form">
         	
 			<div class="row">
+            	<div id="puntosobras" style="margin-left:15px;">
+                	
+                </div>
 			<?php echo $formulario; ?>
             </div>
             
@@ -265,41 +268,41 @@ $(document).ready(function(){
 
 	 $( "#dialog2" ).dialog({
 		 	
-			    autoOpen: false,
-			 	resizable: false,
-				width:600,
-				height:240,
-				modal: true,
-				buttons: {
-				    "Eliminar": function() {
-	
-						$.ajax({
-									data:  {id: $('#idEliminar').val(), accion: '<?php echo $eliminar; ?>'},
-									url:   '../../ajax/ajax.php',
-									type:  'post',
-									beforeSend: function () {
-											
-									},
-									success:  function (response) {
-											url = "cargos.php?id="<?php echo $id; ?>;
-											$(location).attr('href',url);
-											
-									}
-							});
-						$( this ).dialog( "close" );
-						$( this ).dialog( "close" );
-							$('html, body').animate({
-	           					scrollTop: '1000px'
-	       					},
-	       					1500);
-				    },
-				    Cancelar: function() {
-						$( this ).dialog( "close" );
-				    }
+			autoOpen: false,
+			resizable: false,
+			width:600,
+			height:240,
+			modal: true,
+			buttons: {
+				"Eliminar": function() {
+
+					$.ajax({
+								data:  {id: $('#idEliminar').val(), accion: '<?php echo $eliminar; ?>'},
+								url:   '../../ajax/ajax.php',
+								type:  'post',
+								beforeSend: function () {
+										
+								},
+								success:  function (response) {
+										url = "cargos.php?id="+<?php echo $id; ?>;
+										$(location).attr('href',url);
+										
+								}
+						});
+					$( this ).dialog( "close" );
+					$( this ).dialog( "close" );
+						$('html, body').animate({
+							scrollTop: '1000px'
+						},
+						1500);
+				},
+				Cancelar: function() {
+					$( this ).dialog( "close" );
 				}
-		 
-		 
-	 		}); //fin del dialogo para eliminar
+			}
+	 
+	 
+		}); //fin del dialogo para eliminar
 	
 
 
