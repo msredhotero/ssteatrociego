@@ -950,6 +950,19 @@ function traerValorEntrada($idObra) {
 	return $res; 
 }
 
+function traerValorEntradaPorFuncion($idFuncion) {
+	$sql = "select
+				o.valorentrada
+			from		dbfunciones f
+			inner
+			join		dbobras o
+			ON			o.idobra = f.refobras
+			
+			where		f.idfuncion = ".$idFuncion; 
+	$res = $this->existeDevuelveId($sql); 
+	return $res; 
+}
+
 /* Fin */
 /* /* Fin de la Tabla: dbobras*/
 
@@ -1267,6 +1280,53 @@ return $res;
 /* /* Fin de la Tabla: dbpersonalcooperativas*/
 
 
+/*			PARA EL PLANTEL DE LAS COOPERATIVAS   			*/
+function traerPlantelPorFuncion($idFuncion) {
+	$sql = "select
+				p.idpersonal, p.nrodocumento, p.apellido, p.nombre, COALESCE( pc.puntos,0) as puntos
+			from		dbfunciones f
+			inner
+			join		dbobras o
+			ON			o.idobra = f.refobras
+			inner
+			join		dbobrascooperativas co
+			on			co.refobras = o.idobra
+			inner
+			join		dbpersonalcooperativas pco
+			on			pco.refcooperativas = co.refcooperativas
+			inner
+			join		dbpersonal p
+			on			p.idpersonal = pco.refpersonal
+			left
+			join		dbpersonalcargos pc
+			on			pc.reffunciones = f.idfuncion and pc.refpersonal = p.idpersonal and (fechabaja is null or fechabaja > now())
+			where		f.idfuncion = ".$idFuncion." 
+			order by p.apellido, p.nombre";	
+	$res = $this->query($sql,0); 
+	return $res;
+}
+
+function traerPlantelConCargosPorFuncion($idFuncion) {
+	$sql = "select
+				p.idpersonal, p.nrodocumento, p.apellido, p.nombre, pc.puntos
+			from		dbfunciones f
+			inner
+			join		dbobras o
+			ON			o.idobra = f.refobras
+			inner
+			join		dbpersonalcargos pc
+			on			pc.reffunciones = f.idfuncion
+			inner
+			join		dbpersonal p
+			on			pc.refpersonal = p.idpersonal and (fechabaja is null or fechabaja > now())
+			where		f.idfuncion = ".$idFuncion." 
+			order by p.apellido, p.nombre";	
+	$res = $this->query($sql,0); 
+	return $res;
+}
+
+/*			FIN  											*/
+
 /* PARA Personalcargos */
 function existeCargo($refpersonal,$reffunciones) {
 	$sql = "select idpersonalcargo from dbpersonalcargos where refpersonal=".$refpersonal." and reffunciones=".$reffunciones." and (fechabaja is null or fechabaja > now())";
@@ -1550,6 +1610,21 @@ function traerDescuentoMontoCategorias($idCategorias) {
 	$res = $this->existeDevuelveId($sql); 
 	return $res; 
 }
+
+function traerCategoriasPorFuncion($idFuncion) {
+	$sql = "select
+				c.idcategoria,c.descripcion, c.porcentaje, c.monto, c.pocentajeretenido
+			from		dbfunciones f
+			inner
+			join		dbobras o
+			ON			o.idobra = f.refobras
+			inner
+			join		dbcategorias c
+			on			o.idobra = c.refobras
+			where		f.idfuncion =".$idFuncion; 
+	$res = $this->query($sql,0); 
+	return $res;
+}
 /* Fin */
 /* /* Fin de la Tabla: dbcategorias*/
 
@@ -1636,6 +1711,22 @@ function traerDescuentoMontoPromociones($idPromo) {
 	return $res; 
 }
 
+
+function traerPromosObrasPorFuncion($idFuncion) {
+	$sql = "select
+			p.idpromoobra,p.descripcion, p.porcentaje, p.monto
+			from		dbfunciones f
+			inner
+			join		dbobras o
+			ON			o.idobra = f.refobras
+			inner
+			join		dbpromosobras p
+			on			o.idobra = p.refobras and (p.vigenciadesde <= now() and p.vigenciahasta >= now() or (p.vigenciahasta = '0000-00-00' or p.vigenciahasta is null))
+			where		f.idfuncion =".$idFuncion; 
+	$res = $this->query($sql,0); 
+	return $res;
+
+}
 /* Fin */
 /* /* Fin de la Tabla: dbpromosobras*/
 

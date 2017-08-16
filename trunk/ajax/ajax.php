@@ -331,11 +331,26 @@ case 'traerCategoriasPromocionesPorObras':
 	traerCategoriasPromocionesPorObras($serviciosReferencias, $serviciosFunciones);
 break;
 
+case 'traerPromosObrasPorFuncion':
+	traerPromosObrasPorFuncion($serviciosReferencias);
+	break;
+case 'traerCategoriasPorFuncion':
+	traerCategoriasPorFuncion($serviciosReferencias);
+	break;
+case 'traerPlantelConCargosPorFuncion':
+	traerPlantelConCargosPorFuncion($serviciosReferencias);
+	break;	
+case 'traerPlantelPorFuncion':
+	traerPlantelPorFuncion($serviciosReferencias);
+	break;	
 ////////////////////////////////*****    FIN AUTO-COMPLETAR   *******/////////////////////////////////////
 
 ////////////////////////////////*****    Solo para que traigan valores   *******/////////////////////////////////////
 case 'traerValorEntrada':
 	traerValorEntrada($serviciosReferencias, $serviciosFunciones);
+	break;
+case 'traerValorEntradaPorFuncion':
+	traerValorEntradaPorFuncion($serviciosReferencias, $serviciosFunciones);
 	break;
 case 'traerDescuentoCategoria':
 	traerDescuentoCategoria($serviciosReferencias, $serviciosFunciones);
@@ -525,6 +540,87 @@ function traerTotal($serviciosReferencias) {
 	echo round($cantidad * $total,2,PHP_ROUND_HALF_UP);
 }
 
+
+function traerCategoriasPorFuncion($serviciosReferencias) {
+	$idfuncion		=	$_POST['id'];
+	
+	$res	=	$serviciosReferencias->traerCategoriasPorFuncion($idfuncion);
+	
+	$cad = '';
+	while ($row = mysql_fetch_array($res)) {
+		$cad .= '<div class="form-group col-md-4 col-xs-6" style="display:block">
+                        <label for="vigenciadesde" class="control-label" style="text-align:left">'.$row['descripcion'].'</label>
+                        <div class="input-group col-md-12 col-xs-12">
+                            <input class="form-control" name="categoria'.$row[0].'" id="categoria'.$row[0].'" type="text" value="0"/>
+                        </div>
+                        
+                    </div>';
+	}
+	
+	echo $cad;
+}
+
+
+function traerPromosObrasPorFuncion($serviciosReferencias) {
+	$idfuncion		=	$_POST['id'];
+	
+	$res	=	$serviciosReferencias->traerPromosObrasPorFuncion($idfuncion);
+	
+	$cad = '';
+	while ($row = mysql_fetch_array($res)) {
+		$cad .= '<div class="form-group col-md-4 col-xs-6" style="display:block">
+                        <label for="vigenciadesde" class="control-label" style="text-align:left">'.$row['descripcion'].'</label>
+                        <div class="input-group col-md-12 col-xs-12">
+                            <input class="form-control" name="promo'.$row[0].'" id="promo'.$row[0].'" type="text" value="0"/>
+                        </div>
+                        
+                    </div>';
+	}
+	
+	echo $cad;
+}
+
+
+function traerPlantelPorFuncion($serviciosReferencias) {
+	$idfuncion		=	$_POST['id'];
+	
+	$res	=	$serviciosReferencias->traerPlantelPorFuncion($idfuncion);
+	
+	$cad = '';
+	while ($row = mysql_fetch_array($res)) {
+		$cad .= '<div class="form-group col-md-6 col-xs-8" style="display:block">
+                        
+                        <div class="input-group col-md-12 col-xs-12">
+							<span class="input-group-addon">'.$row['apellido'].' '.$row['nombre'].' - Nro. Documento: '.$row['nrodocumento'].'</span> 
+                            <input class="form-control" name="plantel'.$row[0].'" id="plantel'.$row[0].'" type="text" value="'.$row['puntos'].'"/>
+                        </div>
+                        
+                    </div>';
+	}
+	
+	echo $cad;
+}
+
+
+function traerPlantelConCargosPorFuncion($serviciosReferencias) {
+	$idfuncion		=	$_POST['id'];
+	
+	$res	=	$serviciosReferencias->traerPlantelConCargosPorFuncion($idfuncion);
+	
+	$cad = '';
+	while ($row = mysql_fetch_array($res)) {
+		$cad .= '<div class="form-group col-md-6 col-xs-8" style="display:block">
+                        
+                        <div class="input-group col-md-12 col-xs-12">
+							<span class="input-group-addon">'.$row['apellido'].' '.$row['nombre'].' - Nro. Documento: '.$row['nrodocumento'].'</span> 
+                            <input class="form-control" name="plantel'.$row[0].'" id="plantel'.$row[0].'" type="text" value="'.$row['puntos'].'"/>
+                        </div>
+                        
+                    </div>';
+	}
+	
+	echo $cad;
+}
 ////////////////////////////////*****    FIN AUTO-COMPLETAR   *******/////////////////////////////////////
 
 ////////////////////////////////*****    Solo para que traigan valores   *******/////////////////////////////////////
@@ -532,6 +628,12 @@ function traerValorEntrada($serviciosReferencias) {
 	$id		=	$_POST['id'];
 	
 	echo $serviciosReferencias->traerValorEntrada($id);
+}
+
+function traerValorEntradaPorFuncion($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	echo $serviciosReferencias->traerValorEntradaPorFuncion($id);
 }
 
 function traerDescuentoPorcentualCategorias($serviciosReferencias) {

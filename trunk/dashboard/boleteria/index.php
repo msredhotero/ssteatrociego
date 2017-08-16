@@ -81,9 +81,9 @@ $cabeceras2 		= "	<th>Numero</th>
 
 
 $lstTipoPago  = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerTipopago(),array(1),'');
-$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerObras(),array(1,3),' - Valor Entrada:');
+$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFunciones(),array(3,4,5),' - ');
 
-$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),13);
+//$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),13);
 
 
 
@@ -147,6 +147,26 @@ if ($_SESSION['refroll_predio'] != 1) {
 		}
 	</style>
     
+    <style>
+   	.dropdown-menu {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index:999999999999;
+ }
+	.clickable{
+    cursor: pointer;   
+	}
+	
+	.panel-heading span {
+		margin-top: -20px;
+		font-size: 15px;
+	}
+	
+
+	
+   </style>
+    
  
 </head>
 
@@ -166,103 +186,163 @@ if ($_SESSION['refroll_predio'] != 1) {
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
             
-        
-            <div class="row">
-				<div class="form-group col-md-6" style="display:block">
-                	<label class="control-label" for="codigobarra" style="text-align:left">Función <span style="color:#F00;">*</span></label>
-                    <div class="input-group col-md-12">
-	                    <select data-placeholder="selecione la Obra..." id="refobras" name="refobras" class="chosen-select" tabindex="2" style="width:100%;">
-                            
-                            <?php echo $lstFunciones; ?>
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-4" style="display:block">
-                	<label class="control-label" for="codigobarra" style="text-align:left">Tipo Pago <span style="color:#F00;">*</span></label>
-                    <div class="input-group col-md-12">
-	                    <select data-placeholder="selecione el Tipo de Pago..." id="reftipopago" name="reftipopago" class="chosen-select" tabindex="2" style="width:100%;">
-                            
-                            <?php echo $lstTipoPago; ?>
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-2 col-xs-4" style="display:block">
-                    <label for="vigenciadesde" class="control-label" style="text-align:left">Fecha</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                        <input class="form-control" name="fecha" id="fecha" type="text" value="<?php echo date('Y-m-d'); ?>"/>
+        	<div class='row' style="margin-left:25px; margin-right:25px;">
+				<div class="panel panel-primary panel1">
+				<div class="panel-heading">
+					<h3 class="panel-title">Paso 1</h3>
+					<span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+				</div>
+                <div class="panel-body" id="primero">
+                	<div class="form-group col-md-6" style="display:block">
+                        <label class="control-label" for="codigobarra" style="text-align:left">Función <span style="color:#F00;">*</span></label>
+                        <div class="input-group col-md-12">
+                            <select data-placeholder="selecione la Función..." id="reffunciones" name="reffunciones" class="form-control" tabindex="2">
+                                
+                                <?php echo $lstFunciones; ?>
+                            </select>
+                        </div>
                     </div>
                     
-                </div>
+                    <div class="form-group col-md-2 col-xs-4" style="display:block">
+                        <label for="vigenciadesde" class="control-label" style="text-align:left">Fecha</label>
+                        <div class="input-group col-md-12 col-xs-12">
+                            <input class="form-control" name="fecha" id="fecha" type="text" value="<?php echo date('Y-m-d'); ?>"/>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="form-group col-md-2 col-xs-4" style="display:block">
+                        <label for="vigenciadesde" class="control-label" style="text-align:left">Nro Venta</label>
+                        <div class="input-group col-md-12 col-xs-12">
+                            <input class="form-control" readonly name="numero" id="numero" type="text" value="<?php echo $serviciosReferencias->generarNroVenta(); ?>"/>
+                        </div>
+                        
+                    </div>
+                    
+                    
+                    <div class="form-group col-md-2 col-xs-4" style="display:block">
+                        <label for="vigenciadesde" class="control-label" style="text-align:left">Valor Entrada</label>
+                        <div class="input-group col-md-12 col-xs-12">
+                            <input class="form-control" readonly name="valorentrada" id="valorentrada" type="text" value="0"/>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="form-group col-md-2 col-xs-4" style="display:block">
+                    	<button type="button" class="btn btn-succes" id="siguiente1" style="margin-left:0px;">Siguiente</button>
+                    </div>
+                    
+				</div>
             </div>
-            <div class="row">
-                <div class="form-group col-md-2" style="display:block">
-                	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
-                    <div class="input-group col-md-12">
-	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required type="number" value="1">
-                    </div>
-                </div>
-                
-                <div class="form-group col-md-5" style="display:block">
-                	<label class="control-label" for="codigobarra" style="text-align:left">Album</label>
-                    <div class="input-group col-md-12">
-	                    <select data-placeholder="selecione el Album..." id="refalbum" name="refalbum" class="form-control" />
-                            
-                            
-                        </select>
-                    </div>
-                </div>
-                
-                
-                <div class="form-group col-md-5" style="display:block">
-                	<label class="control-label" for="codigobarra" style="text-align:left">Categorias - Promociones</label>
-                    <div class="input-group col-md-12">
-	                    <select placeholder="selecione la Categoria..." id="refcategoriaspromociones" name="refcategoriaspromociones" class="form-control" />
-                            
-                            
-                        </select>
-                    </div>
-                </div>
-                
-                
-                
-                
-                <div class="row" style="margin-top:15px;">
-                <hr>
-                <div class="col-md-12">
-                <ul class="list-inline" style="margin-left:15px;margin-top:15px;">
-                    <li>
-                    	Total:
-                    </li>
-                    <li>
-						<input id="total" style="padding:12px; font-size:1.5em; width:150px;" name="total" placeholder="Paga con..." readonly required type="text" value="0">
-                    </li>
-                    <li>
-                    	Paga con:
-                    </li>
-                    <li>
-						<input id="paga" style="padding:12px; font-size:1.5em; width:150px;" name="paga" placeholder="Paga con..." required type="text" value="0">
-                    </li>
-                    <li>
-                    	Su vuelto:
-                    </li>
-                    <li>
-						<input id="vuelto" style="padding:12px; font-size:1.5em; width:150px;" name="vuelto" readonly placeholder="Su vuelto..." required type="text" value="0">
-                    </li>
-                    
-                </ul>
-                </div>
-                <div class="form-group col-md-12 col-xs-12" style="display:block; padding-left:35px; padding-right:35px;">
-                    <label for="observacionces" class="control-label" style="text-align:left">Observaciones</label>
-                    <div class="input-group col-md-12 col-xs-12">
-                        <textarea type="text" rows="5" cols="6" class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese las Observaciones..." required=""></textarea>
+            
+            
+            <div class='row panel2' style="margin-left:0px; margin-right:0px; display:none;">
+				<div class="panel panel-default" id="panel2">
+				<div class="panel-heading">
+					<h3 class="panel-title">Paso 2 (Cuponeras - Album)</h3>
+					<span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+				</div>
+                <div class="panel-body collapse" id="segundo">
+                    <div class="form-group col-md-4" style="display:block">
+                        <label class="control-label" for="codigobarra" style="text-align:left">Cantidad Entradas</label>
+                        <div class="input-group col-md-12">
+                            <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required type="number" value="1">
+                        </div>
                     </div>
                     
-                </div>
+                    
+                    
+                    <div id="lstCuponeras">
+                    
+                    
+                    </div>
+                    
+                    <div class="form-group col-md-5" style="display:block">
+                        <label class="control-label" for="codigobarra" style="text-align:left">Album</label>
+                        <div class="input-group col-md-12">
+                            <select data-placeholder="selecione el Album..." id="refalbum" name="refalbum" class="form-control" />
+                                
+                                
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group col-md-2 col-xs-4" style="display:block">
+                    	<button type="button" class="btn btn-succes" id="siguiente2" style="margin-left:0px;">Siguiente</button>
+                    </div>
+                    
+				</div>
             </div>
+            
+            
+            <div class='row panel3' style="margin-left:0px; margin-right:0px;display:none;">
+				<div class="panel panel-default" id="panel3">
+				<div class="panel-heading">
+					<h3 class="panel-title">Paso 3 (Actores)</h3>
+					<span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+				</div>
+                <div class="panel-body collapse" id="tercero">
+                    <div id="lstPersonal">
+                    
+                    
+                    </div>
+                    <div class="form-group col-md-2 col-xs-4" style="display:block">
+                    	<button type="button" class="btn btn-succes" id="siguiente3" style="margin-left:0px;">Siguiente</button>
+                    </div>
+				</div>
+            </div>
+            
+            
+            <div class='row panel4' style="margin-left:0px; margin-right:0px;display:none;">
+				<div class="panel panel-default" id="panel4">
+				<div class="panel-heading">
+					<h3 class="panel-title">Paso 4 (Montos)</h3>
+					<span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+				</div>
+                <div class="panel-body collapse" id="cuarto">
+                    <div class="form-group col-md-4" style="display:block">
+                        <label class="control-label" for="codigobarra" style="text-align:left">Total Efectivo</label>
+                        <div class="input-group col-md-12">
+                        	<span class="input-group-addon">$</span>
+                            <input id="totalefectivo" class="form-control" name="totalefectivo" placeholder="Total Efectivo..." required type="text" value="0">
+                            <span class="input-group-addon">0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group col-md-4" style="display:block">
+                        <label class="control-label" for="codigobarra" style="text-align:left">Total Tarjeta</label>
+                        <div class="input-group col-md-12">
+                        	<span class="input-group-addon">$</span>
+                            <input id="totaltarjeta" class="form-control" name="totaltarjeta" placeholder="Total Tarjeta..." required type="text" value="0">
+                            <span class="input-group-addon">0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group col-md-4" style="display:block">
+                        <label class="control-label" for="codigobarra" style="text-align:left">Total</label>
+                        <div class="input-group col-md-12">
+                        	<span class="input-group-addon">$</span>
+                            <input id="total" class="form-control" name="total" placeholder="Total..." required type="text" value="0">
+                            <span class="input-group-addon">0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group col-md-12" style="display:block">
+                        <label class="control-label" for="codigobarra" style="text-align:left">Observaciones</label>
+                        <div class="input-group col-md-12">
+                            <textarea type="text" rows="5" cols="6" class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese las Observaciones..." required=""></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group col-md-2 col-xs-4" style="display:block">
+                    	<button type="button" class="btn btn-succes" id="siguiente4" style="margin-left:0px;">Siguiente</button>
+                    </div>
+                    
+				</div>
+            </div>
+            
+            
+
             
             </div>
                 
@@ -301,7 +381,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox">
-        	<?php echo $lstVentas; ?>
+        	<?php //echo $lstVentas; ?>
             
     	</div>
     </div>
@@ -331,6 +411,21 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <script type="text/javascript">
 $(document).ready(function(){
+	
+	$(document).on('click', '.panel-heading span.clickable', function(e){
+		var $this = $(this);
+		if(!$this.hasClass('panel-collapsed')) {
+			$this.parents('.panel').find('.panel-body').slideUp();
+			$this.addClass('panel-collapsed');
+			$this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+		} else {
+			$this.parents('.panel').find('.panel-body').slideDown();
+			$this.removeClass('panel-collapsed');
+			$this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+		}
+	});
+	
+	
 	var table = $('#example').dataTable({
 		"order": [[ 0, "asc" ]],
 		"language": {
@@ -358,59 +453,7 @@ $(document).ready(function(){
 		  }
 	} );
 	
-	$('#paga').change(function(e) {
-        $('#vuelto').val(($(this).val() - $('#total').val()).toFixed(2));
-    });
 	
-	
-	function devolverPosicionPromos() {
-		var i = 0;
-		$("#refcategoriaspromociones").each(function(){
-
-			$(this).children("option").each(function(){
-				i = i + 1;
-				if ( $(this).html() == '--- Promociones ---') {
-						
-					return false;
-				}
-				
-			});
-		});	
-		return i;
-	}
-	
-	$('#refcategoriaspromociones').change(function() {
-		var indiceSelect = $(this).prop('selectedIndex');
-		var idDescuento = 0;
-
-		idDescuento = $('#refcategoriaspromociones option:eq('+indiceSelect+')').val();	
-		if ((indiceSelect + 1) > devolverPosicionPromos()) {
-			//voy por las promociones
-			generarTotal(idDescuento, 2, $('#refobras').val(), $('#cantidadbuscar').val());
-			$('#refpromosobras').val(idDescuento);
-			$('#refcategorias').val(0);
-		} else {
-			//voy por las categorias
-			generarTotal(idDescuento, 1, $('#refobras').val(), $('#cantidadbuscar').val());
-			$('#refpromosobras').val(0);
-			$('#refcategorias').val(idDescuento);
-		}
-	});
-	
-	$('#cantidadbuscar').change(function() {
-		var indiceSelect = $('#refcategoriaspromociones').prop('selectedIndex');
-		var idDescuento = 0;
-
-		idDescuento = $('#refcategoriaspromociones option:eq('+indiceSelect+')').val();	
-		if ((indiceSelect + 1) > devolverPosicionPromos()) {
-			//voy por las promociones
-			generarTotal(idDescuento, 2, $('#refobras').val(), $('#cantidadbuscar').val());
-			
-		} else {
-			//voy por las categorias
-			generarTotal(idDescuento, 1, $('#refobras').val(), $('#cantidadbuscar').val());
-		}
-	});
 	
 	$('#fechacreacion').val('<?php echo date('Y-m-d'); ?>');
 	$('#fechamodi').val('');
@@ -446,14 +489,29 @@ $(document).ready(function(){
 	
 	function traerAutocomplete(idObra, funcion, contenedor) {
 		$.ajax({
-			data:  {idObra: idObra, accion: funcion},
+			data:  {id: idObra, accion: funcion},
 					url:   '../../ajax/ajax.php',
 					type:  'post',
 			beforeSend: function () {
 			
 			},
 			success:  function (response) {
-				$('#'+contenedor).html(response);
+				$('#'+contenedor).append(response);
+			
+			}
+		});		
+	}
+	
+	function traerAutocompleteVal(idObra, funcion, contenedor) {
+		$.ajax({
+			data:  {id: idObra, accion: funcion},
+					url:   '../../ajax/ajax.php',
+					type:  'post',
+			beforeSend: function () {
+			
+			},
+			success:  function (response) {
+				$('#'+contenedor).val(response);
 			
 			}
 		});		
@@ -477,28 +535,103 @@ $(document).ready(function(){
 			}
 		});		
 	}
+	
+	$('#siguiente1').click(function(e) {
 
-	$('#refobras').change(function() {
-		traerAutocomplete($(this).val(), 'traerCategoriasPromocionesPorObras', 'refcategoriaspromociones');
-		traerAutocomplete($(this).val(), 'traerAlbumPorObras', 'refalbum');	
+        $(this).removeClass('btn-primary').addClass('btn-success');
+		$('.panel2').show();
+		$('#panel2').removeClass('panel-default').addClass('panel-primary');
+		$('.panel1').removeClass('panel-primary').addClass('panel-success');
+		
+		$('#panel2').find('.panel-body').slideDown();
+		$('#panel2').removeClass('panel-collapsed');
+		$('#panel2').find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+			
+		
+    });
+	
+	
+	$('#siguiente2').click(function(e) {
+
+        $(this).removeClass('btn-primary').addClass('btn-success');
+		$('.panel3').show();
+		$('#panel3').removeClass('panel-default').addClass('panel-primary');
+		$('#panel2').removeClass('panel-primary').addClass('panel-success');
+		
+		$(this).parents('.panel').find('.panel-body').slideUp();
+		$(this).addClass('panel-collapsed');
+		$(this).find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+		
+		
+		$('#panel3').find('.panel-body').slideDown();
+		$('#panel3').removeClass('panel-collapsed');
+		$('#panel3').find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+    });
+	
+	
+	$('#siguiente3').click(function(e) {
+
+        $(this).removeClass('btn-primary').addClass('btn-success');
+		$('.panel4').show();
+		$('#panel4').removeClass('panel-default').addClass('panel-primary');
+		$('#panel3').removeClass('panel-primary').addClass('panel-success');
+		
+		$(this).parents('.panel').find('.panel-body').slideUp();
+		$(this).addClass('panel-collapsed');
+		$(this).find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+		
+		$('#panel4').find('.panel-body').slideDown();
+		$('#panel4').removeClass('panel-collapsed');
+		$('#panel4').find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+    });
+	
+	
+	$('#siguiente4').click(function(e) {
+		$(this).removeClass('btn-primary').addClass('btn-success');
+
+		$('#panel4').removeClass('panel-primary').addClass('panel-success');
+		
+		$(this).parents('.panel').find('.panel-body').slideUp();
+		$(this).addClass('panel-collapsed');
+		$(this).find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+		
+		$('#cargar').show();	
+	});
+	
+	$('#reffunciones').change(function() {
+		
+		$('.panel2').hide();
+		$('.panel3').hide();
+		$('.panel4').hide();
+		
+		$('#siguiente1').removeClass('btn-success').addClass('btn-primary');
+		$('#siguiente2').removeClass('btn-success').addClass('btn-primary');
+		$('#siguiente3').removeClass('btn-success').addClass('btn-primary');
+		$('#siguiente4').removeClass('btn-success').addClass('btn-primary');
+		
+		$('#panel2').removeClass('panel-success').addClass('panel-primary');
+		$('#panel3').removeClass('panel-success').addClass('panel-primary');
+		$('#panel4').removeClass('panel-success').addClass('panel-primary');
+		
+		$('#cargar').hide();
+		
+		$('#lstCuponeras').html('');
+		$('#lstPersonal').html('');
+		
+		//cuponeras y promos		
+		traerAutocomplete($(this).val(), 'traerCategoriasPorFuncion', 'lstCuponeras');
+		traerAutocomplete($(this).val(), 'traerPromosObrasPorFuncion', 'lstCuponeras');	
+
+		//valor entrada
+		traerAutocompleteVal($(this).val(), 'traerValorEntradaPorFuncion', 'valorentrada');
+		
+		//personal
+		traerAutocomplete($(this).val(), 'traerPlantelPorFuncion', 'lstPersonal');	
+		
 		$('#total').val(0);
-		$('#paga').val(0);
-		$('#vuelto').val(0);
-		
-		$.ajax({
-			data:  {id: $(this).val(),
-					accion: 'traerValorEntrada'},
-					url:   '../../ajax/ajax.php',
-					type:  'post',
-			beforeSend: function () {
-			
-			},
-			success:  function (response) {
-				$('#total').val(response);
-			
-			}
-		});	
-		
+		$('#totalefectivo').val(0);
+		$('#totaltarjeta').val(0);
+
 	});
 	
 
