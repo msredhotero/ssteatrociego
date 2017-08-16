@@ -53,7 +53,6 @@ $refCampo 	=  array();
 
 
 
-
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
 $cabeceras 		= "	<th>Descripcion</th>
 					<th>Obra</th>
@@ -63,16 +62,16 @@ $cabeceras 		= "	<th>Descripcion</th>
 					<th>Monto</th>";
 					
 $cabeceras2 		= "	<th>Numero</th>
-                    <th>Fecha</th>
-                    <th>Tipo Pago</th>
-					<th>Cant.</th>
+                    <th>Obra</th>
+                    <th>Dia</th>
+					<th>Horario</th>
+					<th>Fecha</th>
+					<th>Cantidad Entradas</th>
 					<th>Valor Entrada</th>
 					<th>Total</th>
+                    <th>Total Efectivo</th>
+					<th>Total Tarjeta</th>
 					<th>Cancelada</th>
-					<th>Obra</th>
-                    <th>Promo</th>
-					<th>Categoria</th>
-					<th>Cuponera</th>
 					<th>Banda</th>
 					<th>Album</th>";	
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -83,7 +82,7 @@ $cabeceras2 		= "	<th>Numero</th>
 $lstTipoPago  = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerTipopago(),array(1),'');
 $lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFunciones(),array(3,4,5),' - ');
 
-//$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),13);
+$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),13);
 
 
 
@@ -187,11 +186,14 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<form class="form-inline formulario" role="form">
             
         	<div class='row' style="margin-left:25px; margin-right:25px;">
-				<div class="panel panel-primary panel1">
-				<div class="panel-heading">
+				
+            <div class="panel panel-primary panel1">
+				
+                <div class="panel-heading">
 					<h3 class="panel-title">Paso 1</h3>
 					<span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
 				</div>
+                
                 <div class="panel-body" id="primero">
                 	<div class="form-group col-md-6" style="display:block">
                         <label class="control-label" for="codigobarra" style="text-align:left">Función <span style="color:#F00;">*</span></label>
@@ -232,9 +234,9 @@ if ($_SESSION['refroll_predio'] != 1) {
                     	<button type="button" class="btn btn-succes" id="siguiente1" style="margin-left:0px;">Siguiente</button>
                     </div>
                     
-				</div>
-            </div>
-            
+				</div> <!-- fin del panel-body -->
+            </div><!-- fin del panel -->
+            </div><!-- fin del row -->
             
             <div class='row panel2' style="margin-left:0px; margin-right:0px; display:none;">
 				<div class="panel panel-default" id="panel2">
@@ -271,80 +273,82 @@ if ($_SESSION['refroll_predio'] != 1) {
                     	<button type="button" class="btn btn-succes" id="siguiente2" style="margin-left:0px;">Siguiente</button>
                     </div>
                     
-				</div>
-            </div>
+				</div> <!-- fin del panel-body -->
+            </div><!-- fin del panel -->
+            </div><!-- fin del row -->
             
             
             <div class='row panel3' style="margin-left:0px; margin-right:0px;display:none;">
 				<div class="panel panel-default" id="panel3">
-				<div class="panel-heading">
-					<h3 class="panel-title">Paso 3 (Actores)</h3>
-					<span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
-				</div>
-                <div class="panel-body collapse" id="tercero">
-                    <div id="lstPersonal">
-                    
-                    
+				
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Paso 3 (Actores)</h3>
+                        <span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
                     </div>
-                    <div class="form-group col-md-2 col-xs-4" style="display:block">
-                    	<button type="button" class="btn btn-succes" id="siguiente3" style="margin-left:0px;">Siguiente</button>
+                    
+                    <div class="panel-body collapse" id="tercero">
+                        <div id="lstPersonal">
+                        
+                        
+                        </div>
+                        <div class="form-group col-md-2 col-xs-4" style="display:block">
+                            <button type="button" class="btn btn-succes" id="siguiente3" style="margin-left:0px;">Siguiente</button>
+                        </div>
                     </div>
-				</div>
+            	</div>
             </div>
-            
             
             <div class='row panel4' style="margin-left:0px; margin-right:0px;display:none;">
 				<div class="panel panel-default" id="panel4">
-				<div class="panel-heading">
-					<h3 class="panel-title">Paso 4 (Montos)</h3>
-					<span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
-				</div>
-                <div class="panel-body collapse" id="cuarto">
-                    <div class="form-group col-md-4" style="display:block">
-                        <label class="control-label" for="codigobarra" style="text-align:left">Total Efectivo</label>
-                        <div class="input-group col-md-12">
-                        	<span class="input-group-addon">$</span>
-                            <input id="totalefectivo" class="form-control" name="totalefectivo" placeholder="Total Efectivo..." required type="text" value="0">
-                            <span class="input-group-addon">0.00</span>
+				
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Paso 4 (Montos)</h3>
+                        <span class="pull-right clickable panel-collapsed"><i class="glyphicon glyphicon-chevron-down"></i></span>
+                    </div>
+                    
+                    <div class="panel-body collapse" id="cuarto">
+                        <div class="form-group col-md-4" style="display:block">
+                            <label class="control-label" for="codigobarra" style="text-align:left">Total Efectivo</label>
+                            <div class="input-group col-md-12">
+                                <span class="input-group-addon">$</span>
+                                <input id="totalefectivo" class="form-control" name="totalefectivo" placeholder="Total Efectivo..." required type="text" value="0">
+                                <span class="input-group-addon">0.00</span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="form-group col-md-4" style="display:block">
-                        <label class="control-label" for="codigobarra" style="text-align:left">Total Tarjeta</label>
-                        <div class="input-group col-md-12">
-                        	<span class="input-group-addon">$</span>
-                            <input id="totaltarjeta" class="form-control" name="totaltarjeta" placeholder="Total Tarjeta..." required type="text" value="0">
-                            <span class="input-group-addon">0.00</span>
+                        
+                        <div class="form-group col-md-4" style="display:block">
+                            <label class="control-label" for="codigobarra" style="text-align:left">Total Tarjeta</label>
+                            <div class="input-group col-md-12">
+                                <span class="input-group-addon">$</span>
+                                <input id="totaltarjeta" class="form-control" name="totaltarjeta" placeholder="Total Tarjeta..." required type="text" value="0">
+                                <span class="input-group-addon">0.00</span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="form-group col-md-4" style="display:block">
-                        <label class="control-label" for="codigobarra" style="text-align:left">Total</label>
-                        <div class="input-group col-md-12">
-                        	<span class="input-group-addon">$</span>
-                            <input id="total" class="form-control" name="total" placeholder="Total..." required type="text" value="0">
-                            <span class="input-group-addon">0.00</span>
+                        
+                        <div class="form-group col-md-4" style="display:block">
+                            <label class="control-label" for="codigobarra" style="text-align:left">Total</label>
+                            <div class="input-group col-md-12">
+                                <span class="input-group-addon">$</span>
+                                <input id="total" class="form-control" name="total" placeholder="Total..." required type="text" value="0">
+                                <span class="input-group-addon">0.00</span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="form-group col-md-12" style="display:block">
-                        <label class="control-label" for="codigobarra" style="text-align:left">Observaciones</label>
-                        <div class="input-group col-md-12">
-                            <textarea type="text" rows="5" cols="6" class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese las Observaciones..." required=""></textarea>
+                        
+                        <div class="form-group col-md-12" style="display:block">
+                            <label class="control-label" for="codigobarra" style="text-align:left">Observaciones</label>
+                            <div class="input-group col-md-12">
+                                <textarea type="text" rows="5" cols="6" class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese las Observaciones..." required=""></textarea>
+                            </div>
                         </div>
+                        
+                        <div class="form-group col-md-2 col-xs-4" style="display:block">
+                            <button type="button" class="btn btn-succes" id="siguiente4" style="margin-left:0px;">Siguiente</button>
+                        </div>
+                        
                     </div>
-                    
-                    <div class="form-group col-md-2 col-xs-4" style="display:block">
-                    	<button type="button" class="btn btn-succes" id="siguiente4" style="margin-left:0px;">Siguiente</button>
-                    </div>
-                    
-				</div>
+            	</div>
             </div>
-            
-            
 
-            
-            </div>
                 
 
            
@@ -372,7 +376,8 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
             </div>
             </form>
-    	</div>
+    	
+        </div>
     </div>
     
     <div class="boxInfoLargo">
@@ -381,7 +386,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox">
-        	<?php //echo $lstVentas; ?>
+        	<?php echo $lstVentas; ?>
             
     	</div>
     </div>

@@ -26,6 +26,10 @@ $fecha = date('Y-m-d');
 $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reportes",$_SESSION['refroll_predio'],'');
 
 
+$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFunciones(),array(3,4,5),' - ');
+
+$lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerObras(),array(1),'');
+
 ?>
 
 <!DOCTYPE HTML>
@@ -87,7 +91,7 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
 
     <div class="boxInfoLargo tile-stats stat-til tile-white">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Reporte Caja Diaria</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Reporte Diario</p>
         	
         </div>
     	<div class="cuerpoBox">
@@ -100,6 +104,16 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
                     </div>
                 </div>
                 
+                <div class="form-group col-md-6" style="display:block">
+                    <label class="control-label" for="codigobarra" style="text-align:left">Función <span style="color:#F00;">*</span></label>
+                    <div class="input-group col-md-12">
+                        <select data-placeholder="selecione la Función..." id="reffunciones" name="reffunciones" class="form-control" tabindex="2">
+                            
+                            <?php echo $lstFunciones; ?>
+                        </select>
+                    </div>
+                </div>
+                
                 
                 <div class="form-group col-md-6">
                     <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
@@ -108,8 +122,63 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
                         	<li>
                     			<button type="button" class="btn btn-success" id="rptCajaDiaria" style="margin-left:0px;">Generar</button>
                             </li>
-                            <li>
-                    			<button type="button" class="btn btn-info" id="rptCajaDiariaDetalle" style="margin-left:0px;">Generar Detalle</button>
+                            <!--<li>
+                        		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
+                            </li>-->
+                        </ul>
+
+                </div>
+                
+
+            </div>
+            
+            
+            <div class='row' style="margin-left:25px; margin-right:25px;">
+                <div class='alert'>
+                
+                </div>
+                <div id='load'>
+                
+                </div>
+            </div>
+
+            </form>
+    	</div>
+    </div>
+    
+    
+    <div class="boxInfoLargo tile-stats stat-til tile-white">
+        <div id="headBoxInfo">
+        	<p style="color: #fff; font-size:18px; height:16px;">Reporte Mensual</p>
+        	
+        </div>
+    	<div class="cuerpoBox">
+        	<form class="form-inline formulario" role="form">
+        	<div class="row">
+            	<div class="form-group col-md-4 col-xs-6" style="display:'.$lblOculta.'">
+                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione la fecha</label>
+                    <div class="input-group col-md-6 col-xs-12">
+                    <input class="form-control" type="text" name="fecha2" id="fecha2" value="Date"/>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6" style="display:block">
+                    <label class="control-label" for="codigobarra" style="text-align:left">Obra <span style="color:#F00;">*</span></label>
+                    <div class="input-group col-md-12">
+                        <select data-placeholder="selecione la Función..." id="refobras" name="refobras" class="form-control" tabindex="2">
+                            
+                            <?php echo $lstObras; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                
+                <div class="form-group col-md-6">
+                    <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
+
+                    	<ul class="list-inline">
+                        	<li>
+                    			<button type="button" class="btn btn-success" id="rptCajaMensual" style="margin-left:0px;">Generar</button>
                             </li>
                             <!--<li>
                         		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
@@ -156,10 +225,14 @@ $(document).ready(function(){
 
 
 	$("#rptCajaDiaria").click(function(event) {
-        window.open("../../reportes/rptdiario.php?fecha=" + $("#fecha1").val() ,'_blank');	
+        window.open("../../reportes/rptdiarioExcel.php?fecha=" + $("#fecha1").val() + "&reffuncion=" + $('#reffunciones').val() ,'_blank');	
 						
     });
 	
+	$("#rptCajaMensual").click(function(event) {
+        window.open("../../reportes/rptMensualPorObraExcel.php?fecha=" + $("#fecha2").val() + "&refobras=" + $('#refobras').val() ,'_blank');	
+						
+    });
 	$("#rptCajaDiariaDetalle").click(function(event) {
         window.open("../../reportes/rptdiariodetalle.php?fecha=" + $("#fecha1").val() ,'_blank');	
 						
@@ -275,6 +348,9 @@ $('.form_date').datetimepicker({
  
     $( "#fecha1" ).datepicker();
     $( "#fecha1" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+	
+	$( "#fecha2" ).datepicker();
+    $( "#fecha2" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 	
 	$( "#fechadesde2" ).datepicker();
     $( "#fechadesde2" ).datepicker( "option", "dateFormat", "yy-mm-dd" );

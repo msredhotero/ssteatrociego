@@ -1746,18 +1746,18 @@ function generarNroVenta() {
 	return $nro;
 }
 
-function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad) {
-$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum,monto,porcentaje,valorentrada,observacion,fechacreacion,usuacrea,fechamodi,usuamodi,cantidad)
-values ('','".utf8_decode($numero)."',".$reftipopago.",'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".($refcategorias == '' ? 0 : $refcategorias).",".($refpromosobras == '' ? 0 : $refpromosobras).",".$refobras.",".($refalbum == '' ? 0 : $refalbum).",".($monto == '' ? 0 : $monto).",".($porcentaje == '' ? 0 : $porcentaje).",".($valorentrada == '' ? 0 : $valorentrada).",'".utf8_decode($observacion)."','".($fechacreacion)."','".utf8_decode($usuacrea)."','".($fechamodi)."','".utf8_decode($usuamodi)."',".($cantidad == '' ? 1 : $cantidad).")";
+function insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$reffunciones,$refalbum,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad,$totalefectivo,$totaltarjeta) {
+$sql = "insert into dbventas(idventa,numero,reftipopago,fecha,total,cancelado,usuario,reffunciones,refalbum,valorentrada,observacion,fechacreacion,usuacrea,fechamodi,usuamodi,cantidad,totalefectivo,totaltarjeta)
+values ('','".utf8_decode($numero)."',1,'".utf8_decode($fecha)."',".$total.",".$cancelado.",'".utf8_decode($usuario)."',".$reffunciones.",".($refalbum == '' ? 0 : $refalbum).",".($valorentrada == '' ? 0 : $valorentrada).",'".utf8_decode($observacion)."','".($fechacreacion)."','".utf8_decode($usuacrea)."','".($fechamodi)."','".utf8_decode($usuamodi)."',".($cantidad == '' ? 1 : $cantidad).",".($totalefectivo == '' ? 0 : $totalefectivo).",".($totaltarjeta == '' ? 0 : $totaltarjeta).")";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad) {
+function modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$reffunciones,$refalbum,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad,$totalefectivo,$totaltarjeta) {
 $sql = "update dbventas
 set
-numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',refcategorias = ".($refcategorias == '' ? 0 : $refcategorias).",refpromosobras = ".($refpromosobras == '' ? 0 : $refpromosobras).",refobras = ".$refobras.",refalbum = ".($refalbum == '' ? 0 : $refalbum).",monto = ".($monto == '' ? 0 : $monto).",porcentaje = ".($porcentaje == '' ? 0 : $porcentaje).",valorentrada = ".($valorentrada == '' ? 0 : $valorentrada).",observacion = '".utf8_decode($observacion)."',fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',cantidad = ".($cantidad == '' ? 1 : $cantidad)."
+numero = '".utf8_decode($numero)."',reftipopago = ".$reftipopago.",fecha = '".utf8_decode($fecha)."',total = ".$total.",cancelado = ".$cancelado.",usuario = '".utf8_decode($usuario)."',reffunciones = ".$reffunciones.",refalbum = ".($refalbum == '' ? 0 : $refalbum).",valorentrada = ".($valorentrada == '' ? 0 : $valorentrada).",observacion = '".utf8_decode($observacion)."',fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',cantidad = ".($cantidad == '' ? 1 : $cantidad).",totalefectivo = ".($totalefectivo == '' ? 0 : $totalefectivo).",totaltarjeta = ".($totaltarjeta == '' ? 0 : $totaltarjeta)."
 where idventa =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -1775,17 +1775,15 @@ function traerVentas() {
 $sql = "select
 v.idventa,
 v.numero,
-v.reftipopago,
 v.fecha,
 v.total,
 v.cancelado,
 v.usuario,
-v.refcategorias,
-v.refpromosobras,
-v.refobras,
+v.reftipopago,
+v.reffunciones,
 v.refalbum
 from dbventas v
-inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+left join tbtipopago tip ON tip.idtipopago = v.reftipopago
 order by 1";
 $res = $this->query($sql,0);
 return $res;
@@ -1795,30 +1793,28 @@ function traerVentasPorDia($fecha) {
 	$sql = "select
 v.idventa,
 v.numero,
+o.nombre as obra,
+di.dia,
+fu.horario,
 v.fecha,
-tip.descripcion,
 v.cantidad,
 v.valorentrada,
 v.total,
+v.totalefectivo,
+v.totaltarjeta,
 (case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
-o.nombre as obra,
-pr.descripcion as promo,
-cat.descripcion as categoria,
-cup.nombre as cuponera,
 a.banda as banda,
 a.album as album,
 v.reftipopago,
-v.refobras,
-v.refcategorias,
-v.refpromosobras,
+v.reffunciones,
 v.refalbum,
+o.idobra,
 v.usuario
 from dbventas v
-inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
-inner join dbobras o ON o.idobra = v.refobras
-left join dbpromosobras pr ON pr.idpromoobra = v.refpromosobras
-left join dbcategorias cat ON cat.idcategoria = v.refcategorias and o.idobra = cat.refobras
-left join tbcuponeras cup ON cup.idcuponera = cat.refcuponeras
+left join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbfunciones fu on fu.idfuncion = v.reffunciones
+inner join tbdias di on di.iddia = fu.refdias
+inner join dbobras o ON o.idobra = fu.refobras
 left join dbalbumobras ao ON ao.refobras = o.idobra
 left join tbalbum a ON a.idalbum = v.refalbum
 where	v.fecha = '".$fecha."'
@@ -1828,8 +1824,220 @@ return $res;
 }
 
 
+function traerVentasPorDiaFuncionActivos($fecha, $reffuncion) {
+	$sql = "select
+v.idventa,
+v.numero,
+o.nombre as obra,
+di.dia,
+fu.horario,
+v.fecha,
+v.cantidad,
+v.valorentrada,
+v.total,
+v.totalefectivo,
+v.totaltarjeta,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+a.banda as banda,
+a.album as album,
+v.reftipopago,
+v.reffunciones,
+v.refalbum,
+o.idobra,
+v.usuario,
+sa.capacidad,
+o.cantpulicidad,
+o.valorpulicidad,
+o.valorticket,
+o.costotranscciontarjetaiva,
+o.porcentajeargentores,
+round((o.valorticket * v.cantidad),2) as costopapelentrada,
+round((o.costotranscciontarjetaiva / 100 * v.totaltarjeta),2) as gastotarjeta,
+round((o.porcentajeargentores / 100 * v.total),2) as argentores,
+o.porcentajereparto,
+o.porcentajeretencion,
+v.observacion
+from dbventas v
+left join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbfunciones fu on fu.idfuncion = v.reffunciones
+inner join tbdias di on di.iddia = fu.refdias
+inner join dbobras o ON o.idobra = fu.refobras
+inner join tbsalas sa ON sa.idsala = o.refsalas
+left join dbalbumobras ao ON ao.refobras = o.idobra
+left join tbalbum a ON a.idalbum = v.refalbum
+where	v.fecha = '".$fecha."' and fu.idfuncion = ".$reffuncion." and v.cancelado = 0
+order by 1 desc";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerVentasPorDiaActivos($fecha) {
+	$sql = "select
+v.idventa,
+v.numero,
+o.nombre as obra,
+di.dia,
+fu.horario,
+v.fecha,
+v.cantidad,
+v.valorentrada,
+v.total,
+v.totalefectivo,
+v.totaltarjeta,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+a.banda as banda,
+a.album as album,
+v.reftipopago,
+v.reffunciones,
+v.refalbum,
+o.idobra,
+v.usuario,
+sa.capacidad,
+o.cantpulicidad,
+o.valorpulicidad,
+o.valorticket,
+o.costotranscciontarjetaiva,
+o.porcentajeargentores,
+round((o.valorticket * v.valorentrada),2) as costopapelentrada,
+round((o.costotranscciontarjetaiva / 100 * v.totaltarjeta),2) as gastotarjeta,
+round((o.porcentajeargentores / 100 * v.total),2) as argentores,
+o.porcentajereparto,
+o.porcentajeretencion,
+v.observacion
+from dbventas v
+left join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbfunciones fu on fu.idfuncion = v.reffunciones
+inner join tbdias di on di.iddia = fu.refdias
+inner join dbobras o ON o.idobra = fu.refobras
+inner join tbsalas sa ON sa.idsala = o.refsalas
+left join dbalbumobras ao ON ao.refobras = o.idobra
+left join tbalbum a ON a.idalbum = v.refalbum
+where	v.fecha = '".$fecha."' and v.cancelado = 0
+order by 1 desc";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentasPorMesObraActivos($mes) {
+	$sql = "select
+v.idventa,
+v.numero,
+o.nombre as obra,
+di.dia,
+fu.horario,
+v.fecha,
+v.cantidad,
+v.valorentrada,
+v.total,
+v.totalefectivo,
+v.totaltarjeta,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+a.banda as banda,
+a.album as album,
+v.reftipopago,
+v.reffunciones,
+v.refalbum,
+o.idobra,
+v.usuario,
+sa.capacidad,
+o.cantpulicidad,
+o.valorpulicidad,
+o.valorticket,
+o.costotranscciontarjetaiva,
+o.porcentajeargentores,
+round((o.valorticket * v.valorentrada),2) as costopapelentrada,
+round((o.costotranscciontarjetaiva / 100 * v.totaltarjeta),2) as gastotarjeta,
+round((o.porcentajeargentores / 100 * v.total),2) as argentores,
+o.porcentajereparto,
+o.porcentajeretencion,
+v.observacion
+from dbventas v
+left join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbfunciones fu on fu.idfuncion = v.reffunciones
+inner join tbdias di on di.iddia = fu.refdias
+inner join dbobras o ON o.idobra = fu.refobras
+inner join tbsalas sa ON sa.idsala = o.refsalas
+left join dbalbumobras ao ON ao.refobras = o.idobra
+left join tbalbum a ON a.idalbum = v.refalbum
+where	v.fecha = '".$fecha."' and v.cancelado = 0
+order by 1 desc";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentasPorDiaActivosDetalle($idVenta) {
+	$sql = "select
+v.idventa,
+v.numero,
+o.nombre as obra,
+di.dia,
+fu.horario,
+v.fecha,
+v.cantidad,
+v.valorentrada,
+v.total,
+v.totalefectivo,
+v.totaltarjeta,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+a.banda as banda,
+a.album as album,
+v.reftipopago,
+v.reffunciones,
+v.refalbum,
+o.idobra,
+v.usuario
+from dbventas v
+left join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbfunciones fu on fu.idfuncion = v.reffunciones
+inner join tbdias di on di.iddia = fu.refdias
+inner join dbobras o ON o.idobra = fu.refobras
+left join dbalbumobras ao ON ao.refobras = o.idobra
+left join tbalbum a ON a.idalbum = v.refalbum
+where	v.fecha = '".$fecha."' and v.cancelado = 1
+order by 1 desc";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerPuntosTotalesPorVenta($idVenta) {
+	$sql = "select sum(p.puntos) from dbpersonalventa p where p.refventas =".$idVenta;
+	
+	$res = $this->query($sql,0);
+	return $res;	
+}
+
+function traerGastosPorFuncion($fecha, $idFuncion) {
+	$sql = "SELECT coalesce( sum(monto),0) as gasto
+			FROM dbventas v 
+			inner
+			join	dbfunciones fu
+			ON		fu.idfuncion = v.reffunciones
+			inner
+			join	dbgastosobras g
+			on		g.reffunciones = fu.idfuncion
+			where month(v.fecha) = month('".$fecha."') and year(v.fecha) = year('".$fecha."') and v.cancelado = 0 and fu.idfuncion = ".$idFuncion;
+			
+	$res = $this->query($sql,0);
+	return $res;	
+}
+
+
+function traerVentasPorObrasFecha($fecha, $idObra) {
+	$sql = "SELECT v.idventa ,fu.idfuncion , date_format(v.fecha,'%Y-%m-%d') as fecha
+			FROM dbventas v 
+			inner
+			join	dbfunciones fu
+			ON		fu.idfuncion = v.reffunciones
+			where month(v.fecha) = month('".$fecha."') and year(v.fecha) = year('".$fecha."') and v.cancelado = 0 and fu.refobras = ".$idObra;	
+			
+	$res = $this->query($sql,0);
+	return $res;
+}
+
 function traerVentasPorId($id) { 
-$sql = "select idventa,numero,reftipopago,fecha,total,(case when cancelado=1 then 'Si' else 'No' end) as cancelado,usuario,refcategorias,refpromosobras,refobras,refalbum,monto,porcentaje,valorentrada,observacion,fechacreacion,usuacrea,fechamodi,usuamodi,cantidad from dbventas where idventa =".$id; 
+$sql = "select idventa,numero,reftipopago,fecha,total,(case when cancelado=1 then 'Si' else 'No' end) as cancelado,usuario,reffunciones,refalbum,valorentrada,observacion,fechacreacion,usuacrea,fechamodi,usuamodi,cantidad,totalefectivo, totaltarjeta from dbventas where idventa =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -1837,6 +2045,166 @@ return $res;
 
 /* Fin */
 /* /* Fin de la Tabla: dbventas*/
+
+
+/* PARA Ventadetalle */
+
+function insertarVentadetalle($refventas,$total,$refcategorias,$refpromosobras,$monto,$porcentaje,$cantidad) {
+$sql = "insert into dbventadetalle(idventadetalle,refventas,total,refcategorias,refpromosobras,monto,porcentaje,cantidad)
+values ('',".$refventas.",".$total.",".$refcategorias.",".$refpromosobras.",".$monto.",".$porcentaje.",".$cantidad.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarVentadetalle($id,$refventas,$total,$refcategorias,$refpromosobras,$monto,$porcentaje,$cantidad) {
+$sql = "update dbventadetalle
+set
+refventas = ".$refventas.",total = ".$total.",refcategorias = ".$refcategorias.",refpromosobras = ".$refpromosobras.",monto = ".$monto.",porcentaje = ".$porcentaje.",cantidad = ".$cantidad."
+where idventadetalle =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarVentadetalle($id) {
+$sql = "delete from dbventadetalle where idventadetalle =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentadetalle() {
+$sql = "select
+v.idventadetalle,
+v.refventas,
+v.total,
+v.refcategorias,
+v.refpromosobras,
+v.monto,
+v.porcentaje,
+v.cantidad
+from dbventadetalle v
+inner join dbventas ven ON ven.idventa = v.refventas
+inner join tbtipopago ti ON ti.idtipopago = ven.reftipopago
+inner join dbfunciones fu ON fu.idfuncion = ven.reffunciones
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentadetallePorVentaCategoria($idVenta) {
+$sql = "select
+v.idventadetalle,
+v.refventas,
+v.total,
+cat.descripcion,
+v.refcategorias,
+v.refpromosobras,
+v.monto,
+v.porcentaje,
+v.cantidad
+from dbventadetalle v
+inner join dbventas ven ON ven.idventa = v.refventas
+inner join tbtipopago ti ON ti.idtipopago = ven.reftipopago
+inner join dbfunciones fu ON fu.idfuncion = ven.reffunciones
+inner join dbcategorias cat ON cat.idcategoria = v.refcategorias
+where ven.idventa = ".$idVenta."
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentadetallePorVentaPromociones($idVenta) {
+$sql = "select
+v.idventadetalle,
+v.refventas,
+v.total,
+cat.descripcion,
+v.refcategorias,
+v.refpromosobras,
+v.monto,
+v.porcentaje,
+v.cantidad
+from dbventadetalle v
+inner join dbventas ven ON ven.idventa = v.refventas
+inner join tbtipopago ti ON ti.idtipopago = ven.reftipopago
+inner join dbfunciones fu ON fu.idfuncion = ven.reffunciones
+inner join dbpromosobras cat ON cat.idpromoobra = v.refpromosobras
+where ven.idventa = ".$idVenta."
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentadetallePorId($id) {
+$sql = "select idventadetalle,refventas,total,refcategorias,refpromosobras,monto,porcentaje,cantidad from dbventadetalle where idventadetalle =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbventadetalle*/
+
+
+
+/* PARA Personalventa */
+
+function insertarPersonalventa($refpersonal,$refventas,$puntos) {
+$sql = "insert into dbpersonalventa(idpersonalventa,refpersonal,refventas,puntos)
+values ('',".$refpersonal.",".$refventas.",".$puntos.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarPersonalventa($id,$refpersonal,$refventas,$puntos) {
+$sql = "update dbpersonalventa
+set
+refpersonal = ".$refpersonal.",refventas = ".$refventas.",puntos = ".$puntos."
+where idpersonalventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarPersonalventa($id) {
+$sql = "delete from dbpersonalventa where idpersonalventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerPersonalventa() {
+$sql = "select
+p.idpersonalventa,
+p.refpersonal,
+p.refventas,
+p.puntos
+from dbpersonalventa p
+inner join dbpersonal per ON per.idpersonal = p.refpersonal
+inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento
+inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil
+inner join dbventas ven ON ven.idventa = p.refventas
+inner join tbtipopago ti ON ti.idtipopago = ven.reftipopago
+inner join dbfunciones fu ON fu.idfuncion = ven.reffunciones
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerPersonalventaPorId($id) {
+$sql = "select idpersonalventa,refpersonal,refventas,puntos from dbpersonalventa where idpersonalventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbpersonalventa*/
 
 
 /* PARA Cuponeras */

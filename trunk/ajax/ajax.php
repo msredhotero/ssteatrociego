@@ -371,7 +371,7 @@ case 'traerTotal':
 ///////////////////////////////****  VENTAS  ********************///////////////////////////////////
 function insertarVentas($serviciosReferencias) { 
 	$numero = $serviciosReferencias->generarNroVenta(); 
-	$reftipopago = $_POST['reftipopago']; 
+	$reftipopago = 1; 
 	$fecha = $_POST['fecha']; 
 	$total = $_POST['total']; 
 	
@@ -380,40 +380,103 @@ function insertarVentas($serviciosReferencias) {
 	$cancelado = 0;  
 	
 	$usuario = $_POST['usuario']; 
-	$refcategorias = $_POST['refcategorias']; 
-	$refpromosobras = $_POST['refpromosobras']; 
-	$refobras = $_POST['refobras']; 
-	$refalbum = $_POST['refalbum']; 
+
+	$reffunciones = $_POST['reffunciones']; 
+	
+	if (isset($_POST['refalbum'])) {
+		$refalbum = $_POST['refalbum']; 
+	} else {
+		$refalbum = '';	
+	}
 	
 	$fechacreacion = date('Y-m-d'); 
 	$usuacrea = $_POST['usuario'];
 	$fechamodi = ''; 
 	$usuamodi = '';
 	
-	if ($refcategorias != 0) {
-		$refDescuento = $serviciosReferencias->traerCategoriasPorId($refcategorias);
-		$monto = mysql_result($refDescuento,0,'monto'); 
-		$porcentaje = mysql_result($refDescuento,0,'porcentaje');
-	} else {
+	$valorentrada = $_POST['valorentrada'];
 	
-		if ($refpromosobras != 0) {
-			$refDescuento = $serviciosReferencias->traerPromosobrasPorId($refpromosobras);
-			$monto = mysql_result($refDescuento,0,'monto'); 
-			$porcentaje = mysql_result($refDescuento,0,'porcentaje');
-		} else {
-			$monto = 0; 
-			$porcentaje = 0;
-		}
-	}
-	
-	$resObras = $serviciosReferencias->traerObrasPorId($refobras);
-	$valorentrada = mysql_result($resObras,0,'valorentrada');
-	
+	$totalefectivo = $_POST['totalefectivo'];
+	$totaltarjeta = $_POST['totaltarjeta'];
 	$observacion = $_POST['observaciones'];
 	
-	$res = $serviciosReferencias->insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad); 
+	$res = $serviciosReferencias->insertarVentas($numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$reffunciones,$refalbum,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad, $totalefectivo,$totaltarjeta); 
 	
 	if ((integer)$res > 0) { 
+		// si graba bien empiezo a recorrer para guardar Categorias - Promociones - Personal
+		
+		//	CATEGORIAS
+		$resCategorias = $serviciosReferencias->traerCategoriasPorFuncion($reffunciones);
+		$cad = 'categoria';
+		$totalC = 0;
+			while ($rowFS = mysql_fetch_array($resCategorias)) {
+				$montoC 		= $rowFS['monto'];
+				$porcentajeC 	= $rowFS['porcentaje'];
+				
+				
+				if (isset($_POST[$cad.$rowFS[0]])) {
+					$cantidadC	=	$_POST[$cad.$rowFS[0]];
+					
+					if (($montoC > 0) && ($montoC != '')) {
+						$totalC = (float)$montoC * $cantidadC;	
+					} else {
+						if ($porcentajeC > 0) {
+							$totalC = ((float)$valorentrada - ((float)$valorentrada * (float)$porcentajeC / 100)) * $cantidadC;	
+						} else {
+							$totalC = (float)$valorentrada * $cantidadC;	
+						}
+					}
+					$serviciosReferencias->insertarVentadetalle($res,$totalC,$rowFS[0],0,$montoC,$porcentajeC,$cantidadC);
+				}
+			}
+			
+		//		PROMOCIONES	
+		$resPromociones = $serviciosReferencias->traerPromosObrasPorFuncion($reffunciones);
+		$cad = 'promo';
+		$totalP = 0;
+			while ($rowFS = mysql_fetch_array($resPromociones)) {
+				$montoP 		= $rowFS['monto'];
+				$porcentajeP 	= $rowFS['porcentaje'];
+				
+				
+				if (isset($_POST[$cad.$rowFS[0]])) {
+					$cantidadP	=	$_POST[$cad.$rowFS[0]];
+					
+					if (($montoP > 0) && ($montoP != '')) {
+						$totalP = (float)$montoP * $cantidadP;	
+					} else {
+						if ($porcentajeP > 0) {
+							$totalP = ((float)$valorentrada - ((float)$valorentrada * (float)$porcentajeP / 100)) * $cantidadP;	
+						} else {
+							$totalP = (float)$valorentrada * $cantidadP;	
+						}
+					}
+					$serviciosReferencias->insertarVentadetalle($res,$totalP,0,$rowFS[0],$montoP,$porcentajeP,$cantidadP);
+				}
+			}
+			
+		
+		//		PERSONAL	
+		$resPromociones = $serviciosReferencias->traerPlantelPorFuncion($reffunciones);
+		$cad = 'plantel';
+			while ($rowFS = mysql_fetch_array($resPromociones)) {
+				$puntos 		= $rowFS['puntos'];
+				
+				if (isset($_POST[$cad.$rowFS[0]])) {
+					$cantidadP	=	$_POST[$cad.$rowFS[0]];
+					
+					if (($montoP > 0) && ($montoP != '')) {
+						$totalP = (float)$montoP * $cantidadP;	
+					} else {
+						if ($porcentajeP > 0) {
+							$totalP = ((float)$valorentrada - ((float)$valorentrada * (float)$porcentajeP / 100)) * $cantidadP;	
+						}
+					}
+					$serviciosReferencias->insertarPersonalventa($rowFS[0],$res,$puntos);
+				}
+			}
+			
+		
 		echo ''; 
 	} else { 
 		echo 'Hubo un error al insertar datos';	 
@@ -428,7 +491,7 @@ function modificarVentas($serviciosReferencias) {
 	$reftipopago = $_POST['reftipopago']; 
 	$fecha = $_POST['fecha']; 
 	$total = $_POST['total']; 
-	$cantidad = $_POST['cantidadbuscar'];
+	$cantidad = $_POST['cantidad'];
 	
 	if (isset($_POST['cancelado'])) { 
 		$cancelado	= 1; 
@@ -437,19 +500,9 @@ function modificarVentas($serviciosReferencias) {
 	} 
 	
 	$usuario = $_POST['usuario']; 
-	if (isset($_POST['refcategorias'])) { 
-		$refcategorias = $_POST['refcategorias'];
-	} else { 
-		$refcategorias = 0; 
-	}
+	
 	 
-	if (isset($_POST['refpromosobras'])) { 
-		$refpromosobras = $_POST['refpromosobras']; 
-	} else { 
-		$refpromosobras = 0; 
-	}
-	 
-	$refobras = $_POST['refobras']; 
+	$reffunciones = $_POST['reffunciones']; 
 	
 	if (isset($_POST['refalbum'])) { 
 		$refalbum = $_POST['refalbum']; 
@@ -457,16 +510,17 @@ function modificarVentas($serviciosReferencias) {
 		$refalbum = 0; 
 	}
 	 
-	$monto = $_POST['monto']; 
-	$porcentaje = $_POST['porcentaje']; 
+	
 	$valorentrada = $_POST['valorentrada'];
 	$observacion = $_POST['observacion']; 
 	$fechacreacion = $_POST['fechacreacion']; 
 	$usuacrea = $_POST['usuacrea']; 
 	$fechamodi = date('Y-m-d'); 
 	$usuamodi = $_POST['usuamodi']; 
+	$totalefectivo = $_POST['totalefectivo']; 
+	$totaltarjeta = $_POST['totaltarjeta']; 
 	
-	$res = $serviciosReferencias->modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$refcategorias,$refpromosobras,$refobras,$refalbum,$monto,$porcentaje,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad); 
+	$res = $serviciosReferencias->modificarVentas($id,$numero,$reftipopago,$fecha,$total,$cancelado,$usuario,$reffunciones,$refalbum,$valorentrada,$observacion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$cantidad,$totalefectivo,$totaltarjeta); 
 	
 	if ($res == true) { 
 		echo ''; 

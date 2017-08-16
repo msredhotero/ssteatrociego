@@ -47,28 +47,22 @@ $tituloWeb = "Gestión: Teatro Ciego";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array("reftipopago","refcategorias","refpromosobras","refobras","refalbum","valorentrada");
-$lblreemplazo	= array("Tipo Pago","Categorias","Promos","Obras","Album","Valor Entrada");
+$lblCambio	 	= array("reftipopago","reffunciones","refalbum","valorentrada","totalefectivo","totaltarjeta");
+$lblreemplazo	= array("Tipo Pago","Funcion","Album","Valor Entrada","Total Efectivo","Total Tarjeta");
 
 
 $resTipoPago 	= $serviciosReferencias->traerTipopago();
 $cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resTipoPago,array(1),'',mysql_result($resResultado,0,'reftipopago'));
-    
-$resCategorias 	= $serviciosReferencias->traerCategoriasPorId(mysql_result($resResultado,0,'refcategorias'));
-$cadRef2 	= $serviciosFunciones->devolverSelectBoxActivo($resCategorias,array(1),'',mysql_result($resResultado,0,'refcategorias'));
 
-$resPromo 	= $serviciosReferencias->traerPromosobrasPorId(mysql_result($resResultado,0,'refpromosobras'));
-$cadRef3 	= $serviciosFunciones->devolverSelectBoxActivo($resPromo,array(1),'',mysql_result($resResultado,0,'refpromosobras'));
-
-$resObra 	= $serviciosReferencias->traerObrasPorId(mysql_result($resResultado,0,'refobras'));
-$cadRef4 	= $serviciosFunciones->devolverSelectBoxActivo($resObra,array(1,3),' - Valor Entrada:',mysql_result($resResultado,0,'refobras'));
+$resFuncion 	= $serviciosReferencias->traerFuncionesPorFuncion(mysql_result($resResultado,0,'reffunciones'));
+$cadRef4 	= $serviciosFunciones->devolverSelectBoxActivo($resFuncion,array(3,4),' - ',mysql_result($resResultado,0,'reffunciones'));
 
 $resAlbum 	= $serviciosReferencias->traerAlbumPorId(mysql_result($resResultado,0,'refalbum'));
 $cadRef5 	= $serviciosFunciones->devolverSelectBoxActivo($resAlbum,array(1,2),' - ',mysql_result($resResultado,0,'refalbum'));
    
 	
-$refdescripcion = array(0 => $cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5);
-$refCampo 	=  array("reftipopago","refcategorias","refpromosobras","refobras","refalbum");
+$refdescripcion = array(0 => $cadRef, 1=>$cadRef4, 2=>$cadRef5);
+$refCampo 	=  array("reftipopago","reffunciones","refalbum");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -222,15 +216,15 @@ $(document).ready(function(){
 	
 	$('#total').prop('readonly', true);
 	
+	$('#totalefectivo').prop('readonly', true);
+	
+	$('#totaltarjeta').prop('readonly', true);
+	
 	$('#fecha').prop('readonly', true);
 	
 	$('#usuario').prop('readonly', true);
 	
 	$('#numero').prop('readonly', true);
-	
-	$('#monto').prop('readonly', true);
-	
-	$('#porcentaje').prop('readonly', true);
 	
 	$('#valorentrada').prop('readonly', true);
 	

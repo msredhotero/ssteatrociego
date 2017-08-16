@@ -1067,7 +1067,7 @@ class Servicios {
 		$sql	=	"show columns from ".$tabla;
 		$res 	=	$this->query($sql,0);
 		
-		$ocultar = array("fechacrea","fechacreacion","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","refviejo");
+		$ocultar = array("fechacrea","fechacreacion","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","refviejo","reftipopago");
 		
 		$camposEscondido = "";
 		/* Analizar para despues */

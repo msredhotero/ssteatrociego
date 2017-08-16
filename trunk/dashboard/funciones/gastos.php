@@ -54,7 +54,7 @@ $lblCambio	 	= array("reffunciones");
 $lblreemplazo	= array("Funcion");
 
 $resObras	=	$serviciosReferencias->traerFuncionesPorFuncion($id);
-$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resObras,array(1,2,3,4),' - ',$id);
+$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resObras,array(3,4,5),' - ',$id);
 
 $refdescripcion = array(0=>$cadRef);
 $refCampo 	=  array("reffunciones");
