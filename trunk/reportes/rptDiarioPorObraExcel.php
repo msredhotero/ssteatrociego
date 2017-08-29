@@ -120,10 +120,11 @@ while ($row = mysql_fetch_array($resDetalleVentaPromociones)) {
 	$i += 1;	
 }
 
-
+/*
 $objPHPExcel->setActiveSheetIndex(0)
     ->setCellValue('A'.$i, 'Entradas cartelera')
 	->setCellValue('B'.$i, mysql_result($resVenta,0,'cantidad') - $cantidadEntradasCuponeras);
+*/
 
 $objPHPExcel->setActiveSheetIndex(0)
     ->setCellValue('A'.($i + 1), 'Efectivo')
@@ -185,10 +186,10 @@ $objPHPExcel->setActiveSheetIndex(0)
 	->setCellValue('A'.($i + 7), 'Observaciones')
 	->setCellValue('B'.($i + 1), ($TotalesGeneral * mysql_result($resVenta,0,'porcentajereparto') / 100))
 	->setCellValue('B'.($i + 2), ($TotalesGeneral * 30 / 100))
-	->setCellValue('B'.($i + 3), ($TotalesGeneral * mysql_result($resVenta,0,'porcentajeretencion') / 100))
+	->setCellValue('B'.($i + 3), (($TotalesGeneral * mysql_result($resVenta,0,'porcentajereparto') / 100) * mysql_result($resVenta,0,'porcentajeretencion') / 100))
 	->setCellValue('B'.($i + 4), ($TotalesGeneral * mysql_result($resVenta,0,'porcentajeargentores') / 100))
-	->setCellValue('B'.($i + 5), (($TotalesGeneral * mysql_result($resVenta,0,'porcentajereparto') / 100) - ($TotalesGeneral * mysql_result($resVenta,0,'porcentajeretencion') / 100)))
-	->setCellValue('B'.($i + 6), (($TotalesGeneral * mysql_result($resVenta,0,'porcentajereparto') / 100) - ($TotalesGeneral * mysql_result($resVenta,0,'porcentajeretencion') / 100)) / mysql_result($resPuntosVentaPersonal,0,0))
+	->setCellValue('B'.($i + 5), (($TotalesGeneral * mysql_result($resVenta,0,'porcentajereparto') / 100) - (($TotalesGeneral * mysql_result($resVenta,0,'porcentajereparto') / 100) * mysql_result($resVenta,0,'porcentajeretencion') / 100)))
+	->setCellValue('B'.($i + 6), (($TotalesGeneral * mysql_result($resVenta,0,'porcentajereparto') / 100) - (($TotalesGeneral * mysql_result($resVenta,0,'porcentajereparto') / 100) * mysql_result($resVenta,0,'porcentajeretencion') / 100)) / mysql_result($resPuntosVentaPersonal,0,0))
 	->setCellValue('B'.($i + 7), mysql_result($resVenta,0,'observacion'));
 
 

@@ -412,6 +412,7 @@ function insertarVentas($serviciosReferencias) {
 			while ($rowFS = mysql_fetch_array($resCategorias)) {
 				$montoC 		= $rowFS['monto'];
 				$porcentajeC 	= $rowFS['porcentaje'];
+				$comisionC		= $rowFS['pocentajeretenido'];
 				
 				
 				if (isset($_POST[$cad.$rowFS[0]])) {
@@ -422,6 +423,7 @@ function insertarVentas($serviciosReferencias) {
 					} else {
 						if ($porcentajeC > 0) {
 							$totalC = ((float)$valorentrada - ((float)$valorentrada * (float)$porcentajeC / 100)) * $cantidadC;	
+							$totalC = $totalC - ($totalC / 100 * $comisionC);
 						} else {
 							$totalC = (float)$valorentrada * $cantidadC;	
 						}
