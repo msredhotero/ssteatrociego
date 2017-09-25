@@ -2036,6 +2036,33 @@ function traerVentasPorObrasFecha($fecha, $idObra) {
 	return $res;
 }
 
+function traerTotalCooperativaPorObra($idObra, $desde, $hasta) {
+	$sql = "select
+			  sum(ROUND(r.porcentajereparto/100 * r.subtotal - ( r.porcentajeretencion / 100 * (r.porcentajereparto/100 * r.subtotal)), 2)) totalcooperativas
+			from (
+			SELECT 
+				v.idventa,
+				fu.idfuncion,
+				ROUND(v.total - o.valorpulicidad - o.valorticket * v.cantidad - (o.costotranscciontarjetaiva / 100) * v.totaltarjeta - (o.porcentajeargentores / 100) * v.total,
+						2) AS subtotal,
+				o.porcentajereparto,
+				o.porcentajeretencion
+			FROM
+				dbventas v
+					INNER JOIN
+				dbfunciones fu ON fu.idfuncion = v.reffunciones
+					INNER JOIN
+				dbobras o ON o.idobra = fu.refobras
+			WHERE
+				MONTH(v.fecha) = 8
+					AND YEAR(v.fecha) = 2017
+					AND v.cancelado = 0
+					AND fu.refobras = 1
+					) r";	
+	$res = $this->query($sql,0); 
+	return $res; 
+}
+
 function traerVentasPorId($id) { 
 $sql = "select idventa,numero,reftipopago,fecha,total,(case when cancelado=1 then 'Si' else 'No' end) as cancelado,usuario,reffunciones,refalbum,valorentrada,observacion,fechacreacion,usuacrea,fechamodi,usuamodi,cantidad,totalefectivo, totaltarjeta from dbventas where idventa =".$id; 
 $res = $this->query($sql,0); 
