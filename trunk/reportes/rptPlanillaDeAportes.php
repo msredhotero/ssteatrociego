@@ -21,30 +21,17 @@ require('fpdf.php');
 //$header = array("Hora", "Cancha 1", "Cancha 2", "Cancha 3");
 
 $id				=	$_GET['id'];
+$desde			=	$_GET['desde'];
+$hasta			=	$_GET['hasta'];
 
-$resEmpresa		=	$serviciosReferencias->traerConfiguracionUltima();
+$mes 			=	date('M', strtotime($desde));
 
-$resFactura		=	$serviciosReferencias->traerVentasPorId($id);
+$resObra		=	$serviciosReferencias->traerObrascooperativasPorObra($id);
 
-if (mysql_num_rows($resEmpresa)>0) {
-	$empresa		=	mysql_result($resEmpresa,0,1);
-	$cuit			=	mysql_result($resEmpresa,0,2);
-	$direccion		=	mysql_result($resEmpresa,0,3);
-	$telefono		=	mysql_result($resEmpresa,0,4);
-	$email			=	mysql_result($resEmpresa,0,5);
-	$ciudad			=	mysql_result($resEmpresa,0,6);
-	$codpostal		=	mysql_result($resEmpresa,0,7);
-} else {
-	$empresa		=	'';
-	$cuit			=	'';
-	$direccion		=	'';
-	$telefono		=	'';
-	$email			=	'';
-	$ciudad			=	'';
-	$codpostal		=	'';
-}
+$resBruto		=	$serviciosReferencias->traerTotalCooperativaPorObra($id,$desde, $hasta);
 
-$datos			=	$serviciosReferencias->traerDetalleventasPorVenta($id);
+$resFactura		=	$serviciosReferencias->traerPersonalcooperativasPorObra($id);
+
 
 $TotalIngresos = 0;
 $TotalEgresos = 0;
@@ -63,6 +50,8 @@ class PDF extends FPDF
 // Tabla coloreada
 function ingresosFacturacion($header, $data, &$TotalIngresos)
 {
+	
+	/*
 	$this->SetFont('Arial','',12);
 	$this->Ln();
 	$this->Ln();
@@ -142,18 +131,9 @@ function ingresosFacturacion($header, $data, &$TotalIngresos)
 	$this->Cell(60,7,'Total: $'.number_format($sumSaldos, 2, '.', ','),0,0,'L',false);
 	
 	$TotalIngresos = $TotalIngresos + $total;
+	*/
 }
 
-//Pie de página
-function Footer()
-{
-
-$this->SetY(-10);
-
-$this->SetFont('Arial','I',8);
-
-$this->Cell(0,10,'Pagina '.$this->PageNo()." - Fecha: ".date('Y-m-d')." ** No válido como factura",0,0,'C');
-}
 
 }
 
@@ -162,18 +142,170 @@ $this->Cell(0,10,'Pagina '.$this->PageNo()." - Fecha: ".date('Y-m-d')." ** No vá
 
 
 
-$pdf = new PDF();
+$pdf = new PDF('L','mm','A4');
 
-
+$pdf->SetMargins(3,3,3);
 // Títulos de las columnas
 
-$headerFacturacion = array("Detalle", "Cantidad", "Precio","SubTotal");
+$headerFacturacion = array("Tipo Doc", "Nro Documento", "Apellido y Nombre Artístico","Puntaje", "Remuneracion","Aporte Sindical", "Aporte Social");
 // Carga de datos
 
 $pdf->AddPage();
 
-$pdf->Image('../imagenes/login-1.png',2,2,40);
 
+
+$pdf->SetXY(7,7);
+
+$pdf->SetFillColor(188,188,188);
+$pdf->Rect(7.5,7.5,195,20.5,'F');
+
+
+$pdf->SetXY(138.5,8);
+$pdf->SetFillColor(232,232,232);
+$pdf->Rect(7.8,7.8,115.5,20,'F');
+$pdf->Rect(123.8,7.8,78.5,20,'F');
+
+$pdf->Image('../imagenes/logoactores2.jpg',13,11,60);
+
+$pdf->SetFont('Arial','b',8);
+$pdf->SetXY(165,10);
+$pdf->Cell(35,4,'PLANILLA DE APORTES',0,0,'R');
+$pdf->SetFont('Arial','b',7);
+$pdf->SetXY(126,14);
+$pdf->Cell(74,4,'Para ser entregada en la Asociación Argentina de Actores',0,0,'R');
+$pdf->SetFont('Arial','b',13);
+$pdf->SetXY(149,21);
+$pdf->Cell(30,6,'RAMA: ',0,0,'R');
+
+
+$pdf->SetFillColor(88,88,88);
+$pdf->Rect(7.8,27.8,194.5,6,'F');
+
+$wA = 22;
+$wB = 41;
+$wC = 47;
+
+$pdf->SetFont('Arial','b',6);
+$pdf->SetDrawColor(188, 188, 188);
+$pdf->SetFillColor(255,255,255);
+$pdf->SetXY(7.8,33.8);
+$pdf->Cell($wA,8,'N°COOPERATIVA',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,mysql_result($resObra,0,'numero'),1,0,'C',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->MultiCell($wA,4,'AP Y NOMB. DEL RESPONSABLE',1,'L',1);
+$pdf->SetXY(92.8,33.8);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wC,8,'A CIEGAS TEATRO POR LA INTEGRACION',1,0,'C',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->Cell($wA,8,'NRO de CUIT',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'30712485961',1,0,'C',1);
+
+
+$pdf->SetFont('Arial','b',6);
+$pdf->SetDrawColor(188, 188, 188);
+$pdf->SetFillColor(255,255,255);
+$pdf->SetXY(7.8,41.8);
+$pdf->Cell($wA,8,'DOMICILIO LEGAL',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->MultiCell($wA,4,'AP Y NOMB. DEL CONTACTO',1,'L',1);
+$pdf->SetXY(92.8,41.8);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wC,8,'ASOC. CIVIL',1,0,'C',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->Cell($wA,8,'INGRESOS BRUTOS',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'',1,0,'L',1);
+
+
+
+$pdf->SetFont('Arial','b',6);
+$pdf->SetDrawColor(188, 188, 188);
+$pdf->SetFillColor(255,255,255);
+$pdf->SetXY(7.8,49.8);
+$pdf->Cell($wA,8,'DOMICILIO REAL',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->MultiCell($wA,4,'TELEFONO FIJO DEL CONTACTO',1,'L',1);
+$pdf->SetXY(92.8,49.8);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wC,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->Cell($wA,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'',1,0,'L',1);
+
+
+
+$pdf->SetFont('Arial','b',6);
+$pdf->SetDrawColor(188, 188, 188);
+$pdf->SetFillColor(255,255,255);
+$pdf->SetXY(7.8,57.8);
+$pdf->Cell($wA,8,'TELEFONO / FAX',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->MultiCell($wA,4,'TELEFONO MOVIL DEL CONTACTO',1,'L',1);
+$pdf->SetXY(92.8,57.8);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wC,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->Cell($wA,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'',1,0,'L',1);
+
+
+
+$pdf->SetFont('Arial','b',6);
+$pdf->SetDrawColor(188, 188, 188);
+$pdf->SetFillColor(255,255,255);
+$pdf->SetXY(7.8,65.8);
+$pdf->Cell($wA,8,'EMAIL',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->MultiCell($wA,4,'EMAIL DEL CONTACTO',1,'L',1);
+$pdf->SetXY(92.8,65.8);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wC,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->Cell($wA,8,'',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'',1,0,'L',1);
+
+
+$pdf->SetFillColor(88,88,88);
+$pdf->Rect(7.8,73.8,194.5,6,'F');
+
+
+$pdf->SetFont('Arial','b',6);
+$pdf->SetDrawColor(188, 188, 188);
+$pdf->SetFillColor(255,255,255);
+$pdf->SetXY(7.8,79.8);
+$pdf->MultiCell($wA,4,'TITULO DEL PROGRAMA',1,'L',1);
+$pdf->SetXY(7.8 + $wA,79.8);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,mysql_result($resObra,0,'nombre'),1,0,'C',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->MultiCell($wA,4,'MONTO BORDEAUX',1,'L',1);
+$pdf->SetXY(92.8,79.8);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wC,8,'$'.number_format( mysql_result($resBruto,0,'totalcooperativas'),2,'.',''),1,0,'C',1);
+$pdf->SetFont('Arial','b',6);
+$pdf->Cell($wA,8,'PERIOD. LIQUID',1,0,'L',1);
+$pdf->SetFont('Arial','',6);
+$pdf->Cell($wB,8,'DESDE: '.$desde.' HASTA: '.$hasta,1,0,'C',1);
+
+$pdf->SetFillColor(88,88,88);
+$pdf->Rect(7.8,81.8,194.5,6,'F');
+
+
+
+/*
 $pdf->SetFont('Arial','',14);
 $pdf->SetXY(42,3);
 $pdf->Cell(32,5,'Razon Social: ',0,0,'L',false);
@@ -226,12 +358,12 @@ $pdf->SetXY(2,36);
 $pdf->ingresosFacturacion($headerFacturacion,$datos,$TotalFacturacion);
 
 
-
+*/
 $pdf->Ln();
 
 $pdf->SetFont('Arial','',13);
 
-$nombreTurno = "rptFacturacionGeneral-".$fecha.".pdf";
+$nombreTurno = mysql_result($resObra,0,1)." - ".$mes.".pdf";
 
 $pdf->Output($nombreTurno,'D');
 

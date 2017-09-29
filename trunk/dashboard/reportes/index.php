@@ -206,6 +206,72 @@ $lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traer
     
     
     
+    <div class="boxInfoLargo tile-stats stat-til tile-white">
+        <div id="headBoxInfo">
+        	<p style="color: #fff; font-size:18px; height:16px;">Planilla de Aportes</p>
+        	
+        </div>
+    	<div class="cuerpoBox">
+        	<form class="form-inline formulario" role="form">
+        	<div class="row">
+            	<div class="form-group col-md-3 col-xs-6" style="display:'.$lblOculta.'">
+                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione la fecha desde</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="fecha3" id="fecha3" value="Date"/>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-3 col-xs-6" style="display:'.$lblOculta.'">
+                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione la fecha hasta</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="fecha4" id="fecha4" value="Date"/>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6" style="display:block">
+                    <label class="control-label" for="codigobarra" style="text-align:left">Obra <span style="color:#F00;">*</span></label>
+                    <div class="input-group col-md-12">
+                        <select data-placeholder="selecione la Función..." id="refobras2" name="refobras2" class="form-control" tabindex="2">
+                            
+                            <?php echo $lstObras; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                
+                <div class="form-group col-md-6">
+                    <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
+
+                    	<ul class="list-inline">
+                        	<li>
+                    			<button type="button" class="btn btn-success" id="rptPlanillaAportes" style="margin-left:0px;">Generar</button>
+                            </li>
+                            <!--<li>
+                        		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
+                            </li>-->
+                        </ul>
+
+                </div>
+                
+
+            </div>
+            
+            
+            <div class='row' style="margin-left:25px; margin-right:25px;">
+                <div class='alert'>
+                
+                </div>
+                <div id='load'>
+                
+                </div>
+            </div>
+
+            </form>
+    	</div>
+    </div>
+    
+    
+    
 
     
     
@@ -237,6 +303,13 @@ $(document).ready(function(){
         window.open("../../reportes/rptdiariodetalle.php?fecha=" + $("#fecha1").val() ,'_blank');	
 						
     });
+	
+	$("#rptPlanillaAportes").click(function(event) {
+        window.open("../../reportes/rptPlanillaDeAportes.php?desde=" + $("#fecha3").val() + "&hasta=" + $("#fecha4").val() + '&id=' + $('#refobras2').val(),'_blank');	
+						
+    });
+	
+	
 	
 	
 	$("#rptsc").click(function(event) {
@@ -351,6 +424,12 @@ $('.form_date').datetimepicker({
 	
 	$( "#fecha2" ).datepicker();
     $( "#fecha2" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+	
+	$( "#fecha3" ).datepicker();
+    $( "#fecha3" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+	
+	$( "#fecha4" ).datepicker();
+    $( "#fecha4" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 	
 	$( "#fechadesde2" ).datepicker();
     $( "#fechadesde2" ).datepicker( "option", "dateFormat", "yy-mm-dd" );

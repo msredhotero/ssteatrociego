@@ -441,18 +441,18 @@ return $res;
 
 /* PARA Cooperativas */
 
-function insertarCooperativas($descripcion,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo) { 
-$sql = "insert into dbcooperativas(idcooperativa,descripcion,puntos,puntosproduccion,puntossinproduccion,fechacreacion,usuacrea,fechamodi,usuamodi,activo) 
-values ('','".utf8_decode($descripcion)."',".$puntos.",".$puntosproduccion.",".$puntossinproduccion.",'".utf8_decode($fechacreacion)."','".utf8_decode($usuacrea)."','".utf8_decode($fechamodi)."','".utf8_decode($usuamodi)."',".$activo.")"; 
+function insertarCooperativas($descripcion,$numero,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo) { 
+$sql = "insert into dbcooperativas(idcooperativa,descripcion,numero,puntos,puntosproduccion,puntossinproduccion,fechacreacion,usuacrea,fechamodi,usuamodi,activo) 
+values ('','".utf8_decode($descripcion)."','".utf8_decode($numero)."',".$puntos.",".$puntosproduccion.",".$puntossinproduccion.",'".utf8_decode($fechacreacion)."','".utf8_decode($usuacrea)."','".utf8_decode($fechamodi)."','".utf8_decode($usuamodi)."',".$activo.")"; 
 $res = $this->query($sql,1); 
 return $res; 
 } 
 
 
-function modificarCooperativas($id,$descripcion,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo) { 
+function modificarCooperativas($id,$descripcion,$numero,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo) { 
 $sql = "update dbcooperativas 
 set 
-descripcion = '".utf8_decode($descripcion)."',puntos = ".$puntos.",puntosproduccion = ".$puntosproduccion.",puntossinproduccion = ".$puntossinproduccion.",fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',activo = ".$activo." 
+descripcion = '".utf8_decode($descripcion)."', numero = '".utf8_decode($numero)."'puntos = ".$puntos.",puntosproduccion = ".$puntosproduccion.",puntossinproduccion = ".$puntossinproduccion.",fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',activo = ".$activo." 
 where idcooperativa =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -485,7 +485,8 @@ c.puntossinproduccion,
 c.fechacreacion,
 c.usuacrea,
 c.fechamodi,
-c.usuamodi
+c.usuamodi,
+c.numero
 from dbcooperativas c 
 order by c.descripcion"; 
 $res = $this->query($sql,0); 
@@ -503,7 +504,8 @@ c.puntossinproduccion,
 c.fechacreacion,
 c.usuacrea,
 c.fechamodi,
-c.usuamodi
+c.usuamodi,
+c.numero
 from dbcooperativas c 
 where c.activo = 1
 order by c.descripcion"; 
@@ -513,7 +515,7 @@ return $res;
 
 
 function traerCooperativasPorId($id) { 
-$sql = "select idcooperativa,descripcion,puntos,puntosproduccion,puntossinproduccion,fechacreacion,usuacrea,fechamodi,usuamodi,(case when activo = 1 then 'Si' else 'No' end) as activo from dbcooperativas where idcooperativa =".$id; 
+$sql = "select idcooperativa,descripcion,numero,puntos,puntosproduccion,puntossinproduccion,fechacreacion,usuacrea,fechamodi,usuamodi,(case when activo = 1 then 'Si' else 'No' end) as activo from dbcooperativas where idcooperativa =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -1027,7 +1029,8 @@ o.refobras,
 o.refcooperativas,
 obr.nombre as obra,
 coo.descripcion as cooperativa,
-sa.descripcion as sala
+sa.descripcion as sala,
+coo.numero
 from dbobrascooperativas o 
 inner join dbobras obr ON obr.idobra = o.refobras 
 inner join tbsalas sa ON sa.idsala = obr.refsalas 
@@ -1043,12 +1046,14 @@ $sql = "select
 o.idobracooperativa,
 o.refobras,
 o.refcooperativas,
-coo.puntos
+coo.puntos,
+coo.numero,
+obr.nombre
 from dbobrascooperativas o 
 inner join dbobras obr ON obr.idobra = o.refobras 
 inner join tbsalas sa ON sa.idsala = obr.refsalas 
 inner join dbcooperativas coo ON coo.idcooperativa = o.refcooperativas 
-where coo.refobras = ".$idObra."
+where o.refobras = ".$idObra."
 order by 1"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -1263,6 +1268,30 @@ function traerPersonalcooperativasPorCooperativa($idCooperativa) {
 	inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
 	inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativas 
 	where coo.idcooperativa = ".$idCooperativa."
+	order by per.apellido,	per.nombre"; 
+	
+	$res = $this->query($sql,0); 
+	return $res; 
+} 
+
+
+function traerPersonalcooperativasPorObra($idObra) { 
+	$sql = "select 
+	p.idpersonalcooperativa,
+	per.nrodocumento,
+	per.apellido,
+	per.nombre,
+	coo.descripcion as cooperativa,
+	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
+	p.refpersonal,
+	p.refcooperativas
+	from dbpersonalcooperativas p 
+	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
+	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
+	inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
+	inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativas 
+	inner join dbobrascooperativas oc ON oc.refcooperativas = coo.idcooperativa
+	where oc.refobras = ".$idObra."
 	order by per.apellido,	per.nombre"; 
 	
 	$res = $this->query($sql,0); 
