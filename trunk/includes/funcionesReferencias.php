@@ -1276,23 +1276,40 @@ function traerPersonalcooperativasPorCooperativa($idCooperativa) {
 
 
 function traerPersonalcooperativasPorObra($idObra) { 
-	$sql = "select 
-	p.idpersonalcooperativa,
-	per.nrodocumento,
-	per.apellido,
-	per.nombre,
-	coo.descripcion as cooperativa,
-	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
-	p.refpersonal,
-	p.refcooperativas
-	from dbpersonalcooperativas p 
-	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
-	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
-	inner join tbestadocivil es ON es.idestadocivil = per.refestadocivil 
-	inner join dbcooperativas coo ON coo.idcooperativa = p.refcooperativas 
-	inner join dbobrascooperativas oc ON oc.refcooperativas = coo.idcooperativa
-	where oc.refobras = ".$idObra."
-	order by per.apellido,	per.nombre"; 
+	$sql = "SELECT 
+    per.nrodocumento,
+    per.apellido,
+    per.nombre,
+    pc.puntos,
+	coo.puntos as puntoscooperativa,
+    coo.descripcion AS cooperativa,
+    (CASE
+        WHEN coo.activo = 1 THEN 'Si'
+        ELSE 'No'
+    END) AS activo,
+    p.refpersonal,
+    p.refcooperativas
+FROM
+    dbpersonalcooperativas p
+        INNER JOIN
+    dbpersonal per ON per.idpersonal = p.refpersonal
+        INNER JOIN
+    tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento
+        INNER JOIN
+    tbestadocivil es ON es.idestadocivil = per.refestadocivil
+        INNER JOIN
+    dbcooperativas coo ON coo.idcooperativa = p.refcooperativas
+        INNER JOIN
+    dbobrascooperativas oc ON oc.refcooperativas = coo.idcooperativa
+        INNER JOIN
+    dbpersonalcargos pc ON pc.refpersonal = per.idpersonal
+        INNER JOIN
+    dbfunciones ff ON ff.refcooperativas = p.refcooperativas
+        AND ff.refobras = oc.refobras
+WHERE
+    oc.refobras = 1
+GROUP BY coo.puntos, per.nrodocumento , per.apellido , per.nombre , pc.puntos , coo.descripcion , coo.activo , p.refpersonal , p.refcooperativas
+ORDER BY per.apellido , per.nombre"; 
 	
 	$res = $this->query($sql,0); 
 	return $res; 

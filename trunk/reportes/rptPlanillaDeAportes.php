@@ -30,7 +30,9 @@ $resObra		=	$serviciosReferencias->traerObrascooperativasPorObra($id);
 
 $resBruto		=	$serviciosReferencias->traerTotalCooperativaPorObra($id,$desde, $hasta);
 
-$resFactura		=	$serviciosReferencias->traerPersonalcooperativasPorObra($id);
+$resDatos		=	$serviciosReferencias->traerPersonalcooperativasPorObra($id);
+
+$totalActores   =	mysql_num_rows($serviciosReferencias->traerPersonalcooperativasPorObra($id));
 
 
 $TotalIngresos = 0;
@@ -40,109 +42,7 @@ $Caja = 0;
 
 
 
-class PDF extends FPDF
-{
-// Cargar los datos
-
-
-
-
-// Tabla coloreada
-function ingresosFacturacion($header, $data, &$TotalIngresos)
-{
-	
-	/*
-	$this->SetFont('Arial','',12);
-	$this->Ln();
-	$this->Ln();
-	$this->Cell(60,7,'Facturación General',0,0,'L',false);
-	$this->SetFont('Arial','',11);
-    // Colores, ancho de línea y fuente en negrita
-    $this->SetFillColor(255,0,0);
-    $this->SetTextColor(255);
-    $this->SetDrawColor(128,0,0);
-    $this->SetLineWidth(.3);
-	$this->Ln();
-	
-	
-    // Cabecera
-    $w = array(80,30,30,30);
-    for($i=0;$i<count($header);$i++)
-        $this->Cell($w[$i],6,$header[$i],1,0,'C',true);
-    $this->Ln();
-    // Restauración de colores y fuentes
-    $this->SetFillColor(224,235,255);
-    $this->SetTextColor(0);
-    $this->SetFont('');
-    // Datos
-    $fill = false;
-	
-	$total = 0;
-	$totalcant = 0;
-	$sumSaldos = 0;
-	$sumAbonos = 0;
-	
-	$this->SetFont('Arial','',9);
-    while ($row = mysql_fetch_array($data))
-    {
-		$sumSaldos = $sumSaldos + $row['total'];
-		$total = $total + $row['total'];
-		$totalcant = $totalcant + 1;
-		
-        $this->Cell($w[0],5,$row['nombre'],'LR',0,'L',$fill);
-		$this->Cell($w[1],5,number_format($row['cantidad'],0,',','.'),'LR',0,'C',$fill);
-		$this->Cell($w[2],5,number_format($row['precio'],2,',','.'),'LR',0,'R',$fill);
-		$this->Cell($w[3],5,number_format($row['total'],2,',','.'),'LR',0,'R',$fill);
-        $this->Ln();
-        
-		
-		if ($totalcant == 25) {
-			$this->AddPage();
-			$this->SetFont('Arial','',11);
-			// Colores, ancho de línea y fuente en negrita
-			$this->SetFillColor(255,0,0);
-			$this->SetTextColor(255);
-			$this->SetDrawColor(128,0,0);
-			$this->SetLineWidth(.3);
-			for($i=0;$i<count($header);$i++)
-				$this->Cell($w[$i],6,$header[$i],1,0,'C',true);
-			$this->Ln();
-			$this->SetFillColor(224,235,255);
-			$this->SetTextColor(0);
-			$this->SetFont('');
-			// Datos
-			$fill = false;
-			$this->SetFont('Arial','',9);
-		}
-    }
-	
-	$this->Cell($w[0]+$w[1]+$w[2],5,'Totales:','LRT',0,'L',$fill);
-	$this->Cell($w[3],5,number_format($total,2,',','.'),'LRT',0,'R',$fill);
-
-	$fill = !$fill;
-	$this->Ln();
-    // Línea de cierre
-    $this->Cell(array_sum($w),0,'','T');
-	$this->SetFont('Arial','',12);
-	$this->Ln();
-	$this->Ln();
-	$this->Cell(60,7,'Cantidad de items: '.$totalcant,0,0,'L',false);
-	$this->Ln();
-	$this->Cell(60,7,'Total: $'.number_format($sumSaldos, 2, '.', ','),0,0,'L',false);
-	
-	$TotalIngresos = $TotalIngresos + $total;
-	*/
-}
-
-
-}
-
-
-
-
-
-
-$pdf = new PDF('L','mm','A4');
+$pdf = new FPDF('L','mm','A4');
 
 $pdf->SetMargins(3,3,3);
 // Títulos de las columnas
@@ -154,156 +54,265 @@ $pdf->AddPage();
 
 
 
-$pdf->SetXY(7,7);
+$pdf->SetXY(10,10);
 
 $pdf->SetFillColor(188,188,188);
-$pdf->Rect(7.5,7.5,195,20.5,'F');
+$pdf->Rect(9.5,9.5,277,25.5,'F');
 
 
 $pdf->SetXY(138.5,8);
 $pdf->SetFillColor(232,232,232);
-$pdf->Rect(7.8,7.8,115.5,20,'F');
-$pdf->Rect(123.8,7.8,78.5,20,'F');
+$pdf->Rect(9.8,9.8,174.5,25,'F');
+$pdf->Rect(184.8,9.8,101.5,25,'F');
 
-$pdf->Image('../imagenes/logoactores2.jpg',13,11,60);
+$pdf->Image('../imagenes/logoactores2.jpg',15,14,80);
 
-$pdf->SetFont('Arial','b',8);
-$pdf->SetXY(165,10);
-$pdf->Cell(35,4,'PLANILLA DE APORTES',0,0,'R');
-$pdf->SetFont('Arial','b',7);
-$pdf->SetXY(126,14);
-$pdf->Cell(74,4,'Para ser entregada en la Asociación Argentina de Actores',0,0,'R');
-$pdf->SetFont('Arial','b',13);
-$pdf->SetXY(149,21);
+$pdf->SetFont('Arial','b',9);
+$pdf->SetXY(240,15);
+$pdf->Cell(45,4,'PLANILLA DE APORTES',0,0,'R');
+$pdf->SetFont('Arial','b',9);
+$pdf->SetXY(203,19);
+$pdf->Cell(82,4,'Para ser entregada en la Asociación Argentina de Actores',0,0,'R');
+$pdf->SetFont('Arial','b',14);
+$pdf->SetXY(222,26);
 $pdf->Cell(30,6,'RAMA: ',0,0,'R');
 
 
 $pdf->SetFillColor(88,88,88);
-$pdf->Rect(7.8,27.8,194.5,6,'F');
+$pdf->Rect(9.8,34.8,276.5,6,'F');
 
-$wA = 22;
-$wB = 41;
-$wC = 47;
+$wA = 31;
+$wB = 61;
+$wC = 61.5;
 
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->SetDrawColor(188, 188, 188);
 $pdf->SetFillColor(255,255,255);
-$pdf->SetXY(7.8,33.8);
+$pdf->SetXY(9.8,40.8);
 $pdf->Cell($wA,8,'N°COOPERATIVA',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,mysql_result($resObra,0,'numero'),1,0,'C',1);
-$pdf->SetFont('Arial','b',6);
+
+$pdf->SetFont('Arial','b',8);
 $pdf->MultiCell($wA,4,'AP Y NOMB. DEL RESPONSABLE',1,'L',1);
-$pdf->SetXY(92.8,33.8);
-$pdf->SetFont('Arial','',6);
+
+$pdf->SetXY(132.8,40.8);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wC,8,'A CIEGAS TEATRO POR LA INTEGRACION',1,0,'C',1);
-$pdf->SetFont('Arial','b',6);
+
+$pdf->SetFont('Arial','b',8);
 $pdf->Cell($wA,8,'NRO de CUIT',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'30712485961',1,0,'C',1);
 
 
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->SetDrawColor(188, 188, 188);
 $pdf->SetFillColor(255,255,255);
-$pdf->SetXY(7.8,41.8);
+$pdf->SetXY(9.8,48.8);
 $pdf->Cell($wA,8,'DOMICILIO LEGAL',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->MultiCell($wA,4,'AP Y NOMB. DEL CONTACTO',1,'L',1);
-$pdf->SetXY(92.8,41.8);
-$pdf->SetFont('Arial','',6);
+$pdf->SetXY(132.8,48.8);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wC,8,'ASOC. CIVIL',1,0,'C',1);
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->Cell($wA,8,'INGRESOS BRUTOS',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'',1,0,'L',1);
 
 
 
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->SetDrawColor(188, 188, 188);
 $pdf->SetFillColor(255,255,255);
-$pdf->SetXY(7.8,49.8);
+$pdf->SetXY(9.8,56.8);
 $pdf->Cell($wA,8,'DOMICILIO REAL',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','b',6);
-$pdf->MultiCell($wA,4,'TELEFONO FIJO DEL CONTACTO',1,'L',1);
-$pdf->SetXY(92.8,49.8);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','b',8);
+$pdf->MultiCell($wA,4,'TELEFONO FIJO  DEL CONTACTO',1,'L',1);
+$pdf->SetXY(132.8,56.8);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wC,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->Cell($wA,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'',1,0,'L',1);
 
 
 
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->SetDrawColor(188, 188, 188);
 $pdf->SetFillColor(255,255,255);
-$pdf->SetXY(7.8,57.8);
+$pdf->SetXY(9.8,64.8);
 $pdf->Cell($wA,8,'TELEFONO / FAX',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->MultiCell($wA,4,'TELEFONO MOVIL DEL CONTACTO',1,'L',1);
-$pdf->SetXY(92.8,57.8);
-$pdf->SetFont('Arial','',6);
+$pdf->SetXY(132.8,64.8);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wC,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->Cell($wA,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'',1,0,'L',1);
 
 
 
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->SetDrawColor(188, 188, 188);
 $pdf->SetFillColor(255,255,255);
-$pdf->SetXY(7.8,65.8);
+$pdf->SetXY(9.8,72.8);
 $pdf->Cell($wA,8,'EMAIL',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->MultiCell($wA,4,'EMAIL DEL CONTACTO',1,'L',1);
-$pdf->SetXY(92.8,65.8);
-$pdf->SetFont('Arial','',6);
+$pdf->SetXY(132.8,72.8);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wC,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->Cell($wA,8,'',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'',1,0,'L',1);
 
 
 $pdf->SetFillColor(88,88,88);
-$pdf->Rect(7.8,73.8,194.5,6,'F');
+$pdf->Rect(9.8,80.8,276.5,6,'F');
 
 
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->SetDrawColor(188, 188, 188);
 $pdf->SetFillColor(255,255,255);
-$pdf->SetXY(7.8,79.8);
+$pdf->SetXY(9.8,86.8);
 $pdf->MultiCell($wA,4,'TITULO DEL PROGRAMA',1,'L',1);
-$pdf->SetXY(7.8 + $wA,79.8);
-$pdf->SetFont('Arial','',6);
+$pdf->SetXY(9.8 + $wA,86.8);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,mysql_result($resObra,0,'nombre'),1,0,'C',1);
-$pdf->SetFont('Arial','b',6);
-$pdf->MultiCell($wA,4,'MONTO BORDEAUX',1,'L',1);
-$pdf->SetXY(92.8,79.8);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','b',8);
+$pdf->MultiCell($wA,8,'MONTO BORDEAUX',1,'L',1);
+$pdf->SetXY(132.8,86.8);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wC,8,'$'.number_format( mysql_result($resBruto,0,'totalcooperativas'),2,'.',''),1,0,'C',1);
-$pdf->SetFont('Arial','b',6);
+$pdf->SetFont('Arial','b',8);
 $pdf->Cell($wA,8,'PERIOD. LIQUID',1,0,'L',1);
-$pdf->SetFont('Arial','',6);
+$pdf->SetFont('Arial','',8);
 $pdf->Cell($wB,8,'DESDE: '.$desde.' HASTA: '.$hasta,1,0,'C',1);
 
 $pdf->SetFillColor(88,88,88);
-$pdf->Rect(7.8,81.8,194.5,6,'F');
+$pdf->Rect(9.8,94.8,276.5,6,'F');
+
+$w1 = 5;
+$w2 = 10;
+$w3 = 40;
+$w4 = 49.5;
+$w5 = 43;
+$w6 = 43;
+$w7 = 43;
+$w8 = 43;
+
+$y2 = 100.8;
+
+$pdf->SetFont('Arial','',8);
+$pdf->SetDrawColor(188, 188, 188);
+$pdf->SetFillColor(255,255,255);
+$pdf->SetXY(9.8,$y2);
+$pdf->Cell($w1,8,'',1,0,'C',1);
+$pdf->MultiCell($w2,4,'Tipo Doc',1,'C',1);
+$pdf->SetXY(9.8 + $w1 + $w2,$y2);
+$pdf->Cell($w3,8,'Nro Documento',1,0,'C',1);
+$pdf->Cell($w4,8,'Apellido y Nombre Artístico',1,0,'C',1);
+$pdf->Cell($w5,8,'Puntaje',1,0,'C',1);
+$pdf->Cell($w6,8,'Renumeracion',1,0,'C',1);
+$pdf->Cell($w7,8,'Aporte Sindical',1,0,'C',1);
+$pdf->Cell($w8,8,'Aporte Social',1,0,'C',1);
+
+$i = 0;
+$netoActor = 0;
+$totalSindical = 0;
+$totalSocial = 0;
+$totalRemunerativo = 0;
+
+while ($row = mysql_fetch_array($resDatos)) {
+	$y2 += 8;
+	$i += 1;
+	$netoActor = (($row['puntos'] * mysql_result($resBruto,0,'totalcooperativas')) / $row['puntoscooperativa']);
+	
+	$pdf->SetXY(9.8,$y2);
+	$pdf->Cell($w1,8,$i,1,0,'C',1);
+	$pdf->MultiCell($w2,8,'DNI',1,'C',1);
+	$pdf->SetXY(9.8 + $w1 + $w2,$y2);
+	$pdf->Cell($w3,8,$row['nrodocumento'],1,0,'C',1);
+	$pdf->Cell($w4,8,$row['apellido'].' '.$row['nombre'],1,0,'C',1);
+	$pdf->Cell($w5,8,'$'.round($row['puntos'],0),1,0,'C',1);
+	$pdf->Cell($w6,8,'$'.round($netoActor,2),1,0,'C',1);
+	$pdf->Cell($w7,8,'$'.round(($netoActor * 0.03),2),1,0,'C',1);  // 3% aporte de actores
+	$pdf->Cell($w8,8,'$'.round(($netoActor * 0.03),2),1,0,'C',1);
+	
+	$totalSindical += round(($netoActor * 0.03),2);
+	$totalSocial += round(($netoActor * 0.03),2);
+	$totalRemunerativo += round($netoActor,2);
+}
+
+	$pdf->SetXY(9.8,$y2 + 8);
+	$pdf->Cell($w1,8,'',1,0,'C',1);
+	$pdf->Cell($w2,8,'',1,0,'C',1);
+	$pdf->Cell($w3,8,'',1,0,'C',1);
+	$pdf->Cell($w4,8,'',1,0,'C',1);
+	$pdf->Cell($w5,8,'',1,0,'C',1);
+	$pdf->Cell($w6,8,'',1,0,'C',1);
+	$pdf->Cell($w7,8,'$'.round($totalSindical,2),1,0,'C',1);  // 3% aporte de actores
+	$pdf->Cell($w8,8,'$'.round($totalSocial,2),1,0,'C',1);
+	
+$pdf->SetFillColor(88,88,88);
+$pdf->Rect(9.8,$y2 + 8 + 8,276.5,6,'F');
+
+$w9 = 26.5;
+$w10 = 50;
+
+$pdf->SetFont('Arial','',8);
+$pdf->SetXY(9.8,$y2 + 8 + 8 + 6);
+$pdf->Cell($w9,10,'',1,0,'C',0);
+$pdf->Cell($w10,10,'RECIBIÓ',1,0,'L',0);
+$pdf->Cell($w10,10,'AUTORIZÓ',1,0,'L',0);
+$pdf->Cell($w10,10,'ASENTÓ',1,0,'L',0);
+$pdf->Cell($w10,10,'',1,0,'L',0);
+$pdf->Cell($w10,10,'',1,0,'L',0);
 
 
+$pdf->SetXY(9.8,$y2 + 8 + 8 + 6 + 10);
+$pdf->Cell($w9,20,'ACLARACION',1,0,'L',0);
+$pdf->Cell($w10,20,'X',1,0,'L',0);
+$pdf->Cell($w10,20,'X',1,0,'L',0);
+$pdf->Cell($w10,20,'X',1,0,'L',0);
+$pdf->Cell($w10,10,'TOTAL GENERAL RENUM.',1,0,'L',0);
+$pdf->Cell($w10,10,'$'.$totalRemunerativo,1,0,'L',0);
+$pdf->Ln();
+$pdf->SetX(186.3);
+$pdf->SetFont('Arial','B',10);
+$pdf->Cell($w10,10,'TOTAL A DEPOSITAR',1,0,'L',0);
+$pdf->SetFont('Arial','',8);
+$pdf->Cell($w10,10,'$'.($totalSindical + $totalSocial),1,0,'L',0);
+
+
+$pdf->SetXY(9.8,$y2 + 8 + 8 + 6 + 10 + 24);
+$pdf->Cell($w9,20,'FIRMA',1,0,'L',0);
+$pdf->Cell($w10,20,'X',1,0,'L',0);
+$pdf->Cell($w10,20,'X',1,0,'L',0);
+$pdf->Cell($w10,20,'X',1,0,'L',0);
+$pdf->Cell($w10,10,'NETO',1,0,'L',0);
+$pdf->Cell($w10,10,'$'.($totalRemunerativo - ($totalSindical + $totalSocial)),1,0,'L',0);
+$pdf->Ln();
+$pdf->SetX(186.3);
+$pdf->Cell($w10,10,'',1,0,'L',0);
+$pdf->Cell($w10,10,'',1,0,'L',0);
+
+$pdf->SetFillColor(88,88,88);
+$pdf->Rect(9.8,$y2 + 8 + 8 + 6 + 10 + 24 + 20,276.5,6,'F');
 
 /*
 $pdf->SetFont('Arial','',14);
@@ -363,7 +372,7 @@ $pdf->Ln();
 
 $pdf->SetFont('Arial','',13);
 
-$nombreTurno = mysql_result($resObra,0,1)." - ".$mes.".pdf";
+$nombreTurno = mysql_result($resObra,0,'nombre')." - ".$mes.".pdf";
 
 $pdf->Output($nombreTurno,'D');
 
