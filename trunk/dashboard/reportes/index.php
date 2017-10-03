@@ -305,7 +305,7 @@ $(document).ready(function(){
     });
 	
 	$("#rptPlanillaAportes").click(function(event) {
-		alert($('#refobras2').val());
+
         window.open("../../reportes/rptPlanillaDeAportes.php?desde=" + $("#fecha3").val() + "&hasta=" + $("#fecha4").val() + '&id=' + $('#refobras2').val(),'_blank');	
 						
     });

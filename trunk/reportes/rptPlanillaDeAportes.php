@@ -34,7 +34,7 @@ $resDatos		=	$serviciosReferencias->traerPersonalcooperativasPorObra($id);
 
 $totalActores   =	mysql_num_rows($serviciosReferencias->traerPersonalcooperativasPorObra($id));
 
-
+if (mysql_num_rows($resObra)>0) {
 $TotalIngresos = 0;
 $TotalEgresos = 0;
 $Totales = 0;
@@ -375,7 +375,9 @@ $pdf->SetFont('Arial','',13);
 $nombreTurno = mysql_result($resObra,0,'nombre')." - ".$mes.".pdf";
 
 $pdf->Output($nombreTurno,'D');
-
+} else {
+	echo '<h1>No existe datos</h1>';	
+}
 /*
 require('fpdf.php');
 

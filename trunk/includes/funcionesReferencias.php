@@ -2100,8 +2100,7 @@ function traerTotalCooperativaPorObra($idObra, $desde, $hasta) {
 					INNER JOIN
 				dbobras o ON o.idobra = fu.refobras
 			WHERE
-				MONTH(v.fecha) = 8
-					AND YEAR(v.fecha) = 2017
+				v.fecha between '".$desde."' and '".$hasta."'
 					AND v.cancelado = 0
 					AND fu.refobras = 1
 					) r";	
