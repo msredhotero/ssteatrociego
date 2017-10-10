@@ -361,6 +361,9 @@ case 'traerDescuentoPromociones':
 case 'traerTotal':
 	traerTotal($serviciosReferencias);
 	break;
+case 'traerVentasPorDiaFuncionActivos':
+	traerVentasPorDiaFuncionActivos($serviciosReferencias);
+	break;
 ////////////////////////////////*****    FIN   *******/////////////////////////////////////
 
 }
@@ -680,6 +683,29 @@ function traerPlantelConCargosPorFuncion($serviciosReferencias) {
 ////////////////////////////////*****    FIN AUTO-COMPLETAR   *******/////////////////////////////////////
 
 ////////////////////////////////*****    Solo para que traigan valores   *******/////////////////////////////////////
+function traerVentasPorDiaFuncionActivos($serviciosReferencias) {
+
+	$fecha 		= $_GET['fecha'];
+	$reffuncion = $_GET['reffuncion'];
+
+	$resVenta = $serviciosReferancias->traerVentasPorDiaFuncionActivos($fecha, $reffuncion);
+	
+	$ar = array();	
+	while ($row = mysql_fetch_array($resTraerDatos)) {
+		//$cadJugadores .= '"'.$row[0].'": "'.$row['apellido'].', '.$row['nombres'].' - '.$row['nrodocumento'].'",';
+		if ($datos == 1) {
+
+			array_push($ar,array('equipo'=>$row[0].' - '.$row['nombre'], 'id'=> $row[0], 'categoria'=>$row['categoria'], 'imagen'=>$row['imagen']));
+		} else {
+
+			array_push($ar,array('equipo'=>$row[0].' - '.$row['nombre'].' - '.$row['categoria'].' - '.$row['division'], 'id'=> $row[0], 'categoria'=>$row['categoria'], 'imagen'=>$row['imagen']));
+		}
+	}
+	
+	echo $token.'('.json_encode($ar).');';
+}
+
+
 function traerValorEntrada($serviciosReferencias) {
 	$id		=	$_POST['id'];
 	

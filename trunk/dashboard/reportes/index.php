@@ -271,6 +271,121 @@ $lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traer
     </div>
     
     
+    <div class="boxInfoLargo tile-stats stat-til tile-white">
+        <div id="headBoxInfo">
+        	<p style="color: #fff; font-size:18px; height:16px;">Argentores</p>
+        	
+        </div>
+    	<div class="cuerpoBox">
+        	<form class="form-inline formulario" role="form">
+        	<div class="row">
+            	<div class="form-group col-md-3 col-xs-6" style="display:fechas">
+                    <label for="fecha1" class="control-label" style="text-align:left">Seleccione la fecha</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="fecha5" id="fecha5" value="Date"/>
+                    </div>
+                </div>
+                
+               <div class="form-group col-md-6" style="display:block">
+                    <label class="control-label" for="codigobarra" style="text-align:left">Obra <span style="color:#F00;">*</span></label>
+                    <div class="input-group col-md-12">
+                        <select data-placeholder="selecione la Función..." id="refobras3" name="refobras3" class="form-control" tabindex="2">
+                            
+                            <?php echo $lstObras; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                
+                <div class="form-group col-md-3">
+                    <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
+
+                    	<ul class="list-inline">
+                        	<li>
+                    			<button type="button" class="btn btn-info" id="buscarargentores" style="margin-left:0px;">Buscar</button>
+                            </li>
+                            <!--<li>
+                        		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
+                            </li>-->
+                        </ul>
+
+                </div>
+                
+                <div class="form-group col-md-3">
+                	<label for="fecha1" class="control-label" style="text-align:left">Valor Entrada</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="valorentrada" id="valorentrada" value="0" readonly/>
+                    </div>
+                
+                </div>
+                
+                <div class="form-group col-md-3">
+                	<label for="fecha1" class="control-label" style="text-align:left">Total Recaudado</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="totalrecaudado" id="totalrecaudado" value="0" readonly/>
+                    </div>
+                
+                </div>
+                
+                <div class="form-group col-md-3">
+                	<label for="fecha1" class="control-label" style="text-align:left">Argentores</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="argentores" id="argentores" value="0" readonly/>
+                    </div>
+                
+                </div>
+           </div>
+           <div class="row">     
+                <div class="form-group col-md-3">
+                	<label for="fecha1" class="control-label" style="text-align:left">Entradas Full</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="efull" id="efull" value="0"/>
+                    </div>
+                
+                </div>
+                
+                <div class="form-group col-md-3">
+                	<label for="fecha1" class="control-label" style="text-align:left">Entradas 50%</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="e50" id="e50" value="0"/>
+                    </div>
+                
+                </div>
+                
+                <div class="form-group col-md-3">
+                	<label for="fecha1" class="control-label" style="text-align:left">Entradas Cartelera</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="ecartelera" id="ecartelera" value="0"/>
+                    </div>
+                
+                </div>
+                
+                <div class="form-group col-md-3">
+                	<label for="fecha1" class="control-label" style="text-align:left">Entradas Invitados</label>
+                    <div class="input-group col-md-12 col-xs-12">
+                    <input class="form-control" type="text" name="einvitados" id="einvitados" value="0"/>
+                    </div>
+                
+                </div>
+                
+			</div>
+            
+            
+            
+            <div class='row' style="margin-left:25px; margin-right:25px;">
+                <div class='alert'>
+                
+                </div>
+                <div id='load'>
+                
+                </div>
+            </div>
+
+            </form>
+    	</div>
+    </div>
+    
+    
     
 
     
@@ -380,6 +495,69 @@ $(document).ready(function(){
         window.open("../../reportes/rptSociosExcel.php",'_blank');	
 						
     });
+	
+	
+	function traerAutocompleteVal(idObra, funcion, contenedor) {
+		$.ajax({
+			data:  {id: idObra, accion: funcion},
+					url:   '../../ajax/ajax.php',
+					type:  'post',
+			beforeSend: function () {
+			
+			},
+			success:  function (response) {
+				$('#'+contenedor).val(response);
+			
+			}
+		});		
+	}
+	
+	var total = 0;
+	$('#buscarargentores').click(function() {
+		
+		$('#efull').val(0);
+		$('#e50').val(0);
+		$('#ecartelera').val(0);
+		$('#einvitados').val(0);
+
+		//valor entrada
+		traerAutocompleteVal($('#refobras3').val(), 'traerValorEntradaPorFuncion', 'valorentrada');
+	});
+	
+	$('#efull').change(function() {
+		if ($(this).val() > 0) {
+			total = parseFloat( $(this).val() * $('#valorentrada').val() ) + parseFloat( ($('#e50').val() * $('#valorentrada').val()) * 0.5 ) + parseFloat( $('#ecartelera').val() * $('#valorentrada').val() * 0.1);
+			$('#totalrecaudado').val(total);
+			
+			$('#argentores').val(total * 0.1);
+		} else {
+			$(this).val(0);
+		}
+	});
+	
+	
+	$('#e50').change(function() {
+		if ($(this).val() > 0) {
+			total = parseFloat( $('#efull').val() * $('#valorentrada').val() ) + parseFloat( ($('#e50').val() * $('#valorentrada').val()) * 0.5 ) + parseFloat( $('#ecartelera').val() * $('#valorentrada').val() * 0.1);
+			$('#totalrecaudado').val(total);
+			
+			$('#argentores').val(total * 0.1);
+		} else {
+			$(this).val(0);
+		}
+	});
+	
+	
+	$('#ecartelera').change(function() {
+		if ($(this).val() > 0) {
+			total = parseFloat( $('#efull').val() * $('#valorentrada').val() ) + parseFloat( ($('#e50').val() * $('#valorentrada').val()) * 0.5 ) + parseFloat( $('#ecartelera').val() * $('#valorentrada').val() * 0.1);
+			$('#totalrecaudado').val(total);
+			
+			$('#argentores').val(total * 0.1);
+		} else {
+			$(this).val(0);
+		}
+	});
 
 });
 </script>
@@ -431,6 +609,9 @@ $('.form_date').datetimepicker({
 	
 	$( "#fecha4" ).datepicker();
     $( "#fecha4" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+	
+	$( "#fecha5" ).datepicker();
+    $( "#fecha5" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 	
 	$( "#fechadesde2" ).datepicker();
     $( "#fechadesde2" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
