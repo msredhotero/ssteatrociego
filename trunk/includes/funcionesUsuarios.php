@@ -38,7 +38,7 @@ function recuperar($email) {
 }
 function login($usuario,$pass,$sede) {
 	
-	$sqlusu = "select * from dbusuarios where email = '".$usuario."' and refsedes =".$sede;
+	$sqlusu = "select * from dbusuarios where email = '".$usuario."'";
 
 	$error = '';
 
@@ -47,17 +47,43 @@ function login($usuario,$pass,$sede) {
 		$respusu = $this->query($sqlusu,0);
 		
 		if (mysql_num_rows($respusu) > 0) {
-		
+
+			//obtengo el id del usuario
 			$idUsua = mysql_result($respusu,0,0);
-			$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
+
+			//verifico el rol del usuario
+			$rol = mysql_result($respusu,0,'refroles');
+			if ($rol != 1) {
+				$sqlrol = "select * from dbusuarios where refsedes = ".$sede." and idusuario = ".$idUsua;
+
+				$resRol = $this->query($sqlrol,0);
+				if (mysql_num_rows($resRol) > 0) {
+					$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
 			
-			$resppass = $this->query($sqlpass,0);
-			
-			if (mysql_num_rows($resppass) > 0) {
-				$error = '';
+					$resppass = $this->query($sqlpass,0);
+					
+					if (mysql_num_rows($resppass) > 0) {
+						$error = '';
+					} else {
+						$error = 'Usuario o Password incorrecto';
+					}
+				} else {
+					$error = 'El usuario no tiene permiso para trabajar en esta Sede';
+				}
 			} else {
-				$error = 'Usuario o Password incorrecto';
+				$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
+			
+				$resppass = $this->query($sqlpass,0);
+				
+				if (mysql_num_rows($resppass) > 0) {
+					$error = '';
+				} else {
+					$error = 'Usuario o Password incorrecto';
+				}
 			}
+		
+			
+			
 		
 		}
 		else

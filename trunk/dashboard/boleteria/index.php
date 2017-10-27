@@ -22,7 +22,7 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Boleteria",$_SESSION['refroll_predio'],$_SESSION['nombre_predio']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Boleteria",$_SESSION['refroll_predio'],$_SESSION['sede']);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
@@ -126,7 +126,7 @@ if ($_SESSION['refroll_predio'] != 1) {
     
 	<!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css"/>
-	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+	171
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
@@ -546,15 +546,19 @@ $(document).ready(function(){
 	}
 	
 	$('#siguiente1').click(function(e) {
-
-        $(this).removeClass('btn-primary').addClass('btn-success');
-		$('.panel2').show();
-		$('#panel2').removeClass('panel-default').addClass('panel-primary');
-		$('.panel1').removeClass('panel-primary').addClass('panel-success');
-		
-		$('#panel2').find('.panel-body').slideDown();
-		$('#panel2').removeClass('panel-collapsed');
-		$('#panel2').find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        if ($('#reffunciones').chosen().val() != '') {
+            $(this).removeClass('btn-primary').addClass('btn-success');
+            $('.panel2').show();
+            $('#panel2').removeClass('panel-default').addClass('panel-primary');
+            $('.panel1').removeClass('panel-primary').addClass('panel-success');
+            
+            $('#panel2').find('.panel-body').slideDown();
+            $('#panel2').removeClass('panel-collapsed');
+            $('#panel2').find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        } else {
+            alert('Debe seleccionar una funcion');
+        }
+        
 			
 		
     });

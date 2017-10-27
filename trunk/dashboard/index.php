@@ -54,7 +54,7 @@ $resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Dashboard",$_SESSION
     
 	<!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css"/>
-	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+	171
     <!-- Latest compiled and minified JavaScript -->
     <script src="../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../css/chosen.css">

@@ -23,7 +23,7 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reportes",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reportes",$_SESSION['refroll_predio'],$_SESSION['sede']);
 
 
 $lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFunciones(),array(3,4,5),' - ');
@@ -59,7 +59,7 @@ $lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traer
 	<!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
-	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+	171
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
 
@@ -370,7 +370,19 @@ $lstObras = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traer
                 
 			</div>
             
-            
+            <div class="form-group col-md-6">
+                    <label class="control-label" style="text-align:left" for="refcliente">Acción</label>
+
+                        <ul class="list-inline">
+                            <li>
+                                <button type="button" class="btn btn-success" id="rptArgentores" style="margin-left:0px;">Generar</button>
+                            </li>
+                            <!--<li>
+                                <button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
+                            </li>-->
+                        </ul>
+
+                </div>
             
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
@@ -423,6 +435,12 @@ $(document).ready(function(){
 
         window.open("../../reportes/rptPlanillaDeAportes.php?desde=" + $("#fecha3").val() + "&hasta=" + $("#fecha4").val() + '&id=' + $('#refobras2').val(),'_blank');	
 						
+    });
+
+    $('#rptArgentores').click(function(event) {
+
+        window.open("../../reportes/rptArgentores.php?fecha5=" + $("#fecha5").val() + "&id=" + $("#refobras3").val() + '&valorentrada=' + $('#valorentrada').val() + '&totalrecaudado=' + $('#totalrecaudado').val() + '&argentores=' + $('#argentores').val() + '&efull=' + $('#efull').val() + '&e50=' + $('#e50').val() + '&ecartelera=' + $('#ecartelera').val() + '&einvitados=' + $('#einvitados').val() ,'_blank');  
+                        
     });
 	
 	
