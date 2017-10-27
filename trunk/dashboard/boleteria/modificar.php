@@ -54,7 +54,12 @@ $lblreemplazo	= array("Tipo Pago","Funcion","Album","Valor Entrada","Total Efect
 $resTipoPago 	= $serviciosReferencias->traerTipopago();
 $cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resTipoPago,array(1),'',mysql_result($resResultado,0,'reftipopago'));
 
-$resFuncion 	= $serviciosReferencias->traerFuncionesPorFuncion(mysql_result($resResultado,0,'reffunciones'));
+if ($_SESSION['idroll_predio'] == 1) {
+	$resFuncion 	= $serviciosReferencias->traerFuncionesPorFuncion(mysql_result($resResultado,0,'reffunciones'));
+} else {
+	$resFuncion 	= $serviciosReferencias->traerFuncionesPorFuncionPorSede(mysql_result($resResultado,0,'reffunciones'),$_SESSION['idsede']);
+}
+
 $cadRef4 	= $serviciosFunciones->devolverSelectBoxActivo($resFuncion,array(3,4),' - ',mysql_result($resResultado,0,'reffunciones'));
 
 $resAlbum 	= $serviciosReferencias->traerAlbumPorId(mysql_result($resResultado,0,'refalbum'));

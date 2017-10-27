@@ -36,57 +36,74 @@ function recuperar($email) {
 		echo 'Email incorrecto';	
 	}
 }
-function login($usuario,$pass) {
+function login($usuario,$pass,$sede) {
 	
-	$sqlusu = "select * from dbusuarios where email = '".$usuario."'";
+	$sqlusu = "select * from dbusuarios where email = '".$usuario."' and refsedes =".$sede;
 
-$error = '';
+	$error = '';
 
-if (trim($usuario) != '' and trim($pass) != '') {
-
-$respusu = $this->query($sqlusu,0);
-
-if (mysql_num_rows($respusu) > 0) {
+	if (trim($usuario) != '' and trim($pass) != '') {
 	
-	
-	$idUsua = mysql_result($respusu,0,0);
-	$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
-
-
-	$resppass = $this->query($sqlpass,0);
-	
-	if (mysql_num_rows($resppass) > 0) {
-		$error = '';
-		} else {
-			$error = 'Usuario o Password incorrecto';
+		$respusu = $this->query($sqlusu,0);
+		
+		if (mysql_num_rows($respusu) > 0) {
+		
+			$idUsua = mysql_result($respusu,0,0);
+			$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
+			
+			$resppass = $this->query($sqlpass,0);
+			
+			if (mysql_num_rows($resppass) > 0) {
+				$error = '';
+			} else {
+				$error = 'Usuario o Password incorrecto';
+			}
+		
+		}
+		else
+		
+		{
+			$error = 'Usuario o Password incorrecto';	
+		}
+		
+		if ($error == '') {
+		//die(var_dump($error));
+			session_start();
+			$_SESSION['usua_predio'] = $usuario;
+			$_SESSION['nombre_predio'] = mysql_result($resppass,0,0);
+			$_SESSION['email_predio'] = mysql_result($resppass,0,1);
+			$_SESSION['idroll_predio'] = mysql_result($resppass,0,4);
+			$_SESSION['refroll_predio'] = mysql_result($resppass,0,3);
+			
+			$_SESSION['idsede'] = $sede;
+			
+			$sqlSede = "select sede from tbsedes where idsede =".$sede;
+			$sedeDescripcion = mysql_result($this->query($sqlSede,0),0,0);
+			$_SESSION['sede'] = $sedeDescripcion;
+			
+			return '';
 		}
 	
+	}	else {
+		$error = 'Usuario y Password son campos obligatorios';	
 	}
-	else
-	
-	{
-		$error = 'Usuario o Password incorrecto';	
-	}
-	
-	if ($error == '') {
-		//die(var_dump($error));
-		session_start();
-		$_SESSION['usua_predio'] = $usuario;
-		$_SESSION['nombre_predio'] = mysql_result($resppass,0,0);
-		$_SESSION['email_predio'] = mysql_result($resppass,0,1);
-		$_SESSION['idroll_predio'] = mysql_result($resppass,0,4);
-		$_SESSION['refroll_predio'] = mysql_result($resppass,0,3);
-		
-		return '';
-	}
-	
-}	else {
-	$error = 'Usuario y Password son campos obligatorios';	
-}
 	
 	
 	return $error;
 	
+}
+
+
+function cambiarSede($sede) {
+	session_start();
+	
+	$_SESSION['idsede'] = $sede;
+			
+	$sqlSede = "select sede from tbsedes where idsede =".$sede;
+	$sedeDescripcion = mysql_result($this->query($sqlSede,0),0,0);
+	$_SESSION['sede'] = $sedeDescripcion;
+	
+	return '';	
 }
 
 function loginFacebook($usuario) {
@@ -298,21 +315,22 @@ function enviarEmail($destinatario,$asunto,$cuerpo, $remitente) {
 }
 
 
-function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto) {
+function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto, $refsedes) {
 	$sql = "INSERT INTO dbusuarios
 				(idusuario,
 				usuario,
 				password,
-				refroll,
+				refroles,
 				email,
-				nombrecompleto)
+				nombrecompleto,
+				refsedes)
 			VALUES
 				('',
 				'".utf8_decode($usuario)."',
 				'".utf8_decode($password)."',
 				".$refroll.",
 				'".utf8_decode($email)."',
-				'".utf8_decode($nombrecompleto)."')";
+				'".utf8_decode($nombrecompleto)."', ".$refsedes.")";
 	if ($this->existeUsuario($email) == true) {
 		return "Ya existe el usuario";	
 	}
@@ -326,14 +344,15 @@ function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto) {
 }
 
 
-function modificarUsuario($id,$usuario,$password,$refroll,$email,$nombrecompleto) {
+function modificarUsuario($id,$usuario,$password,$refroll,$email,$nombrecompleto,$refsedes) {
 	$sql = "UPDATE dbusuarios
 			SET
 				usuario = '".utf8_decode($usuario)."',
 				password = '".utf8_decode($password)."',
 				email = '".utf8_decode($email)."',
 				refroles = ".$refroll.",
-				nombrecompleto = '".utf8_decode($nombrecompleto)."'
+				nombrecompleto = '".utf8_decode($nombrecompleto)."',
+				refsedes = ".$refsedes."
 			WHERE idusuario = ".$id;
 	$res = $this->query($sql,0);
 	if ($res == false) {

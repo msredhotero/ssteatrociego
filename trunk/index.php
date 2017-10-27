@@ -2,10 +2,14 @@
 
 require 'includes/funcionesUsuarios.php';
 include ('includes/funciones.php');
+include ('includes/funcionesReferencias.php');
 
 $serviciosUsuarios = new ServiciosUsuarios();
+$serviciosReferencias = new ServiciosReferencias();
 $servicios = new Servicios();
 
+$resSedes = $serviciosReferencias->traerSedesActivas();
+$cadSedes = $servicios->devolverSelectBox($resSedes,array(1),'');
 
 ?>
 <!DOCTYPE HTML>
@@ -69,6 +73,17 @@ $servicios = new Servicios();
         			$("#pass").attr('placeholder','Ingrese el password');
         			});
 					
+					
+					$("#sede").click(function(event) {
+        			$("#sede").removeClass("alert alert-danger");
+					$("#sede").attr('placeholder','Ingrese la sede');
+        			});
+
+        			$("#sede").change(function(event) {
+        			$("#sede").removeClass("alert alert-danger");
+        			$("#sede").attr('placeholder','Ingrese la sede');
+        			});
+					
 				
 				function validador(){
 
@@ -86,6 +101,13 @@ $servicios = new Servicios();
 
         					$("#pass").addClass("alert alert-danger");
         					$("#pass").attr('placeholder',$error);
+        				}
+						
+						if ($("#sede").val() == "") {
+        					$error = "Es obligatorio el campo Sede.";
+
+        					$("#sede").addClass("alert alert-danger");
+        					$("#sede").attr('placeholder',$error);
         				}
 						
 
@@ -117,7 +139,7 @@ $servicios = new Servicios();
         						$.ajax({
                                 data:  {email:		$("#email").val(),
 										pass:		$("#pass").val(),
-										idempresa:	$('#idempresa').val(),
+										sede:	$('#sede').val(),
 										accion:		'login'},
                                 url:   'ajax/ajax.php',
                                 type:  'post',
@@ -187,16 +209,35 @@ background-color: #ffffff; border:1px solid #101010; box-shadow: 2px 2px 3px #33
               <div class="form-group">
                 <label for="usuario" class="col-md-2 control-label" style="color:#363636;text-align:left;">E-Mail</label>
                 <div class="col-lg-7">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
                   <input type="email" class="form-control" id="email" name="email" 
                          placeholder="E-Mail">
+                </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="ejemplo_password_2" class="col-md-2 control-label" style="color:#363636;text-align:left;">Contraseña</label>
                 <div class="col-lg-7">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
                   <input type="password" class="form-control" id="pass" name="pass" 
                          placeholder="password">
+                </div>
+                </div>
+              </div>
+              
+              
+              <div class="form-group">
+                <label for="sedes" class="col-md-2 control-label" style="color:#363636;text-align:left;">Sede</label>
+                <div class="col-lg-7">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-flag"></span></span>
+                  <select class="form-control" id="sede" name="sede">
+                  	<?php echo $cadSedes; ?>
+                  </select>
+                </div>
                 </div>
               </div>
               

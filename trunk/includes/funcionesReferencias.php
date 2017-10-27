@@ -705,6 +705,30 @@ return $res;
 } 
 
 
+function traerFuncionesPorSedes($idSede) { 
+$sql = "select 
+f.idfuncion,
+obr.nombre as obra,
+sa.descripcion as sala,
+coo.descripcion as cooperativa,
+f.horario,
+dia.dia,
+f.refobras,
+f.refcooperativas,
+f.refdias
+from dbfunciones f 
+inner join dbobras obr ON obr.idobra = f.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+inner join dbcooperativas coo ON coo.idcooperativa = f.refcooperativas 
+inner join tbdias dia ON dia.iddia = f.refdias 
+inner join tbsedes se ON se.idsede = obr.refsedes
+where se.idsede = ".$idSede."
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
 function traerFuncionesPorFuncion($id) { 
 $sql = "select 
 f.idfuncion,
@@ -721,7 +745,32 @@ inner join dbobras obr ON obr.idobra = f.refobras
 inner join tbsalas sa ON sa.idsala = obr.refsalas 
 inner join dbcooperativas coo ON coo.idcooperativa = f.refcooperativas 
 inner join tbdias dia ON dia.iddia = f.refdias 
-where idfuncion =".$id." 
+inner join tbsedes se ON se.idsede = obr.refsedes
+where idfuncion =".$id."
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerFuncionesPorFuncionPorSede($id,$idsede) { 
+$sql = "select 
+f.idfuncion,
+obr.nombre as obra,
+sa.descripcion as sala,
+coo.descripcion as cooperativa,
+f.horario,
+dia.dia,
+f.refobras,
+f.refcooperativas,
+f.refdias
+from dbfunciones f 
+inner join dbobras obr ON obr.idobra = f.refobras 
+inner join tbsalas sa ON sa.idsala = obr.refsalas 
+inner join dbcooperativas coo ON coo.idcooperativa = f.refcooperativas 
+inner join tbdias dia ON dia.iddia = f.refdias 
+inner join tbsedes se ON se.idsede = obr.refsedes
+where idfuncion =".$id." and se.idsede = ".$idsede."
 order by 1"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -856,18 +905,18 @@ return $res;
 
 /* PARA Obras */
 
-function insertarObras($nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo) { 
-$sql = "insert into dbobras(idobra,nombre,refsalas,valorentrada,cantpulicidad,valorpulicidad,valorticket,costotranscciontarjetaiva,porcentajeargentores,porcentajereparto,porcentajeretencion,fechacreacion,usuacrea,fechamodi,usuamodi,activo) 
-values ('','".utf8_decode($nombre)."',".$refsalas.",".$valorentrada.",".$cantpulicidad.",".$valorpulicidad.",".$valorticket.",".$costotranscciontarjetaiva.",".$porcentajeargentores.",".$porcentajereparto.",".$porcentajeretencion.",'".utf8_decode($fechacreacion)."','".utf8_decode($usuacrea)."','".utf8_decode($fechamodi)."','".utf8_decode($usuamodi)."',".$activo.")"; 
+function insertarObras($nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo,$refsedes) { 
+$sql = "insert into dbobras(idobra,nombre,refsalas,valorentrada,cantpulicidad,valorpulicidad,valorticket,costotranscciontarjetaiva,porcentajeargentores,porcentajereparto,porcentajeretencion,fechacreacion,usuacrea,fechamodi,usuamodi,activo,refsedes) 
+values ('','".utf8_decode($nombre)."',".$refsalas.",".$valorentrada.",".$cantpulicidad.",".$valorpulicidad.",".$valorticket.",".$costotranscciontarjetaiva.",".$porcentajeargentores.",".$porcentajereparto.",".$porcentajeretencion.",'".utf8_decode($fechacreacion)."','".utf8_decode($usuacrea)."','".utf8_decode($fechamodi)."','".utf8_decode($usuamodi)."',".$activo.",".$refsedes.")"; 
 $res = $this->query($sql,1); 
 return $res; 
 } 
 
 
-function modificarObras($id,$nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo) { 
+function modificarObras($id,$nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo,$refsedes) { 
 $sql = "update dbobras 
 set 
-nombre = '".utf8_decode($nombre)."',refsalas = ".$refsalas.",valorentrada = ".$valorentrada.",cantpulicidad = ".$cantpulicidad.",valorpulicidad = ".$valorpulicidad.",valorticket = ".$valorticket.",costotranscciontarjetaiva = ".$costotranscciontarjetaiva.",porcentajeargentores = ".$porcentajeargentores.",porcentajereparto = ".$porcentajereparto.",porcentajeretencion = ".$porcentajeretencion.",fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',activo = ".$activo." 
+nombre = '".utf8_decode($nombre)."',refsalas = ".$refsalas.",valorentrada = ".$valorentrada.",cantpulicidad = ".$cantpulicidad.",valorpulicidad = ".$valorpulicidad.",valorticket = ".$valorticket.",costotranscciontarjetaiva = ".$costotranscciontarjetaiva.",porcentajeargentores = ".$porcentajeargentores.",porcentajereparto = ".$porcentajereparto.",porcentajeretencion = ".$porcentajeretencion.",fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',activo = ".$activo." ,refsedes = ".$refsedes." 
 where idobra =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -2811,7 +2860,73 @@ return $res;
 
 
 
+/* PARA Sedes */
 
+function insertarSedes($sede,$activo) { 
+$sql = "insert into tbsedes(idsede,sede,activo) 
+values ('','".utf8_decode($sede)."',".$activo.")"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
+
+function modificarSedes($id,$sede,$activo) { 
+$sql = "update tbsedes 
+set 
+sede = '".utf8_decode($sede)."',activo = ".$activo." 
+where idsede =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarSedesDefinitivo($id) { 
+$sql = "delete from tbsedes where idsede =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function eliminarSedes($id) { 
+$sql = "update tbsedes set activo = 0 where idsede =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerSedes() { 
+$sql = "select 
+s.idsede,
+s.sede,
+(case when s.activo = 1 then 'Si' else 'No' end) as activo
+from tbsedes s 
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerSedesActivas() { 
+$sql = "select 
+s.idsede,
+s.sede,
+(case when s.activo = 1 then 'Si' else 'No' end) as activo
+from tbsedes s 
+where s.activo = 1
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerSedesPorId($id) { 
+$sql = "select idsede,sede,(case when activo = 1 then 'Si' else 'No' end) as activo from tbsedes where idsede =".$id; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+/* Fin */
+/* /* Fin de la Tabla: tbsedes*/
 
 
 /* PARA Usuarios */

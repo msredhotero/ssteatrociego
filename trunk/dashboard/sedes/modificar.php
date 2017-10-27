@@ -17,56 +17,52 @@ include ('../../includes/funcionesReferencias.php');
 $serviciosFunciones = new Servicios();
 $serviciosUsuario 	= new ServiciosUsuarios();
 $serviciosHTML 		= new ServiciosHTML();
-$serviciosReferencias = new ServiciosReferencias();
+$serviciosReferencias 	= new ServiciosReferencias();
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Usuarios",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Sedes",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerUsuariosPorId($id);
+$resResultado = $serviciosReferencias->traerSedesPorId($id);
+
+
+/////////////////////// Opciones pagina ///////////////////////////////////////////////
+$singular = "Sede";
+
+$plural = "Sedes";
+
+$eliminar = "eliminarSedes";
+
+$modificar = "modificarSedes";
+
+$idTabla = "idsede";
+
+$tituloWeb = "Gestión: Teatro Ciego";
+//////////////////////// Fin opciones ////////////////////////////////////////////////
+
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbusuarios";
+$tabla 			= "tbsedes";
 
-$lblCambio	 	= array("refroles","nombrecompleto","refsedes");
-$lblreemplazo	= array("Perfil","Nombre Completo","Asignar Sede");
-
-if ($_SESSION['idroll_predio'] != 1) {
-	$resRoles 	= $serviciosUsuario->traerRolesSimple();
-} else {
-	$resRoles 	= $serviciosUsuario->traerRoles();
-	
-}
+$lblCambio	 	= array();
+$lblreemplazo	= array();
 
 
-$cadRef = '';
-while ($rowTT = mysql_fetch_array($resRoles)) {
-	if (mysql_result($resResultado,0,'refroles') == $rowTT[0]) {
-		$cadRef = $cadRef.'<option value="'.$rowTT[0].'" selected>'.utf8_encode($rowTT[1]).'</option>';
-	} else {
-		$cadRef = $cadRef.'<option value="'.$rowTT[0].'">'.utf8_encode($rowTT[1]).'</option>';
-	}
-	
-}
+$cadRef 	= '';
 
-$resSedes = $serviciosReferencias->traerSedes();
-$cadSedes = $serviciosFunciones->devolverSelectBoxActivo($resSedes,array(1),'',mysql_result($resResultado,0,'refsedes'));
-
-
-$refdescripcion = array(0 => $cadRef, 1=>$cadSedes);
-$refCampo 	=  array("refroles","refsedes"); 
+$refdescripcion = array();
+$refCampo 	=  array();
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
+$formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$formulario 	= $serviciosFunciones->camposTablaModificar($id, "idusuario", "modificarUsuario",$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-
-if ($_SESSION['idroll_predio'] != 1) {
+if ($_SESSION['refroll_predio'] != 1) {
 
 } else {
 
@@ -87,7 +83,7 @@ if ($_SESSION['idroll_predio'] != 1) {
 
 
 
-<title>Gestión: Teatro Ciego</title>
+<title><?php echo $tituloWeb; ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -102,11 +98,10 @@ if ($_SESSION['idroll_predio'] != 1) {
     
 	<!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
 	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
-
+	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
 	<style type="text/css">
 		
   
@@ -132,11 +127,11 @@ if ($_SESSION['idroll_predio'] != 1) {
 
 <div id="content">
 
-<h3>Usuarios</h3>
+<h3><?php echo $plural; ?></h3>
 
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Modificar Usuario</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Modificar <?php echo $singular; ?></p>
         	
         </div>
     	<div class="cuerpoBox">
@@ -182,22 +177,27 @@ if ($_SESSION['idroll_predio'] != 1) {
 
 </div>
 
-<div id="dialog2" title="Eliminar Usuarios">
+<div id="dialog2" title="Eliminar <?php echo $singular; ?>">
     	<p>
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
-            ¿Esta seguro que desea eliminar la Usuario?.<span id="proveedorEli"></span>
+            ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
         </p>
-        <p><strong>Importante: </strong>Si elimina el Usuario se perderan todos los datos de este</p>
+        <p><strong>Importante: </strong>Si elimina el equipo se perderan todos los datos de este</p>
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
 <script src="../../bootstrap/js/dataTables.bootstrap.js"></script>
+
 <script src="../../js/bootstrap-datetimepicker.min.js"></script>
 <script src="../../js/bootstrap-datetimepicker.es.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
-
+	
+	<?php
+		$serviciosFunciones->jsBit('activo',mysql_result($resResultado,0,'activo'));
+	?>
+	
 	$('.volver').click(function(event){
 		 
 		url = "index.php";
@@ -218,15 +218,6 @@ $(document).ready(function(){
 		  }
 	});//fin del boton eliminar
 
-	$("#importebruto").change( function(){
-		var iva 	= parseFloat($("#importebruto").val()) * 0.16;
-		var total	= parseFloat($("#importebruto").val()) * 1.16;
-		
-		$("#iva").val(iva);
-		$("#total").val(total);
-		
-	});//calcula el iva
-	
 	 $( "#dialog2" ).dialog({
 		 	
 			    autoOpen: false,
@@ -238,7 +229,7 @@ $(document).ready(function(){
 				    "Eliminar": function() {
 	
 						$.ajax({
-									data:  {id: $('#idEliminar').val(), accion: 'eliminarFacturas'},
+									data:  {id: $('#idEliminar').val(), accion: '<?php echo $eliminar; ?>'},
 									url:   '../../ajax/ajax.php',
 									type:  'post',
 									beforeSend: function () {
@@ -304,7 +295,7 @@ $(document).ready(function(){
                                             $(".alert").removeClass("alert-danger");
 											$(".alert").removeClass("alert-info");
                                             $(".alert").addClass("alert-success");
-                                            $(".alert").html('<strong>Ok!</strong> Se modifico exitosamente el <strong>Usuario</strong>. ');
+                                            $(".alert").html('<strong>Ok!</strong> Se modifico exitosamente el <strong><?php echo $singular; ?></strong>. ');
 											$(".alert").delay(3000).queue(function(){
 												/*aca lo que quiero hacer 
 												  después de los 2 segundos de retraso*/
@@ -334,6 +325,7 @@ $(document).ready(function(){
 
 });
 </script>
+
 <script type="text/javascript">
 $('.form_date').datetimepicker({
 	language:  'es',

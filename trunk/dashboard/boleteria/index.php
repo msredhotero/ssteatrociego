@@ -22,7 +22,7 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Boleteria",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Boleteria",$_SESSION['refroll_predio'],$_SESSION['nombre_predio']);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
@@ -80,8 +80,12 @@ $cabeceras2 		= "	<th>Numero</th>
 
 
 $lstTipoPago  = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerTipopago(),array(1),'');
-$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFunciones(),array(3,4,5),' - ');
 
+if ($_SESSION['idroll_predio'] == 1) {
+	$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFunciones(),array(3,4,5),' - ');
+} else {
+	$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFuncionesPorSedes($_SESSION['idsede']),array(3,4,5),' - ');
+}
 $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),13);
 
 
@@ -337,7 +341,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                         <div class="form-group col-md-12" style="display:block">
                             <label class="control-label" for="codigobarra" style="text-align:left">Observaciones</label>
                             <div class="input-group col-md-12">
-                                <textarea type="text" rows="5" cols="6" class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese las Observaciones..." required=""></textarea>
+                                <textarea type="text" rows="5" cols="6" class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese las Observaciones..." required></textarea>
                             </div>
                         </div>
                         

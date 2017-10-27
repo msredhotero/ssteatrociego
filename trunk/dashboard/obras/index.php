@@ -41,14 +41,19 @@ $tituloWeb = "Gestión: Teatro Ciego";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbobras";
 
-$lblCambio	 	= array("refsalas","valorentrada","cantpulicidad","valorpulicidad","valorticket","costotranscciontarjetaiva","porcentajeargentores","porcentajereparto","porcentajeretencion");
-$lblreemplazo	= array("Sala","Valor Entrada","Cant. para Publicidad","Valor Publicidad","Valor Ticket","Costo Trans. Tarj. IVA","% Argentores","% Reparto","% Retencion");
+$lblCambio	 	= array("refsalas","valorentrada","cantpulicidad","valorpulicidad","valorticket","costotranscciontarjetaiva","porcentajeargentores","porcentajereparto","porcentajeretencion","refsedes");
+$lblreemplazo	= array("Sala","Valor Entrada","Cant. para Publicidad","Valor Publicidad","Valor Ticket","Costo Trans. Tarj. IVA","% Argentores","% Reparto","% Retencion","Sedes");
 
 $resSalas	=	$serviciosReferencias->traerSalas();
 $cadRef 	= 	$serviciosFunciones->devolverSelectBox($resSalas,array(1),'');
 
-$refdescripcion = array(0=>$cadRef);
-$refCampo 	=  array("refsalas");
+$resSedes	=	$serviciosReferencias->traerSedesActivas();
+$cadRef2 	= 	$serviciosFunciones->devolverSelectBox($resSedes,array(1),'');
+
+
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
+$refCampo 	=  array("refsalas","refsedes");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 

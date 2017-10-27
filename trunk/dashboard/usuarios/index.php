@@ -30,8 +30,8 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Usuario
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbusuarios";
 
-$lblCambio	 	= array("refroles","nombrecompleto");
-$lblreemplazo	= array("Perfil","Nombre Completo");
+$lblCambio	 	= array("refroles","nombrecompleto","refsedes");
+$lblreemplazo	= array("Perfil","Nombre Completo","Asignar Sede");
 
 if ($_SESSION['idroll_predio'] != 1) {
 	$resRoles 	= $serviciosUsuario->traerRolesSimple();
@@ -40,12 +40,15 @@ if ($_SESSION['idroll_predio'] != 1) {
 	
 }
 
+$resSedes = $serviciosReferencias->traerSedes();
+$cadSedes = $serviciosFunciones->devolverSelectBox($resSedes,array(1),'');
+
 
 $cadRef = $serviciosFunciones->devolverSelectBox($resRoles,array(1),'');
 
 
-$refdescripcion = array(0 => $cadRef);
-$refCampo 	=  array("refroles"); 
+$refdescripcion = array(0 => $cadRef, 1=>$cadSedes);
+$refCampo 	=  array("refroles","refsedes"); 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -89,7 +92,7 @@ if ($_SESSION['idroll_predio'] != 1) {
 
 
 
-<title>Gestión: Vinoteca</title>
+<title>Gestión: Teatro Ciego</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 

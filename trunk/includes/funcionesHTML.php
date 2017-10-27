@@ -63,7 +63,15 @@ function menu($usuario,$titulo,$rol,$empresa) {
 			<ul class="list-inline" style="margin-left:12px;">
 				<li style="margin-left:20%;"><span class="glyphicon glyphicon-list" id="colapsarMenu" style="cursor:pointer;"> </span></li>	
 				
-				<li class="navbar-right"><span class="glyphicon glyphicon-user"></span> '.$usuario.'</li>
+				<li class="navbar-right"><span class="glyphicon glyphicon-user"></span> '.$usuario.'</li>';
+	if ($rol != 'Empleado') {
+		$menu .= '
+				<li class="navbar-right" style="color:#FC0;">Sede: '.$empresa.' <a href="../sedes/cambiarsede.php"> Cambiar</a></li>';
+	} else {
+		$menu .= '
+				<li class="navbar-right" style="color:#FC0;">Sede: '.$empresa.'</li>';
+	}
+	$menu .= '
 
 			</ul>
 		</div>

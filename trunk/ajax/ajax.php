@@ -34,6 +34,9 @@ switch ($accion) {
 	case 'recuperar':
 		recuperar($serviciosUsuarios);
 		break;
+	case 'cambiarSede':
+		cambiarSede($serviciosUsuarios);
+		break;
 
 
 case 'insertarCajadiaria':
@@ -208,6 +211,17 @@ break;
 case 'eliminarEstadocivil': 
 eliminarEstadocivil($serviciosReferencias); 
 break; 
+
+
+case 'insertarSedes': 
+	insertarSedes($serviciosReferencias); 
+	break; 
+case 'modificarSedes': 
+	modificarSedes($serviciosReferencias); 
+	break; 
+case 'eliminarSedes': 
+	eliminarSedes($serviciosReferencias); 
+	break; 
 
 
 case 'insertarSalas': 
@@ -1601,6 +1615,7 @@ function insertarObras($serviciosReferencias) {
 	$usuacrea = $_POST['usuacrea']; 
 	$fechamodi = $_POST['fechamodi']; 
 	$usuamodi = $_POST['usuamodi']; 
+	$refsedes = $_POST['refsedes'];
 	
 	if (isset($_POST['activo'])) { 
 		$activo	= 1; 
@@ -1608,7 +1623,7 @@ function insertarObras($serviciosReferencias) {
 		$activo = 0; 
 	} 
 	
-	$res = $serviciosReferencias->insertarObras($nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
+	$res = $serviciosReferencias->insertarObras($nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo,$refsedes); 
 	
 	if ((integer)$res > 0) { 
 		$resUser = $serviciosReferencias->traerAlbum();
@@ -1641,6 +1656,7 @@ function modificarObras($serviciosReferencias) {
 	$usuacrea = $_POST['usuacrea']; 
 	$fechamodi = $_POST['fechamodi']; 
 	$usuamodi = $_POST['usuamodi']; 
+	$refsedes = $_POST['refsedes'];
 	
 	if (isset($_POST['activo'])) { 
 		$activo	= 1; 
@@ -1648,7 +1664,7 @@ function modificarObras($serviciosReferencias) {
 		$activo = 0; 
 	} 
 	
-	$res = $serviciosReferencias->modificarObras($id,$nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
+	$res = $serviciosReferencias->modificarObras($id,$nombre,$refsalas,$valorentrada,$cantpulicidad,$valorpulicidad,$valorticket,$costotranscciontarjetaiva,$porcentajeargentores,$porcentajereparto,$porcentajeretencion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo, $refsedes); 
 	if ($res == true) { 
 		$serviciosReferencias->eliminarAlbumobrasPorObra($id);
 			$resUser = $serviciosReferencias->traerAlbum();
@@ -1892,6 +1908,55 @@ $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarSalas($id); 
 echo $res; 
 } 
+
+
+
+function insertarSedes($serviciosReferencias) { 
+	$sede = $_POST['sede']; 
+	
+	if (isset($_POST['activo'])) { 
+		$activo	= 1; 
+	} else { 
+		$activo = 0; 
+	} 
+	
+	$res = $serviciosReferencias->insertarSedes($sede,$activo); 
+	
+	if ((integer)$res > 0) { 
+		echo ''; 
+	} else { 
+		echo 'Hubo un error al insertar datos';	 
+	} 
+} 
+
+
+function modificarSedes($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$sede = $_POST['sede']; 
+	
+	if (isset($_POST['activo'])) { 
+		$activo	= 1; 
+	} else { 
+		$activo = 0; 
+	} 
+	
+	$res = $serviciosReferencias->modificarSedes($id,$sede,$activo); 
+	
+	if ($res == true) { 
+		echo ''; 
+	} else { 
+		echo 'Hubo un error al modificar datos'; 
+	} 
+} 
+
+function eliminarSedes($serviciosReferencias) { 
+	$id = $_POST['id']; 
+	$res = $serviciosReferencias->eliminarSedes($id); 
+	echo $res; 
+} 
+
+
+
 function insertarTipoconceptos($serviciosReferencias) { 
 $tipoconcepto = $_POST['tipoconcepto']; 
 if (isset($_POST['activo'])) { 
@@ -2020,6 +2085,13 @@ function entrar($serviciosUsuarios) {
 }
 
 
+function cambiarSede($serviciosUsuarios) {
+	$sede		=	$_POST['sede'];
+
+	echo $serviciosUsuarios->cambiarSede($sede);
+}
+
+
 function registrar($serviciosUsuarios) {
 	$usuario			=	$_POST['usuario'];
 	$password			=	$_POST['password'];
@@ -2050,8 +2122,9 @@ function insertarUsuario($serviciosUsuarios) {
 	$refroll			=	$_POST['refroles'];
 	$email				=	$_POST['email'];
 	$nombre				=	$_POST['nombrecompleto'];
+	$sedes				=	$_POST['refsedes'];
 	
-	$res = $serviciosUsuarios->insertarUsuario($usuario,$password,$refroll,$email,$nombre);
+	$res = $serviciosUsuarios->insertarUsuario($usuario,$password,$refroll,$email,$nombre,$sedes);
 	if ((integer)$res > 0) {
 		echo '';	
 	} else {
@@ -2067,17 +2140,18 @@ function modificarUsuario($serviciosUsuarios) {
 	$refroll			=	$_POST['refroles'];
 	$email				=	$_POST['email'];
 	$nombre				=	$_POST['nombrecompleto'];
+	$sedes				=	$_POST['refsedes'];
 	
-	echo $serviciosUsuarios->modificarUsuario($id,$usuario,$password,$refroll,$email,$nombre);
+	echo $serviciosUsuarios->modificarUsuario($id,$usuario,$password,$refroll,$email,$nombre,$sedes);
 }
 
 
 function enviarMail($serviciosUsuarios) {
 	$email		=	$_POST['email'];
 	$pass		=	$_POST['pass'];
-	//$idempresa  =	$_POST['idempresa'];
+	$idsede  =	$_POST['sede'];
 	
-	echo $serviciosUsuarios->login($email,$pass);
+	echo $serviciosUsuarios->login($email,$pass,$idsede);
 }
 
 
