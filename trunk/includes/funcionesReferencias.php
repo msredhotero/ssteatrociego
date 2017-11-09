@@ -449,10 +449,10 @@ return $res;
 } 
 
 
-function modificarCooperativas($id,$descripcion,$numero,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo) { 
+function modificarCooperativas($id,$numero,$descripcion,$numero,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo) { 
 $sql = "update dbcooperativas 
 set 
-descripcion = '".utf8_decode($descripcion)."', numero = '".utf8_decode($numero)."'puntos = ".$puntos.",puntosproduccion = ".$puntosproduccion.",puntossinproduccion = ".$puntossinproduccion.",fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',activo = ".$activo." 
+descripcion = '".utf8_decode($descripcion)."', numero = '".utf8_decode($numero)."', puntos = ".$puntos.",puntosproduccion = ".$puntosproduccion.",puntossinproduccion = ".$puntossinproduccion.",fechacreacion = '".utf8_decode($fechacreacion)."',usuacrea = '".utf8_decode($usuacrea)."',fechamodi = '".utf8_decode($fechamodi)."',usuamodi = '".utf8_decode($usuamodi)."',activo = ".$activo." 
 where idcooperativa =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -704,6 +704,64 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+function traerFuncionesPorDiaDeLaSemana($dia) { 
+$sql = "SELECT 
+    f.idfuncion,
+    obr.nombre AS obra,
+    sa.descripcion AS sala,
+    coo.descripcion AS cooperativa,
+    f.horario,
+    dia.dia,
+    f.refobras,
+    f.refcooperativas,
+    f.refdias
+FROM
+    dbfunciones f
+        INNER JOIN
+    dbobras obr ON obr.idobra = f.refobras
+        INNER JOIN
+    tbsalas sa ON sa.idsala = obr.refsalas
+        INNER JOIN
+    dbcooperativas coo ON coo.idcooperativa = f.refcooperativas
+        INNER JOIN
+    tbdias dia ON dia.iddia = f.refdias
+WHERE
+    dia.iddia = ".$dia." 
+UNION ALL SELECT 
+    r.idfuncion,
+    r.obra,
+    r.sala,
+    r.cooperativa,
+    r.horario,
+    r.dia,
+    r.refobras,
+    r.refcooperativas,
+    r.refdias
+FROM
+    (SELECT 
+        f.idfuncion,
+            obr.nombre AS obra,
+            sa.descripcion AS sala,
+            coo.descripcion AS cooperativa,
+            f.horario,
+            dia.dia,
+            f.refobras,
+            f.refcooperativas,
+            f.refdias
+    FROM
+        dbfunciones f
+    INNER JOIN dbobras obr ON obr.idobra = f.refobras
+    INNER JOIN tbsalas sa ON sa.idsala = obr.refsalas
+    INNER JOIN dbcooperativas coo ON coo.idcooperativa = f.refcooperativas
+    INNER JOIN tbdias dia ON dia.iddia = f.refdias
+    WHERE
+        dia.iddia <> ".$dia."
+    ORDER BY 9 , 5 , 2) r"; 
+	
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
 
 function traerFuncionesPorSedes($idSede) { 
 $sql = "select 
@@ -724,6 +782,68 @@ inner join tbdias dia ON dia.iddia = f.refdias
 inner join tbsedes se ON se.idsede = obr.refsedes
 where se.idsede = ".$idSede."
 order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerFuncionesPorDiaDeLaSemanaSede($dia, $idSede) { 
+$sql = "SELECT 
+    f.idfuncion,
+    obr.nombre AS obra,
+    sa.descripcion AS sala,
+    coo.descripcion AS cooperativa,
+    f.horario,
+    dia.dia,
+    f.refobras,
+    f.refcooperativas,
+    f.refdias
+FROM
+    dbfunciones f
+        INNER JOIN
+    dbobras obr ON obr.idobra = f.refobras
+        INNER JOIN
+    tbsalas sa ON sa.idsala = obr.refsalas
+        INNER JOIN
+    dbcooperativas coo ON coo.idcooperativa = f.refcooperativas
+        INNER JOIN
+    tbdias dia ON dia.iddia = f.refdias
+		inner join 
+	tbsedes se ON se.idsede = obr.refsedes
+WHERE
+    dia.iddia = ".$dia." and se.idsede = ".$idSede."
+UNION ALL SELECT 
+    r.idfuncion,
+    r.obra,
+    r.sala,
+    r.cooperativa,
+    r.horario,
+    r.dia,
+    r.refobras,
+    r.refcooperativas,
+    r.refdias
+FROM
+    (SELECT 
+        f.idfuncion,
+            obr.nombre AS obra,
+            sa.descripcion AS sala,
+            coo.descripcion AS cooperativa,
+            f.horario,
+            dia.dia,
+            f.refobras,
+            f.refcooperativas,
+            f.refdias
+    FROM
+        dbfunciones f
+    INNER JOIN dbobras obr ON obr.idobra = f.refobras
+    INNER JOIN tbsalas sa ON sa.idsala = obr.refsalas
+    INNER JOIN dbcooperativas coo ON coo.idcooperativa = f.refcooperativas
+    INNER JOIN tbdias dia ON dia.iddia = f.refdias
+	inner join tbsedes se ON se.idsede = obr.refsedes
+    WHERE
+        dia.iddia <> ".$dia." and se.idsede = ".$idSede."
+    ORDER BY 9 , 5 , 2) r"; 
+	
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -1184,18 +1304,18 @@ return $res;
 
 /* PARA Personalcooperativas */
 
-function insertarPersonalcooperativas($refpersonal,$refcooperativas) { 
-$sql = "insert into dbpersonalcooperativas(idpersonalcooperativa,refpersonal,refcooperativas) 
-values ('',".$refpersonal.",".$refcooperativas.")"; 
+function insertarPersonalcooperativas($refpersonal,$refcooperativas,$puntos) { 
+$sql = "insert into dbpersonalcooperativas(idpersonalcooperativa,refpersonal,refcooperativas,puntos) 
+values ('',".$refpersonal.",".$refcooperativas.",".$puntos.")"; 
 $res = $this->query($sql,1); 
 return $res; 
 } 
 
 
-function modificarPersonalcooperativas($id,$refpersonal,$refcooperativas) { 
+function modificarPersonalcooperativas($id,$refpersonal,$refcooperativas,$puntos) { 
 $sql = "update dbpersonalcooperativas 
 set 
-refpersonal = ".$refpersonal.",refcooperativas = ".$refcooperativas." 
+refpersonal = ".$refpersonal.",refcooperativas = ".$refcooperativas." ,puntos = ".$puntos."
 where idpersonalcooperativa =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -1220,7 +1340,8 @@ function traerPersonalcooperativas() {
 $sql = "select 
 p.idpersonalcooperativa,
 p.refpersonal,
-p.refcooperativas
+p.refcooperativas,
+p.puntos
 from dbpersonalcooperativas p 
 inner join dbpersonal per ON per.idpersonal = p.refpersonal 
 inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
@@ -1241,7 +1362,8 @@ function traerPersonalcooperativasPorPersonal($idPersonal) {
 	coo.descripcion as cooperativa,
 	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
 	p.refpersonal,
-	p.refcooperativas
+	p.refcooperativas,
+	p.puntos
 	from dbpersonalcooperativas p 
 	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
 	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
@@ -1264,7 +1386,8 @@ function traerPersonalcooperativasPorPersonalCooperativaActiva($idPersonal) {
 	coo.descripcion as cooperativa,
 	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
 	p.refpersonal,
-	p.refcooperativas
+	p.refcooperativas,
+	p.puntos
 	from dbpersonalcooperativas p 
 	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
 	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
@@ -1287,7 +1410,8 @@ function traerPersonalcooperativasPorPersonalCooperativaInactiva($idPersonal) {
 	coo.descripcion as cooperativa,
 	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
 	p.refpersonal,
-	p.refcooperativas
+	p.refcooperativas,
+	p.puntos
 	from dbpersonalcooperativas p 
 	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
 	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
@@ -1310,7 +1434,8 @@ function traerPersonalcooperativasPorCooperativa($idCooperativa) {
 	coo.descripcion as cooperativa,
 	(case when coo.activo = 1 then 'Si' else 'No' end) as activo,
 	p.refpersonal,
-	p.refcooperativas
+	p.refcooperativas,
+	p.puntos
 	from dbpersonalcooperativas p 
 	inner join dbpersonal per ON per.idpersonal = p.refpersonal 
 	inner join tbtipodocumento ti ON ti.idtipodocumento = per.reftipodocumento 
@@ -1329,7 +1454,7 @@ function traerPersonalcooperativasPorObra($idObra) {
     per.nrodocumento,
     per.apellido,
     per.nombre,
-    pc.puntos,
+    p.puntos,
 	coo.puntos as puntoscooperativa,
     coo.descripcion AS cooperativa,
     (CASE
@@ -1357,7 +1482,7 @@ FROM
         AND ff.refobras = oc.refobras
 WHERE
     oc.refobras = 1
-GROUP BY coo.puntos, per.nrodocumento , per.apellido , per.nombre , pc.puntos , coo.descripcion , coo.activo , p.refpersonal , p.refcooperativas
+GROUP BY coo.puntos, per.nrodocumento , per.apellido , per.nombre , p.puntos , coo.descripcion , coo.activo , p.refpersonal , p.refcooperativas
 ORDER BY per.apellido , per.nombre"; 
 	
 	$res = $this->query($sql,0); 
@@ -1378,23 +1503,23 @@ return $res;
 /*			PARA EL PLANTEL DE LAS COOPERATIVAS   			*/
 function traerPlantelPorFuncion($idFuncion) {
 	$sql = "select
-				p.idpersonal, p.nrodocumento, p.apellido, p.nombre, COALESCE( pc.puntos,0) as puntos
+				p.idpersonal, p.nrodocumento, p.apellido, p.nombre, COALESCE( pco.puntos,0) as puntos
 			from		dbfunciones f
 			inner
 			join		dbobras o
 			ON			o.idobra = f.refobras
-			inner
+            inner
+            join		dbcooperativas coo
+            on			coo.idcooperativa = f.refcooperativas
+            inner
 			join		dbobrascooperativas co
-			on			co.refobras = o.idobra
-			inner
+			on			co.refcooperativas = coo.idcooperativa 
+            inner
 			join		dbpersonalcooperativas pco
-			on			pco.refcooperativas = co.refcooperativas
-			inner
+			on			pco.refcooperativas = coo.idcooperativa
+            inner
 			join		dbpersonal p
 			on			p.idpersonal = pco.refpersonal
-			left
-			join		dbpersonalcargos pc
-			on			pc.reffunciones = f.idfuncion and pc.refpersonal = p.idpersonal and (fechabaja is null or fechabaja > now())
 			where		f.idfuncion = ".$idFuncion." 
 			order by p.apellido, p.nombre";	
 	$res = $this->query($sql,0); 
@@ -1733,6 +1858,21 @@ $res = $this->query($sql,1);
 return $res; 
 } 
 
+function insertarPromosobrasMasivo($descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto) { 
+$sql = "insert into dbpromosobras(idpromoobra,descripcion,refobras,vigenciadesde,vigenciahasta,porcentaje,monto)
+		select
+		'',
+		'".utf8_decode($descripcion)."',
+		o.idobra,
+		".($vigenciadesde == '' ? 'NULL' : "'".$vigenciadesde."'").",
+		".($vigenciahasta == '' ? 'NULL' : "'".$vigenciahasta."'").",
+		".$porcentaje.",
+		".$monto."
+		from		dbobras o"; 
+$res = $this->query($sql,1); 
+return $res; 
+} 
+
 
 function modificarPromosobras($id,$descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto) { 
 $sql = "update dbpromosobras 
@@ -1755,11 +1895,12 @@ function traerPromosobras() {
 $sql = "select 
 p.idpromoobra,
 p.descripcion,
-p.refobras,
+obr.nombre as obra,
 p.vigenciadesde,
 p.vigenciahasta,
 p.porcentaje,
-p.monto
+p.monto,
+p.refobras
 from dbpromosobras p 
 inner join dbobras obr ON obr.idobra = p.refobras 
 inner join tbsalas sa ON sa.idsala = obr.refsalas 

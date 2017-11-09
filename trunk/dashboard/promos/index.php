@@ -152,6 +152,7 @@ if ($_SESSION['refroll_predio'] != 1) {
             
 			<?php echo $formulario; ?>
             </div>
+            <input type="checkbox" name="aplicar" id="aplicar" /> Aplicar a todas las Obras (se aplicara este valor a cada una de las obras activas)
 
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>

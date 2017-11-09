@@ -653,7 +653,7 @@ function traerPromosObrasPorFuncion($serviciosReferencias) {
 	echo $cad;
 }
 
-
+// se modifica por traer el plantel por cooperativa
 function traerPlantelPorFuncion($serviciosReferencias) {
 	$idfuncion		=	$_POST['id'];
 	
@@ -957,7 +957,17 @@ function insertarPromosobras($serviciosReferencias) {
 	$porcentaje = $_POST['porcentaje']; 
 	$monto = $_POST['monto']; 
 	
-	$res = $serviciosReferencias->insertarPromosobras($descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto); 
+	if (isset($_POST['aplicar'])) { 
+		$aplicar = 1; 
+	} else { 
+		$aplicar = 0; 
+	}
+	
+	if ($aplicar == 0) {
+		$res = $serviciosReferencias->insertarPromosobras($descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto); 
+	} else {
+		$res = $serviciosReferencias->insertarPromosobrasMasivo($descripcion,$refobras,$vigenciadesde,$vigenciahasta,$porcentaje,$monto); 
+	}
 	
 	if ((integer)$res > 0) { 
 		echo ''; 
@@ -1372,6 +1382,7 @@ echo $res;
 function insertarCooperativas($serviciosReferencias) { 
 	$descripcion = $_POST['descripcion']; 
 	$puntos = $_POST['puntos']; 
+	$numero = $_POST['numero']; 
 	$puntosproduccion = $_POST['puntosproduccion']; 
 	$puntossinproduccion = $_POST['puntossinproduccion']; 
 	$fechacreacion = $_POST['fechacreacion']; 
@@ -1385,7 +1396,7 @@ function insertarCooperativas($serviciosReferencias) {
 		$activo = 0; 
 	} 
 	
-	$res = $serviciosReferencias->insertarCooperativas($descripcion,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
+	$res = $serviciosReferencias->insertarCooperativas($descripcion,$numero,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
 	
 	if ((integer)$res > 0) { 
 		$resUser = $serviciosReferencias->traerObras();
@@ -1398,9 +1409,10 @@ function insertarCooperativas($serviciosReferencias) {
 				
 		$resPersonal = $serviciosReferencias->traerPersonal();
 				$cad = 'personal';
+				$cadPuntos = "puntospersonal";
 				while ($rowFS = mysql_fetch_array($resPersonal)) {
 					if (isset($_POST[$cad.$rowFS[0]])) {
-						$serviciosReferencias->insertarPersonalcooperativas($rowFS[0],$res);
+						$serviciosReferencias->insertarPersonalcooperativas($rowFS[0],$res, $_POST[$cadPuntos.$rowFS[0]]);
 					}
 				}
 				
@@ -1413,6 +1425,7 @@ function insertarCooperativas($serviciosReferencias) {
 function modificarCooperativas($serviciosReferencias) { 
 	$id = $_POST['id']; 
 	$descripcion = $_POST['descripcion']; 
+	$numero = $_POST['numero'];
 	$puntos = $_POST['puntos']; 
 	$puntosproduccion = $_POST['puntosproduccion']; 
 	$puntossinproduccion = $_POST['puntossinproduccion']; 
@@ -1427,7 +1440,7 @@ function modificarCooperativas($serviciosReferencias) {
 		$activo = 0; 
 	} 
 	
-	$res = $serviciosReferencias->modificarCooperativas($id,$descripcion,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
+	$res = $serviciosReferencias->modificarCooperativas($id,$numero,$descripcion,$numero,$puntos,$puntosproduccion,$puntossinproduccion,$fechacreacion,$usuacrea,$fechamodi,$usuamodi,$activo); 
 	
 	if ($res == true) { 
 		$serviciosReferencias->eliminarObrascooperativasPorCooperativa($id);
@@ -1442,9 +1455,10 @@ function modificarCooperativas($serviciosReferencias) {
 		$serviciosReferencias->eliminarPersonalcooperativasPorCooperativa($id);
 		$resPersonal = $serviciosReferencias->traerPersonal();
 		$cad = 'personal';
+		$cadPuntos = "puntospersonal";
 		while ($rowFS = mysql_fetch_array($resPersonal)) {
 			if (isset($_POST[$cad.$rowFS[0]])) {
-				$serviciosReferencias->insertarPersonalcooperativas($rowFS[0],$res);
+				$serviciosReferencias->insertarPersonalcooperativas($rowFS[0],$id, $_POST[$cadPuntos.$rowFS[0]]);
 			}
 		}
 		

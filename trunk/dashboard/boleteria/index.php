@@ -77,14 +77,14 @@ $cabeceras2 		= "	<th>Numero</th>
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
-
+$diaDeLaSemana = date('N');
 
 $lstTipoPago  = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerTipopago(),array(1),'');
 
 if ($_SESSION['idroll_predio'] == 1) {
-	$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFunciones(),array(3,4,5),' - ');
+	$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFuncionesPorDiaDeLaSemana($diaDeLaSemana),array(3,4,5),' - ');
 } else {
-	$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFuncionesPorSedes($_SESSION['idsede']),array(3,4,5),' - ');
+	$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFuncionesPorDiaDeLaSemanaSede($diaDeLaSemana,$_SESSION['idsede']),array(3,4,5),' - ');
 }
 $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),13);
 

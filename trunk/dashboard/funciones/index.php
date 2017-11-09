@@ -238,6 +238,8 @@ $(document).ready(function(){
 		  }
 	} );
 	
+	$('#activo').prop('checked',true);
+	
 	$("#horario").mask("99:99",{placeholder:"hh:mm"});
 	
 	$("#example").on("click",'.varborrar', function(){

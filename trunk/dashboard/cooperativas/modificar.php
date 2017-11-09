@@ -114,7 +114,7 @@ while ($rowFS = mysql_fetch_array($resContactos2)) {
 		foreach ($arrayFS2 as $item) {
 			if (stripslashes($item['refpersonal']) == $rowFS[0]) {
 				$check = 'checked';	
-				$cadUser2 = $cadUser2.'<li class="personal'.$rowFS[0].'">'.'<input id="personal'.$rowFS[0].'" '.$check.' class="form-control checkLstPersonal" type="checkbox" required="" style="width:50px;" name="personal'.$rowFS[0].'"><p>'.$rowFS[2].' '.$rowFS[3].' '.$rowFS[4].'</p>'."</li>";
+				$cadUser2 = $cadUser2.'<li class="personal'.$rowFS[0].'">'.'<input id="personal'.$rowFS[0].'" '.$check.' class="form-control checkLstPersonal" type="checkbox" required="" style="width:50px;" name="personal'.$rowFS[0].'"><p>'.$rowFS[2].' '.$rowFS[3].' '.$rowFS[4].'</p><p>Puntos: <input style="width:50px;" type="text" name="puntospersonal'.$rowFS[0].'" id="puntospersonal'.$rowFS[0].'" value="'.$item['puntos'].'"/></p></li>';
 			}
 		}
 	}
@@ -248,6 +248,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                             <option value=""></option>
                             <?php echo $lstContactos2; ?>
                         </select>
+                        <input type="text" name="puntosp" id="puntosp" value="1" style="width:50px; text-align:center;"/>
                         <button type="button" class="btn btn-info" id="asignarPersonal"><span class="glyphicon glyphicon-share-alt"></span> Asignar Personal</button>
                     </div>
                 </div>
@@ -344,7 +345,8 @@ $(document).ready(function(){
 	$('#asignarPersonal').click(function(e) {
 		//alert($('#buscarcontacto option:selected').html());
 		if (existeAsiganadoPersonal('personal'+$('#buscarpersonal').chosen().val()) == 0) {
-			$('#lstPersonal').prepend('<li class="personal'+ $('#buscarpersonal').chosen().val() +'"><input id="personal'+ $('#buscarpersonal').chosen().val() +'" class="form-control checkLstPersonal" checked type="checkbox" required="" style="width:50px;" name="personal'+ $('#buscarpersonal').chosen().val() +'"><p>' + $('#buscarpersonal option:selected').html() + ' </p></li>');
+			$('#lstPersonal').prepend('<li class="personal'+ $('#buscarpersonal').chosen().val() +'"><input id="personal'+ $('#buscarpersonal').chosen().val() +'" class="form-control checkLstPersonal" checked type="checkbox" required="" style="width:50px;" name="personal'+ $('#buscarpersonal').chosen().val() +'"><p>' + $('#buscarpersonal option:selected').html() + ' </p><p>Puntos: <input type="text" name="puntospersonal'+ $('#buscarpersonal').chosen().val() +'" id="puntospersonal'+ $('#buscarpersonal').chosen().val() +'" value="'+ $('#puntosp').val() +'"/></p></li>');
+				$('#puntosp').val(1);
 		}
 	});
 	
