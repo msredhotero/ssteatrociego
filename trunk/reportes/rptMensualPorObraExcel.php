@@ -50,7 +50,7 @@ $objPHPExcel->getProperties()
 			->setCellValue('A1', htmlspecialchars(utf8_encode($tituloReporte)));
 			
 		
-$lstFunciones = $serviciosReferancias->traerVentasPorObrasFecha($fecha, $refobras);
+$lstFunciones = $serviciosReferancias->traerVentasPorObrasFecha($fechaPost, $refobras);
 
 //die(print_r($lstFunciones));
 
