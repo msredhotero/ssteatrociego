@@ -260,6 +260,132 @@ function existeDevuelveId($sql) {
 	return 0;
 }
 
+
+/******    Area del Actor   *****************///
+
+function traerDatosObrasFuncionesPorActor($idActor) {
+	$sql = "SELECT 
+			    concat(p.apellido, ' ', p.nombre) as apyn, p.nrodocumento, o.nombre as obra, c.descripcion as cooperativa, di.dia,fu.horario, o.idobra, fu.idfuncion, o.valorentrada
+			FROM
+			    dbpersonal p
+			        INNER JOIN
+			    dbpersonalcooperativas cp ON p.idpersonal = cp.refpersonal
+			        INNER JOIN
+			    dbcooperativas c ON c.idcooperativa = cp.refcooperativas
+			        INNER JOIN
+			    dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    dbobras o ON o.idobra = oc.refobras
+			        INNER JOIN
+			    dbfunciones fu ON o.idobra = fu.refobras and fu.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    tbdias di ON di.iddia = fu.refdias
+			WHERE
+			    p.idpersonal = ".$idActor."
+			group by p.apellido, p.nombre, p.nrodocumento, o.nombre , c.descripcion , di.dia,fu.horario, o.idobra, fu.idfuncion, o.valorentrada
+			order by o.nombre,di.iddia, fu.horario";
+
+	$res = $this->query($sql,0);
+
+	return $res;
+}
+
+
+function traerDatosSumObrasFuncionesPorActor($idActor) {
+	$sql = "SELECT 
+			    count(distinct c.idcooperativa) as cooperativas,
+			    count(distinct o.idobra) as obras, 
+			    count(distinct fu.idfuncion) as funciones
+			FROM
+			    dbpersonal p
+			        INNER JOIN
+			    dbpersonalcooperativas cp ON p.idpersonal = cp.refpersonal
+			        INNER JOIN
+			    dbcooperativas c ON c.idcooperativa = cp.refcooperativas
+			        INNER JOIN
+			    dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    dbobras o ON o.idobra = oc.refobras
+			        INNER JOIN
+			    dbfunciones fu ON o.idobra = fu.refobras and fu.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    tbdias di ON di.iddia = fu.refdias
+			WHERE
+			    p.idpersonal = ".$idActor."";
+
+	$res = $this->query($sql,0);
+
+	return $res;
+}
+
+function traerDatosObrasPorActor($idActor) {
+	$sql = "SELECT 
+			    CONCAT(p.apellido, ' ', p.nombre) AS apyn,
+			    p.nrodocumento,
+			    o.nombre AS obra,
+			    o.idobra,
+			    o.valorentrada
+			FROM
+			    dbpersonal p
+			        INNER JOIN
+			    dbpersonalcooperativas cp ON p.idpersonal = cp.refpersonal
+			        INNER JOIN
+			    dbcooperativas c ON c.idcooperativa = cp.refcooperativas
+			        INNER JOIN
+			    dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    dbobras o ON o.idobra = oc.refobras
+					INNER JOIN
+				dbfunciones fu ON o.idobra = fu.refobras and fu.refcooperativas = c.idcooperativa
+					INNER JOIN
+				tbdias di ON di.iddia = fu.refdias
+			WHERE
+			    p.idpersonal = ".$idActor."
+			GROUP BY p.apellido , p.nombre , p.nrodocumento , o.nombre , o.idobra, o.valorentrada
+			ORDER BY o.nombre";
+
+	$res = $this->query($sql,0);
+
+	return $res;		
+}
+
+function traerDatosCooperativasPorActor($idActor) {
+	$sql = "SELECT 
+			    CONCAT(p.apellido, ' ', p.nombre) AS apyn,
+			    p.nrodocumento,
+			    o.nombre AS obra,
+			    c.descripcion AS cooperativa,
+			    o.idobra,
+			    o.valorentrada,
+			    cp.puntos
+			FROM
+			    dbpersonal p
+			        INNER JOIN
+			    dbpersonalcooperativas cp ON p.idpersonal = cp.refpersonal
+			        INNER JOIN
+			    dbcooperativas c ON c.idcooperativa = cp.refcooperativas
+			        INNER JOIN
+			    dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    dbobras o ON o.idobra = oc.refobras
+					INNER JOIN
+				dbfunciones fu ON o.idobra = fu.refobras and fu.refcooperativas = c.idcooperativa
+					INNER JOIN
+				tbdias di ON di.iddia = fu.refdias
+			WHERE
+			    p.idpersonal =".$idActor."
+			GROUP BY p.apellido , p.nombre , p.nrodocumento , o.nombre , c.descripcion , o.idobra, o.valorentrada,cp.puntos
+			ORDER BY o.nombre";
+
+	$res = $this->query($sql,0);
+
+	return $res;		
+}
+
+/*********        fin            **************///
+
+
+
 /* PARA Album */
 
 function insertarAlbum($banda,$album,$genero) {

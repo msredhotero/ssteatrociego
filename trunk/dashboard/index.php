@@ -23,7 +23,25 @@ $fecha = date('Y-m-d');
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Dashboard",$_SESSION['refroll_predio'],$_SESSION['sede']);
 
+$resDatosActor = $serviciosReferencias->traerDatosObrasFuncionesPorActor(129); 
 
+$resSumDatosActor = $serviciosReferencias->traerDatosSumObrasFuncionesPorActor(129);
+
+$resDetalleObrasPorActor = $serviciosReferencias->traerDatosObrasPorActor(129);
+
+$resDetalleCooperativasPorActor = $serviciosReferencias->traerDatosCooperativasPorActor(129);
+
+
+
+if (mysql_num_rows($resSumDatosActor)>0) {
+	$obras 			= mysql_result($resSumDatosActor, 0,1);
+	$cooperativas 	= mysql_result($resSumDatosActor, 0,0);
+	$funciones 		= mysql_result($resSumDatosActor, 0,2);
+} else {
+	$obras 			= 0;
+	$cooperativas 	= 0;
+	$funciones 		= 0;
+}
 
 
 ?>
@@ -64,6 +82,7 @@ $resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Dashboard",$_SESSION
     
    
    <link href="../css/perfect-scrollbar.css" rel="stylesheet">
+   <link rel="stylesheet" href="../css/sb-admin-2.css"/>
       <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
       <script src="../js/jquery.mousewheel.js"></script>
       <script src="../js/perfect-scrollbar.js"></script>
@@ -74,6 +93,49 @@ $resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Dashboard",$_SESSION
       });
     </script>
     
+    <style>
+    	.valor {
+    		color: #922B21;
+    		text-align: right;
+    	}
+
+    	.horario {
+    		display: inline-block;
+		    font: normal normal normal 14px/1 FontAwesome;
+		    font-size: inherit;
+		    text-rendering: auto;
+		    -webkit-font-smoothing: antialiased;
+    	}
+
+    	a.list-group-item-fuscia.active, a.list-group-item-fuscia.active:hover, a.list-group-item-fuscia.active:focus {
+		    z-index: 2;
+		    color: #fff;
+		    background-color: #FF0DFF;
+		    border-color: #FF0DFF;
+		}
+
+		a.list-group-item-yellow.active, a.list-group-item-yellow.active:hover, a.list-group-item-yellow.active:focus {
+		    z-index: 2;
+		    color: #fff;
+		    background-color: #f0ad4e;
+		    border-color: #f0ad4e;
+		}
+
+		.list-group-item-fuscia, .list-group-item-yellow:first-child {
+		    border-top-right-radius: 4px;
+		    border-top-left-radius: 4px;
+		}
+
+		.letraChica {
+			display: inline-block;
+		    font-size: 12px;
+		    text-rendering: auto;
+		    -webkit-font-smoothing: antialiased;
+		}
+
+		
+
+    </style>
     <script src="../js/jquery.color.min.js"></script>
 	<script src="../js/jquery.animateNumber.min.js"></script>
 </head>
@@ -88,10 +150,284 @@ $resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Dashboard",$_SESSION
 
     
     <div class="row" style="margin-right:15px;">
-    <div class="col-md-12">
-		<h3>Bienvenidos</h3>
-    
-    </div>
+
+
+    	<div class="row" style="margin-left:15px;">
+    		<div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-comments fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><?php echo $obras; ?></div>
+                                <div>Obras</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" id="verObras">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ver Detalles</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-comments fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><?php echo $cooperativas; ?></div>
+                                <div>Cooperativas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" id="verCooperativas">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ver Detalles</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-fuscia">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-comments fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><?php echo $funciones; ?></div>
+                                <div>Funciones</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" id="verFunciones">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ver Detalles</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+
+
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-comments fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">26</div>
+                                <div>Liquidación</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" id="verLiquidacion">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ver Detalles</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+    	</div>
+
+
+    	<div class="row" style="margin-left:15px;; margin-right: 10px;">
+    	<div class="lstFunciones">
+    	<?php
+    		$idobra = 0;
+    		$primero = 0;
+    		$primeroRow = 1;
+    		$cadbecera = '';
+    		$body = '';
+    		$footer = '';
+    		$divRow = 0;
+    		echo '<div class="row">';
+
+    		while ($row = mysql_fetch_array($resDatosActor)) {
+
+    			if ($idobra != $row['idobra']) {
+    				$idobra = $row['idobra'];
+    				if ($primero == 1) {
+    					echo '</div>
+    							</div>';
+    					$primero = 0;		
+    				}
+
+    				$divRow += 1;
+
+	    			if ($divRow == 4) {
+	    				if ($primeroRow == 1) {
+	    					echo '</div>';
+	    					$primeroRow = 0;
+	    				}
+	    				echo '<div class="row">';
+	    				$divRow = 0;
+	    			}
+    				echo '<div class="col-md-4">
+					    		<div class="list-group">
+								  <a href="#" class="list-group-item list-group-item-fuscia active">
+								    '.$row['obra'].' <span class="valor pull-right">Entrada: $'.$row['valorentrada'].'</span>
+								  </a>';
+					$primero = 1;
+    			}
+
+    			echo '<a href="#" id="'.$row['idfuncion'].'" class="list-group-item">Función: '.$row['dia'].' <span class="horario pull-right"><span class="glyphicon glyphicon-time"></span> '.$row['horario'].'</span></a>';
+
+    	?>
+
+    	<?php
+    			
+    		}
+    		if ($primeroRow == 0) {
+				echo "</div></div>";
+			}
+    		if ($primero == 1) {
+				echo "</div></div>";
+			}
+    	?>
+
+    	</div>
+    	</div>
+
+    	<div class="row" style="margin-left:15px; margin-right: 10px;">
+    	<div class="lstObras">
+    	<?php
+    		$idobra = 0;
+    		$primero = 0;
+    		$primeroRow = 1;
+    		$cadbecera = '';
+    		$body = '';
+    		$footer = '';
+    		$divRow = 0;
+    		echo '<div class="row">';
+    		while ($row2 = mysql_fetch_array($resDetalleObrasPorActor)) {
+    			if ($idobra != $row2['idobra']) {
+    				$idobra = $row2['idobra'];
+    				if ($primero == 1) {
+    					echo '</div>
+    							</div>';
+    					$primero = 0;		
+    				}
+
+    				$divRow += 1;
+
+	    			if ($divRow == 4) {
+	    				if ($primeroRow == 1) {
+	    					echo '</div>';
+	    					$primeroRow = 0;
+	    				}
+	    				echo '<div class="row">';
+	    				$divRow = 0;
+	    			}
+
+    				echo '<div class="col-md-4">
+					    		<div class="list-group">
+								  <a href="#" class="list-group-item active">
+								    '.$row2['obra'].'
+								  </a>';
+					$primero = 1;
+    			}
+
+    			echo '<a href="#" id="'.$row2['idobra'].'" class="list-group-item"><span class="">Entrada: $'.$row2['valorentrada'].'</span></a>';
+
+    	?>
+
+    	<?php
+    		}
+    		if ($primeroRow == 0) {
+				echo "</div>";
+			}
+    		if ($primero == 1) {
+				echo "</div></div>";
+			}
+    	?>
+
+    	</div>
+    	</div>
+
+
+
+    	<div class="row" style="margin-left:15px;; margin-right: 10px;">
+    	<div class="lstCooperativas">
+    	<?php
+    		$idobra = 0;
+    		$primero = 0;
+    		$primeroRow = 1;
+    		$cadbecera = '';
+    		$body = '';
+    		$footer = '';
+    		$divRow = 0;
+    		echo '<div class="row">';
+    		while ($row2 = mysql_fetch_array($resDetalleCooperativasPorActor)) {
+    			
+
+    			if ($idobra != $row2['idobra']) {
+    				
+    				$idobra = $row2['idobra'];
+    				if ($primero == 1) {
+    					echo '</div>
+    							</div>';
+    					$primero = 0;		
+    				}
+
+    				$divRow += 1;
+
+	    			if ($divRow == 4) {
+	    				if ($primeroRow == 1) {
+	    					echo '</div>';
+	    					$primeroRow = 0;
+	    				}
+	    				echo '<div class="row">';
+	    				$divRow = 0;
+	    			}
+    				echo '<div class="col-md-4">
+					    		<div class="list-group">
+								  <a href="#" class="list-group-item list-group-item-yellow active">
+								    '.$row2['obra'].'
+								  </a>';
+					$primero = 1;
+    			}
+
+    			echo '<a href="#" id="'.$row2['idobra'].'" class="list-group-item "><span class="letraChica">'.$row2['cooperativa'].'</span> <span class="pull-right">Puntos: '.$row2['puntos'].'</span></a>';
+
+    	?>
+
+    	<?php
+    		}
+    		if ($primeroRow == 0) {
+				echo "</div></div>";
+			}
+    		if ($primero == 1) {
+				echo "</div></div>";
+			}
+    	?>
+
+    	</div>
+    	</div>
+
+
+
     </div>
     
     
@@ -149,7 +485,33 @@ $resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Dashboard",$_SESSION
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	
+	$('.lstFunciones').hide();
+	$('.lstObras').hide();
+	$('.lstCooperativas').hide();
+	$('.lstLiquidacion').hide();
+
+
+	$('#verFunciones').click(function() {
+		$('.lstFunciones').show();
+		$('.lstObras').hide();
+		$('.lstCooperativas').hide();
+		$('.lstLiquidacion').hide();
+	});
+
+	$('#verObras').click(function() {
+		$('.lstObras').show();
+		$('.lstFunciones').hide();
+		$('.lstCooperativas').hide();
+		$('.lstLiquidacion').hide();
+	});
+
+	$('#verCooperativas').click(function() {
+		$('.lstObras').hide();
+		$('.lstFunciones').hide();
+		$('.lstCooperativas').show();
+		$('.lstLiquidacion').hide();
+	});
+
 	$(document).on('click', '.panel-heading span.clickable', function(e){
 		var $this = $(this);
 		if(!$this.hasClass('panel-collapsed')) {
