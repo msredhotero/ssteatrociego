@@ -23,25 +23,225 @@ $fecha = date('Y-m-d');
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_predio'],"Dashboard",$_SESSION['refroll_predio'],$_SESSION['sede']);
 
-$resDatosActor = $serviciosReferencias->traerDatosObrasFuncionesPorActor(129); 
 
-$resSumDatosActor = $serviciosReferencias->traerDatosSumObrasFuncionesPorActor(129);
+if ($_SESSION['idroll_predio'] == 2) {
+    $columnas = 4;
+} else {
+    $columnas = 3;
+}
+if ($_SESSION['idroll_predio'] == 3) {
+    $resDatosActor = $serviciosReferencias->traerDatosObrasFuncionesPorActor($_SESSION['idpersonal']); 
 
-$resDetalleObrasPorActor = $serviciosReferencias->traerDatosObrasPorActor(129);
+    $resSumDatosActor = $serviciosReferencias->traerDatosSumObrasFuncionesPorActor($_SESSION['idpersonal']);
 
-$resDetalleCooperativasPorActor = $serviciosReferencias->traerDatosCooperativasPorActor(129);
+    $resDetalleObrasPorActor = $serviciosReferencias->traerDatosObrasPorActor($_SESSION['idpersonal']);
+
+    $resDetalleCooperativasPorActor = $serviciosReferencias->traerDatosCooperativasPorActor($_SESSION['idpersonal']);
+
+    $resDatosActorAux = $serviciosReferencias->traerDatosObrasFuncionesPorActor($_SESSION['idpersonal']); 
+
+    $resDatosActorAuxEstadisticas = $serviciosReferencias->traerDatosObrasFuncionesPorActor($_SESSION['idpersonal']); 
 
 
+    $month = date('Y-m');
+	$aux = date('Y-m-d', strtotime("{$month} + 1 month"));
+	$last_day = date('Y-m-d', strtotime("{$aux} - 1 day"));
+	
+	//echo "El último día del mes es: {$last_day}";
+	
+	$total = 0;
+	while ($row = mysql_fetch_array($resDatosActorAux)) {
+		$resCalculo = $serviciosReferencias->calcularPuntoPorFuncionDesdeHasta($_SESSION['idpersonal'],$row['idfuncion'], date('Y-m').'-01', $last_day);
+		if (mysql_num_rows($resCalculo)>0) {
+			$total += mysql_result($resCalculo, 0,0);    
+		}
+	}
+	
+	
+	$estadistica = '';
+	$fechaCalculo = '';
+	
+	$totalMesual = 0;
+	
+	$totalParcial = array();
+	
+	while ($row = mysql_fetch_array($resDatosActorAuxEstadisticas)) {
+		for ($i=1;$i<=12;$i++) {
+			$month = date('Y-').substr('0'.$i,-2);
+			$fechaCalculo = date('Y').'-'.substr('0'.($i + 1),-2).'-01';
+			$aux = date($fechaCalculo, strtotime("{$month} + 1 month"));
+			$last_day = date('Y-m-d', strtotime("{$aux} - 1 day"));
+	
+			$resCalculo = $serviciosReferencias->calcularPuntoPorFuncionDesdeHasta($_SESSION['idpersonal'],$row['idfuncion'], $month.'-01', $last_day);
+			if (mysql_num_rows($resCalculo)>0) {
+				if (mysql_result($resCalculo, 0,0) != '') {
+					$totalMesual += mysql_result($resCalculo, 0,0);      
+				}
+				
+				 
+			}
+	
+			array_push($totalParcial, ["mes" => $i, "total" => $totalMesual]);
+	
+			$totalMesual = 0;
+		}
+	
+		//$totalParcial = array($totalMesual);
+		//$totalMesual = 0;
+		
+	}
+	
+	$enero      = 0;
+	$febrero    = 0;
+	$marzo      = 0;
+	$abril      = 0;
+	$mayo       = 0;
+	$junio      = 0;
+	$julio      = 0;
+	$agosto     = 0;
+	$septiembre = 0;
+	$octubre    = 0;
+	$noviembre  = 0;
+	$diciembre  = 0;
+	
+	foreach ($totalParcial as $key => $value) {
+	
+		switch ($value['mes']) {
+			case 1:
+				$enero += $value['total'];
+				break;
+			case 2:
+				$febrero += $value['total'];
+				break;
+			case 3:
+				$marzo += $value['total'];
+				break;
+			case 4:
+				$abril += $value['total'];
+				break;
+			case 5:
+				$mayo += $value['total'];
+				break;
+			case 6:
+				$junio += $value['total'];
+				break;
+			case 7:
+				$julio += $value['total'];
+				break;
+			case 8:
+				$agosto += $value['total'];
+				break;
+			case 9:
+				$septiembre += $value['total'];
+				break;
+			case 10:
+				$octubre += $value['total'];
+				break;
+			case 11:
+				$noviembre += $value['total'];
+				break;
+			case 12:
+				$diciembre += $value['total'];
+				break; 
+			 default:
+				 # code...
+				 break;
+		 }
+	}
+} else {
+    $resDatosActor = $serviciosReferencias->traerDatosObrasFuncionesTodas(); 
+
+    $resSumDatosActor = $serviciosReferencias->traerDatosSumObrasFuncionesTodas();
+
+    $resDetalleObrasPorActor = $serviciosReferencias->traerDatosObrasTodas();
+
+    $resDetalleCooperativasPorActor = $serviciosReferencias->traerDatosCooperativasTodas();
+
+    $resDatosActorAux = $serviciosReferencias->traerDatosObrasFuncionesTodas(); 
+
+    $resDatosActorAuxEstadisticas = $serviciosReferencias->traerDatosObrasFuncionesTodas(); 
+
+    $resEstadisticasMensuales = $serviciosReferencias->traerMontosGeneralesMensuales(date('Y'));
+    
+    $resTotalMes = $serviciosReferencias->traerMontosGeneralesMensual(date('Y'),date('m'));
+
+    if (mysql_num_rows($resTotalMes)>0) {
+        $total = mysql_result($resTotalMes, 0,4);
+    } else {
+        $total = 0;
+    }
+
+
+    $enero      = 0;
+    $febrero    = 0;
+    $marzo      = 0;
+    $abril      = 0;
+    $mayo       = 0;
+    $junio      = 0;
+    $julio      = 0;
+    $agosto     = 0;
+    $septiembre = 0;
+    $octubre    = 0;
+    $noviembre  = 0;
+    $diciembre  = 0;
+    
+    while ($rowEM = mysql_fetch_array($resEstadisticasMensuales)) {
+    
+        switch ($rowEM['mes']) {
+            case 1:
+                $enero += $rowEM['total'];
+                break;
+            case 2:
+                $febrero += $rowEM['total'];
+                break;
+            case 3:
+                $marzo += $rowEM['total'];
+                break;
+            case 4:
+                $abril += $rowEM['total'];
+                break;
+            case 5:
+                $mayo += $rowEM['total'];
+                break;
+            case 6:
+                $junio += $rowEM['total'];
+                break;
+            case 7:
+                $julio += $rowEM['total'];
+                break;
+            case 8:
+                $agosto += $rowEM['total'];
+                break;
+            case 9:
+                $septiembre += $rowEM['total'];
+                break;
+            case 10:
+                $octubre += $rowEM['total'];
+                break;
+            case 11:
+                $noviembre += $rowEM['total'];
+                break;
+            case 12:
+                $diciembre += $rowEM['total'];
+                break; 
+             default:
+                 # code...
+                 break;
+         }
+    }
+    
+}
 
 if (mysql_num_rows($resSumDatosActor)>0) {
-	$obras 			= mysql_result($resSumDatosActor, 0,1);
-	$cooperativas 	= mysql_result($resSumDatosActor, 0,0);
-	$funciones 		= mysql_result($resSumDatosActor, 0,2);
+    $obras          = mysql_result($resSumDatosActor, 0,1);
+    $cooperativas   = mysql_result($resSumDatosActor, 0,0);
+    $funciones      = mysql_result($resSumDatosActor, 0,2);
 } else {
-	$obras 			= 0;
-	$cooperativas 	= 0;
-	$funciones 		= 0;
+    $obras          = 0;
+    $cooperativas   = 0;
+    $funciones      = 0;
 }
+
 
 
 ?>
@@ -128,7 +328,7 @@ if (mysql_num_rows($resSumDatosActor)>0) {
 
 		.letraChica {
 			display: inline-block;
-		    font-size: 12px;
+		    font-size: 11px;
 		    text-rendering: auto;
 		    -webkit-font-smoothing: antialiased;
 		}
@@ -136,8 +336,15 @@ if (mysql_num_rows($resSumDatosActor)>0) {
 		
 
     </style>
+    
     <script src="../js/jquery.color.min.js"></script>
 	<script src="../js/jquery.animateNumber.min.js"></script>
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    
 </head>
 
 <body>
@@ -149,286 +356,302 @@ if (mysql_num_rows($resSumDatosActor)>0) {
 	
 
     
-    <div class="row" style="margin-right:15px;">
 
 
-    	<div class="row" style="margin-left:15px;">
-    		<div class="col-lg-3 col-md-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <i class="fa fa-comments fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div class="huge"><?php echo $obras; ?></div>
-                                <div>Obras</div>
-                            </div>
+
+    <div class="row" style="margin-left:15px;">
+        <div class="col-lg-<?php echo $columnas; ?> col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-comments fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge"><?php echo $obras; ?></div>
+                            <div>Obras</div>
                         </div>
                     </div>
-                    <a href="javascript:void(0)" id="verObras">
-                        <div class="panel-footer">
-                            <span class="pull-left">Ver Detalles</span>
-                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
                 </div>
+                <a href="javascript:void(0)" id="verObras">
+                    <div class="panel-footer">
+                        <span class="pull-left">Ver Detalles</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
             </div>
+        </div>
 
 
-            <div class="col-lg-3 col-md-6">
-                <div class="panel panel-yellow">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <i class="fa fa-comments fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div class="huge"><?php echo $cooperativas; ?></div>
-                                <div>Cooperativas</div>
-                            </div>
+        <div class="col-lg-<?php echo $columnas; ?> col-md-6">
+            <div class="panel panel-yellow">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-comments fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge"><?php echo $cooperativas; ?></div>
+                            <div>Cooperativas</div>
                         </div>
                     </div>
-                    <a href="javascript:void(0)" id="verCooperativas">
-                        <div class="panel-footer">
-                            <span class="pull-left">Ver Detalles</span>
-                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
                 </div>
+                <a href="javascript:void(0)" id="verCooperativas">
+                    <div class="panel-footer">
+                        <span class="pull-left">Ver Detalles</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
             </div>
+        </div>
 
 
-            <div class="col-lg-3 col-md-6">
-                <div class="panel panel-fuscia">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <i class="fa fa-comments fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div class="huge"><?php echo $funciones; ?></div>
-                                <div>Funciones</div>
-                            </div>
+        <div class="col-lg-<?php echo $columnas; ?> col-md-6">
+            <div class="panel panel-fuscia">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-comments fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge"><?php echo $funciones; ?></div>
+                            <div>Funciones</div>
                         </div>
                     </div>
-                    <a href="javascript:void(0)" id="verFunciones">
-                        <div class="panel-footer">
-                            <span class="pull-left">Ver Detalles</span>
-                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
                 </div>
+                <a href="javascript:void(0)" id="verFunciones">
+                    <div class="panel-footer">
+                        <span class="pull-left">Ver Detalles</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
             </div>
+        </div>
 
 
+        <?php
+        if ($_SESSION['idroll_predio'] != 2) {
+        ?>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-green">
+                <div class="panel-heading">
+                    <div class="row">
 
-            <div class="col-lg-3 col-md-6">
-                <div class="panel panel-green">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <i class="fa fa-comments fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div class="huge">26</div>
-                                <div>Liquidación</div>
-                            </div>
+                        <div class="col-xs-12 text-right" style="padding-bottom:14px;">
+                            <div class="hugeChico">$ <?php echo $total; ?></div>
+                            <div>Liquidación (mes actual)</div>
                         </div>
                     </div>
-                    <a href="javascript:void(0)" id="verLiquidacion">
-                        <div class="panel-footer">
-                            <span class="pull-left">Ver Detalles</span>
-                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
                 </div>
+                <a href="javascript:void(0)" id="verLiquidacion">
+                    <div class="panel-footer">
+                        <span class="pull-left">Ver Detalles</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
             </div>
-
-    	</div>
-
-
-    	<div class="row" style="margin-left:15px;; margin-right: 10px;">
-    	<div class="lstFunciones">
-    	<?php
-    		$idobra = 0;
-    		$primero = 0;
-    		$primeroRow = 1;
-    		$cadbecera = '';
-    		$body = '';
-    		$footer = '';
-    		$divRow = 0;
-    		echo '<div class="row">';
-
-    		while ($row = mysql_fetch_array($resDatosActor)) {
-
-    			if ($idobra != $row['idobra']) {
-    				$idobra = $row['idobra'];
-    				if ($primero == 1) {
-    					echo '</div>
-    							</div>';
-    					$primero = 0;		
-    				}
-
-    				$divRow += 1;
-
-	    			if ($divRow == 4) {
-	    				if ($primeroRow == 1) {
-	    					echo '</div>';
-	    					$primeroRow = 0;
-	    				}
-	    				echo '<div class="row">';
-	    				$divRow = 0;
-	    			}
-    				echo '<div class="col-md-4">
-					    		<div class="list-group">
-								  <a href="#" class="list-group-item list-group-item-fuscia active">
-								    '.$row['obra'].' <span class="valor pull-right">Entrada: $'.$row['valorentrada'].'</span>
-								  </a>';
-					$primero = 1;
-    			}
-
-    			echo '<a href="#" id="'.$row['idfuncion'].'" class="list-group-item">Función: '.$row['dia'].' <span class="horario pull-right"><span class="glyphicon glyphicon-time"></span> '.$row['horario'].'</span></a>';
-
-    	?>
-
-    	<?php
-    			
-    		}
-    		if ($primeroRow == 0) {
-				echo "</div></div>";
-			}
-    		if ($primero == 1) {
-				echo "</div></div>";
-			}
-    	?>
-
-    	</div>
-    	</div>
-
-    	<div class="row" style="margin-left:15px; margin-right: 10px;">
-    	<div class="lstObras">
-    	<?php
-    		$idobra = 0;
-    		$primero = 0;
-    		$primeroRow = 1;
-    		$cadbecera = '';
-    		$body = '';
-    		$footer = '';
-    		$divRow = 0;
-    		echo '<div class="row">';
-    		while ($row2 = mysql_fetch_array($resDetalleObrasPorActor)) {
-    			if ($idobra != $row2['idobra']) {
-    				$idobra = $row2['idobra'];
-    				if ($primero == 1) {
-    					echo '</div>
-    							</div>';
-    					$primero = 0;		
-    				}
-
-    				$divRow += 1;
-
-	    			if ($divRow == 4) {
-	    				if ($primeroRow == 1) {
-	    					echo '</div>';
-	    					$primeroRow = 0;
-	    				}
-	    				echo '<div class="row">';
-	    				$divRow = 0;
-	    			}
-
-    				echo '<div class="col-md-4">
-					    		<div class="list-group">
-								  <a href="#" class="list-group-item active">
-								    '.$row2['obra'].'
-								  </a>';
-					$primero = 1;
-    			}
-
-    			echo '<a href="#" id="'.$row2['idobra'].'" class="list-group-item"><span class="">Entrada: $'.$row2['valorentrada'].'</span></a>';
-
-    	?>
-
-    	<?php
-    		}
-    		if ($primeroRow == 0) {
-				echo "</div>";
-			}
-    		if ($primero == 1) {
-				echo "</div></div>";
-			}
-    	?>
-
-    	</div>
-    	</div>
-
-
-
-    	<div class="row" style="margin-left:15px;; margin-right: 10px;">
-    	<div class="lstCooperativas">
-    	<?php
-    		$idobra = 0;
-    		$primero = 0;
-    		$primeroRow = 1;
-    		$cadbecera = '';
-    		$body = '';
-    		$footer = '';
-    		$divRow = 0;
-    		echo '<div class="row">';
-    		while ($row2 = mysql_fetch_array($resDetalleCooperativasPorActor)) {
-    			
-
-    			if ($idobra != $row2['idobra']) {
-    				
-    				$idobra = $row2['idobra'];
-    				if ($primero == 1) {
-    					echo '</div>
-    							</div>';
-    					$primero = 0;		
-    				}
-
-    				$divRow += 1;
-
-	    			if ($divRow == 4) {
-	    				if ($primeroRow == 1) {
-	    					echo '</div>';
-	    					$primeroRow = 0;
-	    				}
-	    				echo '<div class="row">';
-	    				$divRow = 0;
-	    			}
-    				echo '<div class="col-md-4">
-					    		<div class="list-group">
-								  <a href="#" class="list-group-item list-group-item-yellow active">
-								    '.$row2['obra'].'
-								  </a>';
-					$primero = 1;
-    			}
-
-    			echo '<a href="#" id="'.$row2['idobra'].'" class="list-group-item "><span class="letraChica">'.$row2['cooperativa'].'</span> <span class="pull-right">Puntos: '.$row2['puntos'].'</span></a>';
-
-    	?>
-
-    	<?php
-    		}
-    		if ($primeroRow == 0) {
-				echo "</div></div>";
-			}
-    		if ($primero == 1) {
-				echo "</div></div>";
-			}
-    	?>
-
-    	</div>
-    	</div>
-
-
+        </div>
+        <?php } ?>
 
     </div>
+
+	
+    
+    <div class="row" style="margin-left:15px;; margin-right: 10px;">
+    <div class="lstFunciones">
+    <?php
+        $idobra = 0;
+        $primero = 0;
+        $primeroRow = 1;
+        $cadbecera = '';
+        $body = '';
+        $footer = '';
+        $divRow = 0;
+        echo '<div class="row">';
+
+        while ($row = mysql_fetch_array($resDatosActor)) {
+
+            if ($idobra != $row['idobra']) {
+                $idobra = $row['idobra'];
+                if ($primero == 1) {
+                    echo '</div>
+                            </div>';
+                    $primero = 0;		
+                }
+
+                $divRow += 1;
+
+                if ($divRow == 4) {
+                    if ($primeroRow == 1) {
+                        echo '</div>';
+                        $primeroRow = 0;
+                    }
+                    echo '<div class="row">';
+                    $divRow = 0;
+                }
+                echo '<div class="col-md-4">
+                            <div class="list-group">
+                              <a href="#" class="list-group-item list-group-item-fuscia active">
+                                '.$row['obra'].' <span class="valor pull-right">Entrada: $'.$row['valorentrada'].'</span>
+                              </a>';
+                $primero = 1;
+            }
+
+            echo '<a href="#" id="'.$row['idfuncion'].'" class="list-group-item">Función: '.$row['dia'].' <span class="horario pull-right"><span class="glyphicon glyphicon-time"></span> '.$row['horario'].'</span></a>';
+
+    ?>
+
+    <?php
+            
+        }
+        if ($primeroRow == 0) {
+            echo "</div>";
+        }
+        if ($primero == 1) {
+            echo "</div></div>";
+        }
+    ?>
+
+    </div>
+    </div>
+
+    <div class="row" style="margin-left:15px; margin-right: 10px;">
+    <div class="lstObras">
+    <?php
+        $idobra = 0;
+        $primero = 0;
+        $primeroRow = 1;
+        $cadbecera = '';
+        $body = '';
+        $footer = '';
+        $divRow = 0;
+        echo '<div class="row">';
+        while ($row2 = mysql_fetch_array($resDetalleObrasPorActor)) {
+            if ($idobra != $row2['idobra']) {
+                $idobra = $row2['idobra'];
+                if ($primero == 1) {
+                    echo '</div>
+                            </div>';
+                    $primero = 0;		
+                }
+
+                $divRow += 1;
+
+                if ($divRow == 4) {
+                    if ($primeroRow == 1) {
+                        echo '</div>';
+                        $primeroRow = 0;
+                    }
+                    echo '<div class="row">';
+                    $divRow = 0;
+                }
+
+                echo '<div class="col-md-4">
+                            <div class="list-group">
+                              <a href="#" class="list-group-item active">
+                                '.$row2['obra'].'
+                              </a>';
+                $primero = 1;
+            }
+
+            echo '<a href="#" id="'.$row2['idobra'].'" class="list-group-item"><span class="">Entrada: $'.$row2['valorentrada'].'</span></a>';
+
+    ?>
+
+    <?php
+        }
+        if ($primeroRow == 0) {
+            echo "</div>";
+        }
+        if ($primero == 1) {
+            echo "</div></div>";
+        }
+    ?>
+
+    </div>
+    </div>
+    
+    
+    
+
+    <div class="row" style="margin-left:15px;; margin-right: 10px;">
+    <div class="lstCooperativas">
+    <?php
+        $idobra = 0;
+        $primero = 0;
+        $primeroRow = 1;
+        $cadbecera = '';
+        $body = '';
+        $footer = '';
+        $divRow = 0;
+        echo '<div class="row">';
+        while ($row2 = mysql_fetch_array($resDetalleCooperativasPorActor)) {
+            
+
+            if ($idobra != $row2['idobra']) {
+                
+                $idobra = $row2['idobra'];
+                if ($primero == 1) {
+                    echo '</div>
+                            </div>';
+                    $primero = 0;		
+                }
+
+                $divRow += 1;
+
+                if ($divRow == 4) {
+                    if ($primeroRow == 1) {
+                        echo '</div>';
+                        $primeroRow = 0;
+                    }
+                    echo '<div class="row">';
+                    $divRow = 0;
+                }
+                echo '<div class="col-md-4">
+                            <div class="list-group">
+                              <a href="#" class="list-group-item list-group-item-yellow active">
+                                '.$row2['obra'].'
+                              </a>';
+                $primero = 1;
+            }
+
+            echo '<a href="#" id="'.$row2['idobra'].'" class="list-group-item "><span class="letraChica">'.$row2['cooperativa'].'</span> <span class="pull-right">Pts: '.$row2['puntos'].'</span></a>';
+
+    ?>
+
+    <?php
+        }
+        if ($primeroRow == 0) {
+            echo "</div>";
+        }
+        if ($primero == 1) {
+            echo "</div></div>";
+        }
+    ?>
+
+    </div>
+    </div>
+        
+        
+    <div class="row" style="margin-left:15px;; margin-right: 10px;">
+    <div class="lstLiquidacion">
+        
+        
+        <div class="panel panel-green">
+            <div class="panel-heading">
+                Estadistica por Mes
+            </div>
+            <div class="panel-body">
+                <div id="myfirstchart" style="height: 250px;"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
     
     
 
@@ -436,8 +659,6 @@ if (mysql_num_rows($resSumDatosActor)>0) {
    
 </div>
 
-
-</div>
 
 
 
@@ -484,6 +705,45 @@ if (mysql_num_rows($resSumDatosActor)>0) {
 <script src="../js/bootstrap-datetimepicker.es.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
+	var months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+	new Morris.Line({
+	  // ID of the element in which to draw the chart.
+	  element: 'myfirstchart',
+      
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+		{ month: '2015-01', value: <?php echo $enero; ?> },
+		{ month: '2015-02', value: <?php echo $febrero; ?> },
+		{ month: '2015-03', value: <?php echo $marzo; ?> },
+		{ month: '2015-04', value: <?php echo $abril; ?> },
+		{ month: '2015-05', value: <?php echo $mayo; ?> },
+		{ month: '2015-06', value: <?php echo $junio; ?> },
+		{ month: '2015-07', value: <?php echo $julio; ?> },
+		{ month: '2015-08', value: <?php echo $agosto; ?> },
+        { month: '2015-09', value: <?php echo $septiembre; ?> },
+        { month: '2015-10', value: <?php echo $octubre; ?> },
+        { month: '2015-11', value: <?php echo $noviembre; ?> },
+		{ month: '2015-12', value: <?php echo $diciembre; ?> },
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  xkey: 'month',
+      xLabelFormat: function(x) { // <--- x.getMonth() returns valid index
+        var month = months[x.getMonth()];
+        return month;
+      },
+      dateFormat: function(x) {
+        var month = months[new Date(x).getMonth()];
+        return month;
+      },
+	  // A list of names of data record attributes that contain y-values.
+	  ykeys: ['value'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  labels: ['Liquidado'],
+      lineColors: ['#04E71C']
+	});
+	
 	
 	$('.lstFunciones').hide();
 	$('.lstObras').hide();
@@ -511,6 +771,15 @@ $(document).ready(function(){
 		$('.lstCooperativas').show();
 		$('.lstLiquidacion').hide();
 	});
+
+    $('#verLiquidacion').click(function() {
+        $('.lstObras').hide();
+        $('.lstFunciones').hide();
+        $('.lstCooperativas').hide();
+        $('.lstLiquidacion').show();
+    });
+
+    
 
 	$(document).on('click', '.panel-heading span.clickable', function(e){
 		var $this = $(this);

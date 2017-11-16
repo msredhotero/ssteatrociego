@@ -2137,8 +2137,9 @@ function insertarUsuario($serviciosUsuarios) {
 	$email				=	$_POST['email'];
 	$nombre				=	$_POST['nombrecompleto'];
 	$sedes				=	$_POST['refsedes'];
+	$refpersonal		=	$_POST['refpersonal'];
 	
-	$res = $serviciosUsuarios->insertarUsuario($usuario,$password,$refroll,$email,$nombre,$sedes);
+	$res = $serviciosUsuarios->insertarUsuario($usuario,$password,$refroll,$email,$nombre,$sedes,$refpersonal);
 	if ((integer)$res > 0) {
 		echo '';	
 	} else {
@@ -2155,8 +2156,9 @@ function modificarUsuario($serviciosUsuarios) {
 	$email				=	$_POST['email'];
 	$nombre				=	$_POST['nombrecompleto'];
 	$sedes				=	$_POST['refsedes'];
+	$refpersonal		=	$_POST['refpersonal'];
 	
-	echo $serviciosUsuarios->modificarUsuario($id,$usuario,$password,$refroll,$email,$nombre,$sedes);
+	echo $serviciosUsuarios->modificarUsuario($id,$usuario,$password,$refroll,$email,$nombre,$sedes,$refpersonal);
 }
 
 

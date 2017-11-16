@@ -311,7 +311,7 @@ function traerDatosSumObrasFuncionesPorActor($idActor) {
 			        INNER JOIN
 			    tbdias di ON di.iddia = fu.refdias
 			WHERE
-			    p.idpersonal = ".$idActor."";
+			    p.idpersonal = ".$idActor;
 
 	$res = $this->query($sql,0);
 
@@ -382,7 +382,200 @@ function traerDatosCooperativasPorActor($idActor) {
 	return $res;		
 }
 
+function calcularPuntoPorFuncionDesdeHasta($idPersonal,$idFuncion, $desde, $hasta) {
+	$sql = "select
+	sum(w.valorpunto * w.puntopersona) as liquidacion
+from (
+    select
+		round(((t.totalgral *  coalesce(t.porcentajereparto,1) / 100) - (t.totalgral * coalesce(t.porcentajeretencion,1) / 100)) / op.puntos,2) as valorpunto, t.puntopersona, t.idpersonalventa
+	from (
+
+		select
+		sum(r.total - (r.valorpulicidad + r.costopapelentrada + r.gastotarjeta + r.argentores)) as totalgral, r.idobra,r.porcentajereparto,	r.porcentajeretencion, r.puntopersona,r.idpersonalventa
+		from (	
+			
+			SELECT 
+				total, 
+				o.valorpulicidad,
+				round((o.valorticket * v.cantidad),2) as costopapelentrada, 
+				round((o.costotranscciontarjetaiva / 100 * v.totaltarjeta),2) as gastotarjeta, 
+				round((o.porcentajeargentores / 100 * v.total),2) as argentores,
+				o.idobra,
+				o.porcentajereparto,
+				o.porcentajeretencion,
+				mv.puntos as puntopersona,
+				mv.idpersonalventa
+
+			FROM dbventas v
+			inner join dbfunciones fu on fu.idfuncion = v.reffunciones
+			inner join dbobras o on o.idobra = fu.refobras
+			inner join (select
+						 v.idventa, pv.puntos, pv.idpersonalventa
+						from		dbpersonalventa pv
+						inner
+						join		dbventas v
+						on			v.idventa = pv.refventas
+						where		pv.refpersonal = ".$idPersonal."
+						group by v.idventa, pv.puntos) mv
+			on mv.idventa = v.idventa
+			where fu.idfuncion = ".$idFuncion." and v.fecha between '".$desde."' and '".$hasta."') as r
+
+		group by r.idobra,r.porcentajereparto,	r.porcentajeretencion, r.puntopersona, r.idpersonalventa
+		) as t
+		inner join (SELECT 
+						sum(cp.puntos) as puntos, o.idobra
+					FROM
+						dbpersonal p
+							INNER JOIN
+						dbpersonalcooperativas cp ON p.idpersonal = cp.refpersonal
+							INNER JOIN
+						dbcooperativas c ON c.idcooperativa = cp.refcooperativas
+							INNER JOIN
+						dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+							INNER JOIN
+						dbobras o ON o.idobra = oc.refobras
+							INNER JOIN
+						dbfunciones fu ON o.idobra = fu.refobras and fu.refcooperativas = c.idcooperativa
+							INNER JOIN
+						tbdias di ON di.iddia = fu.refdias
+					where fu.idfuncion = ".$idFuncion."
+					group by o.idobra) op on op.idobra = t.idobra) as w";
+
+	$res = $this->query($sql,0);
+	return $res;
+}
+
 /*********        fin            **************///
+
+
+/*********      Area estadisticas  ************///
+function traerDatosObrasFuncionesTodas() {
+	$sql = "SELECT 
+			    o.nombre as obra, c.descripcion as cooperativa, di.dia,fu.horario, o.idobra, fu.idfuncion, o.valorentrada
+			FROM
+			    dbcooperativas c 
+			        INNER JOIN
+			    dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    dbobras o ON o.idobra = oc.refobras
+			        INNER JOIN
+			    dbfunciones fu ON o.idobra = fu.refobras and fu.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    tbdias di ON di.iddia = fu.refdias
+			group by o.nombre , c.descripcion , di.dia,fu.horario, o.idobra, fu.idfuncion, o.valorentrada
+			order by o.nombre,di.iddia, fu.horario";
+
+	$res = $this->query($sql,0);
+
+	return $res;
+}
+
+
+function traerDatosSumObrasFuncionesTodas() {
+	$sql = "SELECT 
+			    count(distinct c.idcooperativa) as cooperativas,
+			    count(distinct o.idobra) as obras, 
+			    count(distinct fu.idfuncion) as funciones
+			FROM
+			    dbpersonal p
+			        INNER JOIN
+			    dbpersonalcooperativas cp ON p.idpersonal = cp.refpersonal
+			        INNER JOIN
+			    dbcooperativas c ON c.idcooperativa = cp.refcooperativas
+			        INNER JOIN
+			    dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    dbobras o ON o.idobra = oc.refobras
+			        INNER JOIN
+			    dbfunciones fu ON o.idobra = fu.refobras and fu.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    tbdias di ON di.iddia = fu.refdias";
+
+	$res = $this->query($sql,0);
+
+	return $res;
+}
+
+
+function traerDatosObrasTodas() {
+	$sql = "SELECT 
+			    o.nombre AS obra,
+			    o.idobra,
+			    o.valorentrada
+			FROM
+			    dbcooperativas c 
+			        INNER JOIN
+			    dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    dbobras o ON o.idobra = oc.refobras
+					INNER JOIN
+				dbfunciones fu ON o.idobra = fu.refobras and fu.refcooperativas = c.idcooperativa
+					INNER JOIN
+				tbdias di ON di.iddia = fu.refdias
+
+			GROUP BY o.nombre , o.idobra, o.valorentrada
+			ORDER BY o.nombre";
+
+	$res = $this->query($sql,0);
+
+	return $res;		
+}
+
+function traerDatosCooperativasTodas() {
+	$sql = "SELECT 
+			    o.nombre AS obra,
+			    c.descripcion AS cooperativa,
+                c.idcooperativa,
+			    o.idobra,
+			    o.valorentrada,
+			    sum(cp.puntos) as puntos
+			FROM
+			    dbpersonal p
+			        INNER JOIN
+			    dbpersonalcooperativas cp ON p.idpersonal = cp.refpersonal
+			        INNER JOIN
+			    dbcooperativas c ON c.idcooperativa = cp.refcooperativas
+			        INNER JOIN
+			    dbobrascooperativas oc ON oc.refcooperativas = c.idcooperativa
+			        INNER JOIN
+			    dbobras o ON o.idobra = oc.refobras
+			GROUP BY o.nombre , c.descripcion , o.idobra, c.idcooperativa,o.valorentrada
+			ORDER BY o.nombre";
+
+	$res = $this->query($sql,0);
+
+	return $res;		
+}
+
+function traerMontosGeneralesMensuales($anio) {
+	$sql = "SELECT 
+				m.mes, m.nombremes,coalesce( sum(v.totalefectivo),0) as totalefectivo, coalesce(sum(v.totaltarjeta),0) as totaltarjeta, coalesce(sum(v.total),0) as total
+			from	dbventas v
+			right join
+			tbmeses m on m.mes = month(v.fecha) and year(v.fecha)=".$anio."
+			group by m.mes, m.nombremes";	
+			
+	$res = $this->query($sql,0);
+
+	return $res;		
+}
+
+function traerMontosGeneralesMensual($anio,$mes) {
+	$sql = "SELECT 
+				m.mes, m.nombremes,coalesce( sum(v.totalefectivo),0) as totalefectivo, coalesce(sum(v.totaltarjeta),0) as totaltarjeta, coalesce(sum(v.total),0) as total
+			from	dbventas v
+			right join
+			tbmeses m on m.mes = month(v.fecha) and year(v.fecha)=".$anio."
+			where m.mes = ".$mes."
+			group by m.mes, m.nombremes";	
+			
+	$res = $this->query($sql,0);
+
+	return $res;		
+}
+
+
+/**********      fin                *************///
 
 
 
@@ -1413,7 +1606,8 @@ p.usuamodi
 from dbpersonal p 
 inner join tbtipodocumento tip ON tip.idtipodocumento = p.reftipodocumento 
 inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil 
-order by 1"; 
+order by p.apellido,
+p.nombre"; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -3230,7 +3424,8 @@ u.usuario,
 u.password,
 u.refroles,
 u.email,
-u.nombrecompleto
+u.nombrecompleto,
+u.refpersonal
 from dbusuarios u 
 inner join tbroles rol ON rol.idrol = u.refroles 
 order by 1"; 
@@ -3240,7 +3435,7 @@ return $res;
 
 
 function traerUsuariosPorId($id) { 
-$sql = "select idusuario,usuario,password,refroles,email,nombrecompleto from dbusuarios where idusuario =".$id; 
+$sql = "select idusuario,usuario,password,refroles,email,nombrecompleto,refsedes,refpersonal from dbusuarios where idusuario =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 

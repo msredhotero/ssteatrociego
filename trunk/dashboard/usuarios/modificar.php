@@ -32,8 +32,8 @@ $resResultado = $serviciosReferencias->traerUsuariosPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbusuarios";
 
-$lblCambio	 	= array("refroles","nombrecompleto","refsedes");
-$lblreemplazo	= array("Perfil","Nombre Completo","Asignar Sede");
+$lblCambio	 	= array("refroles","nombrecompleto","refsedes","refpersonal");
+$lblreemplazo	= array("Perfil","Nombre Completo","Asignar Sede","Asignar Personal al Usuario");
 
 if ($_SESSION['idroll_predio'] != 1) {
 	$resRoles 	= $serviciosUsuario->traerRolesSimple();
@@ -56,9 +56,11 @@ while ($rowTT = mysql_fetch_array($resRoles)) {
 $resSedes = $serviciosReferencias->traerSedes();
 $cadSedes = $serviciosFunciones->devolverSelectBoxActivo($resSedes,array(1),'',mysql_result($resResultado,0,'refsedes'));
 
+$refUsuarios = $serviciosReferencias->traerPersonal();
+$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($refUsuarios,array(3,4),' ',mysql_result($resResultado,0,'refpersonal'));
 
-$refdescripcion = array(0 => $cadRef, 1=>$cadSedes);
-$refCampo 	=  array("refroles","refsedes"); 
+$refdescripcion = array(0 => $cadRef, 1=>$cadSedes, 2=>$cadRef2);
+$refCampo 	=  array("refroles","refsedes","refpersonal"); 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 

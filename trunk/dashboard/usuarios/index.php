@@ -30,8 +30,8 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Usuario
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbusuarios";
 
-$lblCambio	 	= array("refroles","nombrecompleto","refsedes");
-$lblreemplazo	= array("Perfil","Nombre Completo","Asignar Sede");
+$lblCambio	 	= array("refroles","nombrecompleto","refsedes","refpersonal");
+$lblreemplazo	= array("Perfil","Nombre Completo","Asignar Sede","Asignar Personal al Usuario");
 
 if ($_SESSION['idroll_predio'] != 1) {
 	$resRoles 	= $serviciosUsuario->traerRolesSimple();
@@ -46,9 +46,11 @@ $cadSedes = $serviciosFunciones->devolverSelectBox($resSedes,array(1),'');
 
 $cadRef = $serviciosFunciones->devolverSelectBox($resRoles,array(1),'');
 
+$refUsuarios = $serviciosReferencias->traerPersonal();
+$cadRef2 = $serviciosFunciones->devolverSelectBox($refUsuarios,array(3,4),' ');
 
-$refdescripcion = array(0 => $cadRef, 1=>$cadSedes);
-$refCampo 	=  array("refroles","refsedes"); 
+$refdescripcion = array(0 => $cadRef, 1=>$cadSedes, 2=>$cadRef2);
+$refCampo 	=  array("refroles","refsedes","refpersonal"); 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 

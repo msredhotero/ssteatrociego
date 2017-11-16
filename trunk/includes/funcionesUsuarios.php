@@ -53,12 +53,12 @@ function login($usuario,$pass,$sede) {
 
 			//verifico el rol del usuario
 			$rol = mysql_result($respusu,0,'refroles');
-			if ($rol != 1) {
+			if ($rol == 2) {
 				$sqlrol = "select * from dbusuarios where refsedes = ".$sede." and idusuario = ".$idUsua;
 
 				$resRol = $this->query($sqlrol,0);
 				if (mysql_num_rows($resRol) > 0) {
-					$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
+					$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol, u.refpersonal  from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
 			
 					$resppass = $this->query($sqlpass,0);
 					
@@ -71,7 +71,7 @@ function login($usuario,$pass,$sede) {
 					$error = 'El usuario no tiene permiso para trabajar en esta Sede';
 				}
 			} else {
-				$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
+				$sqlpass = "select nombrecompleto,email,usuario,r.descripcion, r.idrol, u.refpersonal from dbusuarios u inner join tbroles r on r.idrol = u.refroles where password = '".$pass."' and idusuario = ".$idUsua;
 			
 				$resppass = $this->query($sqlpass,0);
 				
@@ -100,6 +100,8 @@ function login($usuario,$pass,$sede) {
 			$_SESSION['email_predio'] = mysql_result($resppass,0,1);
 			$_SESSION['idroll_predio'] = mysql_result($resppass,0,4);
 			$_SESSION['refroll_predio'] = mysql_result($resppass,0,3);
+
+			$_SESSION['idpersonal'] = mysql_result($resppass,0,'refpersonal');
 			
 			$_SESSION['idsede'] = $sede;
 			
@@ -341,7 +343,7 @@ function enviarEmail($destinatario,$asunto,$cuerpo, $remitente) {
 }
 
 
-function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto, $refsedes) {
+function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto, $refsedes, $refpersonal) {
 	$sql = "INSERT INTO dbusuarios
 				(idusuario,
 				usuario,
@@ -349,14 +351,15 @@ function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto, $re
 				refroles,
 				email,
 				nombrecompleto,
-				refsedes)
+				refsedes,
+				refpersonal)
 			VALUES
 				('',
 				'".utf8_decode($usuario)."',
 				'".utf8_decode($password)."',
 				".$refroll.",
 				'".utf8_decode($email)."',
-				'".utf8_decode($nombrecompleto)."', ".$refsedes.")";
+				'".utf8_decode($nombrecompleto)."', ".$refsedes.", ".$refpersonal.")";
 	if ($this->existeUsuario($email) == true) {
 		return "Ya existe el usuario";	
 	}
@@ -370,7 +373,7 @@ function insertarUsuario($usuario,$password,$refroll,$email,$nombrecompleto, $re
 }
 
 
-function modificarUsuario($id,$usuario,$password,$refroll,$email,$nombrecompleto,$refsedes) {
+function modificarUsuario($id,$usuario,$password,$refroll,$email,$nombrecompleto,$refsedes,$refpersonal) {
 	$sql = "UPDATE dbusuarios
 			SET
 				usuario = '".utf8_decode($usuario)."',
@@ -378,7 +381,8 @@ function modificarUsuario($id,$usuario,$password,$refroll,$email,$nombrecompleto
 				email = '".utf8_decode($email)."',
 				refroles = ".$refroll.",
 				nombrecompleto = '".utf8_decode($nombrecompleto)."',
-				refsedes = ".$refsedes."
+				refsedes = ".$refsedes.",
+				refpersonal = ".$refpersonal."
 			WHERE idusuario = ".$id;
 	$res = $this->query($sql,0);
 	if ($res == false) {
