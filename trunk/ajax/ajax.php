@@ -664,7 +664,7 @@ function traerPlantelPorFuncion($serviciosReferencias) {
 		$cad .= '<div class="form-group col-md-6 col-xs-8" style="display:block">
                         
                         <div class="input-group col-md-12 col-xs-12">
-							<span class="input-group-addon">'.$row['apellido'].' '.$row['nombre'].' - Nro. Documento: '.$row['nrodocumento'].'</span> 
+							<span class="input-group-addon">'.$row['apellido'].' '.$row['nombre'].' - Nro.Doc: '.$row['nrodocumento'].'</span> 
                             <input class="form-control" name="plantel'.$row[0].'" id="plantel'.$row[0].'" type="text" value="'.$row['puntos'].'"/>
                         </div>
                         

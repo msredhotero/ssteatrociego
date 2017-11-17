@@ -204,7 +204,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                         <div class="input-group col-md-12">
                             <select data-placeholder="selecione la Función..." id="reffunciones" name="reffunciones" class="form-control" tabindex="2">
                                 
-                                <?php echo $lstFunciones; ?>
+                                <?php echo utf8_decode($lstFunciones); ?>
                             </select>
                         </div>
                     </div>

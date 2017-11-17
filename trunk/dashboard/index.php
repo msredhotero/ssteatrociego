@@ -30,6 +30,10 @@ if ($_SESSION['idroll_predio'] == 2) {
     $columnas = 3;
 }
 if ($_SESSION['idroll_predio'] == 3) {
+
+    $sumTotalEfectivoAnual = 0;
+    $sumTotalTarjetasAnual = 0;
+
     $resDatosActor = $serviciosReferencias->traerDatosObrasFuncionesPorActor($_SESSION['idpersonal']); 
 
     $resSumDatosActor = $serviciosReferencias->traerDatosSumObrasFuncionesPorActor($_SESSION['idpersonal']);
@@ -148,7 +152,14 @@ if ($_SESSION['idroll_predio'] == 3) {
 				 break;
 		 }
 	}
+
+    
+
+
 } else {
+
+    
+
     $resDatosActor = $serviciosReferencias->traerDatosObrasFuncionesTodas(); 
 
     $resSumDatosActor = $serviciosReferencias->traerDatosSumObrasFuncionesTodas();
@@ -172,63 +183,68 @@ if ($_SESSION['idroll_predio'] == 3) {
     }
 
 
-    $enero      = 0;
-    $febrero    = 0;
-    $marzo      = 0;
-    $abril      = 0;
-    $mayo       = 0;
-    $junio      = 0;
-    $julio      = 0;
-    $agosto     = 0;
-    $septiembre = 0;
-    $octubre    = 0;
-    $noviembre  = 0;
-    $diciembre  = 0;
+    $enero      = array();
+    $febrero    = array();
+    $marzo      = array();
+    $abril      = array();
+    $mayo       = array();
+    $junio      = array();
+    $julio      = array();
+    $agosto     = array();
+    $septiembre = array();
+    $octubre    = array();
+    $noviembre  = array();
+    $diciembre  = array();
     
     while ($rowEM = mysql_fetch_array($resEstadisticasMensuales)) {
     
         switch ($rowEM['mes']) {
             case 1:
-                $enero += $rowEM['total'];
+                array_push($enero ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 2:
-                $febrero += $rowEM['total'];
+                array_push($febrero ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta'] ]);
                 break;
             case 3:
-                $marzo += $rowEM['total'];
+                array_push($marzo ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta'] ]);
                 break;
             case 4:
-                $abril += $rowEM['total'];
+                array_push($abril ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 5:
-                $mayo += $rowEM['total'];
+                array_push($mayo ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 6:
-                $junio += $rowEM['total'];
+                array_push($junio ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 7:
-                $julio += $rowEM['total'];
+                array_push($julio ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 8:
-                $agosto += $rowEM['total'];
+                array_push($agosto ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 9:
-                $septiembre += $rowEM['total'];
+                array_push($septiembre ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 10:
-                $octubre += $rowEM['total'];
+                array_push($octubre ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 11:
-                $noviembre += $rowEM['total'];
+                array_push($noviembre ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break;
             case 12:
-                $diciembre += $rowEM['total'];
+                array_push($diciembre ,['total'=>$rowEM['total'],'totalefectivo'=>$rowEM['totalefectivo'],'totaltarjeta'=>$rowEM['totaltarjeta']]);
                 break; 
              default:
                  # code...
                  break;
          }
     }
+
+    $sumTotalEfectivoAnual = ($enero[0]['totalefectivo']+$febrero[0]['totalefectivo']+$marzo[0]['totalefectivo']+$abril[0]['totalefectivo']+$mayo[0]['totalefectivo']+$junio[0]['totalefectivo']+$julio[0]['totalefectivo']+$agosto[0]['totalefectivo']+$septiembre[0]['totalefectivo']+$octubre[0]['totalefectivo']+$noviembre[0]['totalefectivo']+$diciembre[0]['totalefectivo']);
+
+    $sumTotalTarjetasAnual = ($enero[0]['totaltarjeta']+$febrero[0]['totaltarjeta']+$marzo[0]['totaltarjeta']+$abril[0]['totaltarjeta']+$mayo[0]['totaltarjeta']+$junio[0]['totaltarjeta']+$julio[0]['totaltarjeta']+$agosto[0]['totaltarjeta']+$septiembre[0]['totaltarjeta']+$octubre[0]['totaltarjeta']+$noviembre[0]['totaltarjeta']+$diciembre[0]['totaltarjeta']);
+    
     
 }
 
@@ -242,8 +258,9 @@ if (mysql_num_rows($resSumDatosActor)>0) {
     $funciones      = 0;
 }
 
+$sumTotalAnual = ($enero[0]['total']+$febrero[0]['total']+$marzo[0]['total']+$abril[0]['total']+$mayo[0]['total']+$junio[0]['total']+$julio[0]['total']+$agosto[0]['total']+$septiembre[0]['total']+$octubre[0]['total']+$noviembre[0]['total']+$diciembre[0]['total']);
 
-
+$sumTotalCuponerasAnual = $sumTotalAnual - $sumTotalTarjetasAnual - $sumTotalEfectivoAnual;
 ?>
 
 <!DOCTYPE HTML>
@@ -448,7 +465,7 @@ if (mysql_num_rows($resSumDatosActor)>0) {
                 </div>
                 <a href="javascript:void(0)" id="verLiquidacion">
                     <div class="panel-footer">
-                        <span class="pull-left">Ver Detalles</span>
+                        <span class="pull-left">Liquidacion Anual</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                         <div class="clearfix"></div>
                     </div>
@@ -647,6 +664,15 @@ if (mysql_num_rows($resSumDatosActor)>0) {
             </div>
             <div class="panel-body">
                 <div id="myfirstchart" style="height: 250px;"></div>
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-success active">Liquidacion Anual</a>
+                    <a href="#" class="list-group-item">Total: <?php echo '$ '.number_format($sumTotalAnual,2,',','.'); ?></a>
+                    <?php if ($_SESSION['idroll_predio'] == 1) { ?>
+                    <a href="#" class="list-group-item">Total Efectivo: <?php echo '$ '.number_format($sumTotalEfectivoAnual,2,',','.'); ?></a>
+                    <a href="#" class="list-group-item">Total Tarjeta: <?php echo '$ '.number_format($sumTotalTarjetasAnual,2,',','.'); ?></a>
+                    <a href="#" class="list-group-item">Total Cuponeras: <?php echo '$ '.number_format($sumTotalCuponerasAnual,2,',','.'); ?></a>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </div>
@@ -706,28 +732,32 @@ if (mysql_num_rows($resSumDatosActor)>0) {
 <script type="text/javascript">
 $(document).ready(function(){
 	var months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-	new Morris.Line({
-	  // ID of the element in which to draw the chart.
-	  element: 'myfirstchart',
+    <?php
+        if ($_SESSION['idroll_predio'] == 1) {
+
+    ?>
+    new Morris.Line({
+      // ID of the element in which to draw the chart.
+      element: 'myfirstchart',
       
-	  // Chart data records -- each entry in this array corresponds to a point on
-	  // the chart.
-	  data: [
-		{ month: '2015-01', value: <?php echo $enero; ?> },
-		{ month: '2015-02', value: <?php echo $febrero; ?> },
-		{ month: '2015-03', value: <?php echo $marzo; ?> },
-		{ month: '2015-04', value: <?php echo $abril; ?> },
-		{ month: '2015-05', value: <?php echo $mayo; ?> },
-		{ month: '2015-06', value: <?php echo $junio; ?> },
-		{ month: '2015-07', value: <?php echo $julio; ?> },
-		{ month: '2015-08', value: <?php echo $agosto; ?> },
-        { month: '2015-09', value: <?php echo $septiembre; ?> },
-        { month: '2015-10', value: <?php echo $octubre; ?> },
-        { month: '2015-11', value: <?php echo $noviembre; ?> },
-		{ month: '2015-12', value: <?php echo $diciembre; ?> },
-	  ],
-	  // The name of the data record attribute that contains x-values.
-	  xkey: 'month',
+      // Chart data records -- each entry in this array corresponds to a point on
+      // the chart.
+      data: [
+        { month: '2015-01', value: <?php echo $enero[0]['total']; ?>, value2: <?php echo $enero[0]['totalefectivo']; ?>,value3: <?php echo $enero[0]['totaltarjeta']; ?>, value4: <?php echo $enero[0]['total'] - $enero[0]['totalefectivo'] - $enero[0]['totaltarjeta']; ?> },
+        { month: '2015-02', value: <?php echo $febrero[0]['total']; ?>,value2: <?php echo $febrero[0]['totalefectivo']; ?>,value3: <?php echo $febrero[0]['totaltarjeta']; ?>, value4: <?php echo $febrero[0]['total'] - $febrero[0]['totalefectivo'] - $febrero[0]['totaltarjeta']; ?> },
+        { month: '2015-03', value: <?php echo $marzo[0]['total']; ?>,value2: <?php echo $marzo[0]['totalefectivo']; ?>,value3: <?php echo $marzo[0]['totaltarjeta']; ?>, value4: <?php echo $marzo[0]['total'] - $marzo[0]['totalefectivo'] - $marzo[0]['totaltarjeta']; ?> },
+        { month: '2015-04', value: <?php echo $abril[0]['total']; ?>,value2: <?php echo $abril[0]['totalefectivo']; ?>,value3: <?php echo $abril[0]['totaltarjeta']; ?>, value4: <?php echo $abril[0]['total'] - $abril[0]['totalefectivo'] - $abril[0]['totaltarjeta']; ?> },
+        { month: '2015-05', value: <?php echo $mayo[0]['total']; ?>,value2: <?php echo $mayo[0]['totalefectivo']; ?>,value3: <?php echo $mayo[0]['totaltarjeta']; ?>, value4: <?php echo $mayo[0]['total'] - $mayo[0]['totalefectivo'] - $mayo[0]['totaltarjeta']; ?> },
+        { month: '2015-06', value: <?php echo $junio[0]['total']; ?>,value2: <?php echo $junio[0]['totalefectivo']; ?>,value3: <?php echo $junio[0]['totaltarjeta']; ?>, value4: <?php echo $junio[0]['total'] - $junio[0]['totalefectivo'] - $junio[0]['totaltarjeta']; ?> },
+        { month: '2015-07', value: <?php echo $julio[0]['total']; ?>,value2: <?php echo $julio[0]['totalefectivo']; ?>,value3: <?php echo $julio[0]['totaltarjeta']; ?>, value4: <?php echo $julio[0]['total'] - $julio[0]['totalefectivo'] - $julio[0]['totaltarjeta']; ?> },
+        { month: '2015-08', value: <?php echo $agosto[0]['total']; ?>,value2: <?php echo $agosto[0]['totalefectivo']; ?>,value3: <?php echo $agosto[0]['totaltarjeta']; ?>, value4: <?php echo $agosto[0]['total'] - $agosto[0]['totalefectivo'] - $agosto[0]['totaltarjeta']; ?> },
+        { month: '2015-09', value: <?php echo $septiembre[0]['total']; ?>,value2: <?php echo $septiembre[0]['totalefectivo']; ?>,value3: <?php echo $septiembre[0]['totaltarjeta']; ?>, value4: <?php echo $septiembre[0]['total'] - $septiembre[0]['totalefectivo'] - $septiembre[0]['totaltarjeta']; ?> },
+        { month: '2015-10', value: <?php echo $octubre[0]['total']; ?>,value2: <?php echo $octubre[0]['totalefectivo']; ?>,value3: <?php echo $octubre[0]['totaltarjeta']; ?>, value4: <?php echo $octubre[0]['total'] - $octubre[0]['totalefectivo'] - $octubre[0]['totaltarjeta']; ?> },
+        { month: '2015-11', value: <?php echo $noviembre[0]['total']; ?>,value2: <?php echo $noviembre[0]['totalefectivo']; ?>,value3: <?php echo $noviembre[0]['totaltarjeta']; ?>, value4: <?php echo $noviembre[0]['total'] - $noviembre[0]['totalefectivo'] - $noviembre[0]['totaltarjeta']; ?> },
+        { month: '2015-12', value: <?php echo $diciembre[0]['total']; ?>,value2: <?php echo $diciembre[0]['totalefectivo']; ?>,value3: <?php echo $diciembre[0]['totaltarjeta']; ?>, value4: <?php echo $diciembre[0]['total'] - $diciembre[0]['totalefectivo'] - $diciembre[0]['totaltarjeta']; ?> },
+      ],
+      // The name of the data record attribute that contains x-values.
+      xkey: 'month',
       xLabelFormat: function(x) { // <--- x.getMonth() returns valid index
         var month = months[x.getMonth()];
         return month;
@@ -736,13 +766,59 @@ $(document).ready(function(){
         var month = months[new Date(x).getMonth()];
         return month;
       },
-	  // A list of names of data record attributes that contain y-values.
-	  ykeys: ['value'],
-	  // Labels for the ykeys -- will be displayed when you hover over the
-	  // chart.
-	  labels: ['Liquidado'],
+      // A list of names of data record attributes that contain y-values.
+      ykeys: ['value','value2','value3','value4'],
+      // Labels for the ykeys -- will be displayed when you hover over the
+      // chart.
+      labels: ['Total', 'Total Efectivo','Total Tarjeta','Cuponeras'],
+      lineColors: ['#04E71C','#1FC1CC','#FF4D62','#CC3F1F']
+    });
+    <?php
+        } else {
+    ?>
+
+    new Morris.Line({
+      // ID of the element in which to draw the chart.
+      element: 'myfirstchart',
+      
+      // Chart data records -- each entry in this array corresponds to a point on
+      // the chart.
+      data: [
+        { month: '2015-01', value: <?php echo $enero; ?> },
+        { month: '2015-02', value: <?php echo $febrero; ?> },
+        { month: '2015-03', value: <?php echo $marzo; ?> },
+        { month: '2015-04', value: <?php echo $abril; ?> },
+        { month: '2015-05', value: <?php echo $mayo; ?> },
+        { month: '2015-06', value: <?php echo $junio; ?> },
+        { month: '2015-07', value: <?php echo $julio; ?> },
+        { month: '2015-08', value: <?php echo $agosto; ?> },
+        { month: '2015-09', value: <?php echo $septiembre; ?> },
+        { month: '2015-10', value: <?php echo $octubre; ?> },
+        { month: '2015-11', value: <?php echo $noviembre; ?> },
+        { month: '2015-12', value: <?php echo $diciembre; ?> },
+      ],
+      // The name of the data record attribute that contains x-values.
+      xkey: 'month',
+      xLabelFormat: function(x) { // <--- x.getMonth() returns valid index
+        var month = months[x.getMonth()];
+        return month;
+      },
+      dateFormat: function(x) {
+        var month = months[new Date(x).getMonth()];
+        return month;
+      },
+      // A list of names of data record attributes that contain y-values.
+      ykeys: ['value'],
+      // Labels for the ykeys -- will be displayed when you hover over the
+      // chart.
+      labels: ['Liquidado'],
       lineColors: ['#04E71C']
-	});
+    });
+    <?php
+         
+        }
+    ?>
+	
 	
 	
 	$('.lstFunciones').hide();
