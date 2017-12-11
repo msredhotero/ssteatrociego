@@ -246,7 +246,7 @@ $(document).ready(function(){
 											
 										});
 										$("#load").html('');
-										url = "index.php";
+										url = "../index.php";
 										$(location).attr('href',url);
 										
 										

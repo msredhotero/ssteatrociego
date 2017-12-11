@@ -9,6 +9,61 @@ date_default_timezone_set('America/Buenos_Aires');
 
 class ServiciosReferencias {
 
+function calculoBasePorPersona($idPersona, $desde, $hasta) {
+	$sumTotalEfectivoAnual = 0;
+    $sumTotalTarjetasAnual = 0;
+
+    $resDatosActor = $this->traerDatosObrasFuncionesPorActor($idPersona); 
+
+    $resSumDatosActor = $this->traerDatosSumObrasFuncionesPorActor($idPersona);
+
+    $resDetalleObrasPorActor = $this->traerDatosObrasPorActor($idPersona);
+
+    $resDetalleCooperativasPorActor = $this->traerDatosCooperativasPorActor($idPersona);
+
+    $resDatosActorAux = $this->traerDatosObrasFuncionesPorActor($idPersona); 
+
+    $resDatosActorAuxEstadisticas = $this->traerDatosObrasFuncionesPorActor($idPersona);
+	
+	
+	$month = date('Y-m');
+	$aux = date('Y-m-d', strtotime("{$month} + 1 month"));
+	$last_day = date('Y-m-d', strtotime("{$aux} - 1 day"));
+	
+	//echo "El último día del mes es: {$last_day}";
+	
+	$total = 0;
+	while ($row = mysql_fetch_array($resDatosActorAux)) {
+		$resCalculo = $this->calcularPuntoPorFuncionDesdeHasta($idPersona,$row['idfuncion'], $desde, $hasta);
+		if (mysql_num_rows($resCalculo)>0) {
+			$total += mysql_result($resCalculo, 0,0);    
+		}
+	}
+	
+	return $total;
+}
+
+function traerPersonalActivoDesdeHasta($desde,$hasta) {
+	$sql = "select
+				distinct p.idpersonal, p.apellido, p.nombre, p.nrodocumento, b.cbu, b.nrocuenta
+			from dbpersonal p
+			inner
+			join	dbpersonalventa pv
+			on		pv.refpersonal = p.idpersonal
+			inner
+			join	dbventas v
+			on		v.idventa = pv.refventas
+			left
+			join	dbdatosbancos b
+			on		b.refpersonal = p.idpersonal
+			where	v.fecha between '".$desde."' and '".$hasta."'";
+	$res = $this->query($sql,0);
+	
+	return $res;
+}
+
+
+
 function GUID()
 {
     if (function_exists('com_create_guid') === true)

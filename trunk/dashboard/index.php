@@ -71,11 +71,25 @@ if ($_SESSION['idroll_predio'] == 3) {
 	
 	while ($row = mysql_fetch_array($resDatosActorAuxEstadisticas)) {
 		for ($i=1;$i<=12;$i++) {
+
+
 			$month = date('Y-').substr('0'.$i,-2);
-			$fechaCalculo = date('Y').'-'.substr('0'.($i + 1),-2).'-01';
-			$aux = date($fechaCalculo, strtotime("{$month} + 1 month"));
+            if ($i==12) {
+			    $fechaCalculo = (date('Y') + 1).'-01-01';
+			    $aux = date($fechaCalculo, strtotime("{$month} + 1 month"));
+            } else {
+                $fechaCalculo = date('Y').'-'.substr('0'.($i + 1),-2).'-01';
+                $aux = date($fechaCalculo, strtotime("{$month} + 1 month"));    
+            }
 			$last_day = date('Y-m-d', strtotime("{$aux} - 1 day"));
-	
+            /*
+            if ($i==12) {
+                echo $month.'<br>';
+                echo $fechaCalculo.'<br>';
+                echo $aux.'<br>';
+                echo $last_day.'<br>';die();
+            }
+	        */
 			$resCalculo = $serviciosReferencias->calcularPuntoPorFuncionDesdeHasta($_SESSION['idpersonal'],$row['idfuncion'], $month.'-01', $last_day);
 			if (mysql_num_rows($resCalculo)>0) {
 				if (mysql_result($resCalculo, 0,0) != '') {

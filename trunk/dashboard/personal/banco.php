@@ -54,7 +54,7 @@ $lblCambio	 	= array("refpersonal","nrocuenta","tipoproducto","formaoperar");
 $lblreemplazo	= array("Persona","Nro. Cuenta","Tipo Producto","Forma de Operar");
 
 $resPersona	=	$serviciosReferencias->traerPersonalPorId($id);
-$cadRef 	= 	$serviciosFunciones->devolverSelectBox($resPersona,array(3,4),', ');
+$cadRef 	= 	$serviciosFunciones->devolverSelectBoxActivo($resPersona,array(3,4),', ', $id);
 
 $refdescripcion = array(0=>$cadRef);
 $refCampo 	=  array("refpersonal");
@@ -111,7 +111,9 @@ if ($_SESSION['refroll_predio'] != 1) {
   
 		
 	</style>
-    
+    <script src="../../js/inputmask.js"></script>
+    <script src="../../js/inputmask.date.Extensions.js"></script>
+    <script src="../../js/jquery.inputmask.js"></script>
    
    <link href="../../css/perfect-scrollbar.css" rel="stylesheet">
       <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
@@ -211,7 +213,8 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 
-
+	$("#cbu").inputmask("9999999999999999999999");
+	$("#nrocuenta").inputmask("9999999");
 	
 	$('.volver').click(function(event){
 		 

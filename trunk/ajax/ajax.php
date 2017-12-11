@@ -38,6 +38,12 @@ switch ($accion) {
 		cambiarSede($serviciosUsuarios);
 		break;
 
+/**** haberes */
+case 'traerPagos':
+	traerPagos($serviciosReferencias);
+	break;
+/** fin *///
+
 
 case 'insertarCajadiaria':
 insertarCajadiaria($serviciosReferencias);
@@ -384,6 +390,26 @@ case 'traerVentasPorDiaFuncionActivos':
 
 /* Fin */
 
+
+///////////////////////////////*****  haberes ******************////////////////////////////
+function traerPagos($serviciosReferencias) {
+	$desde = $_POST['desde'];
+	$hasta = $_POST['hasta'];
+	
+	$resPersonalActivo = $serviciosReferencias->traerPersonalActivoDesdeHasta($desde, $hasta);
+	
+	$cuerpo = '<a href="#" class="list-group-item list-group-item-success active">Liquidacion</a>';
+	
+	while ($row = mysql_fetch_array($resPersonalActivo)) {
+		$calculoLiquido = $serviciosReferencias->calculoBasePorPersona($row['idpersonal'], $desde, $hasta);
+		$cuerpo .= '<a href="#" class="list-group-item">'.$row['apellido'].' '.$row['nombre'].' , DNI: '.$row['nrodocumento'].' <span class="navbar-right" style="color:#F10;">$ '.$calculoLiquido.'</span></a>';	
+	}
+	
+	echo $cuerpo;
+}
+
+
+//////////////////****** fin  *********************************/////////////////////////////
 
 ///////////////////////////////****  VENTAS  ********************///////////////////////////////////
 function insertarVentas($serviciosReferencias) { 
