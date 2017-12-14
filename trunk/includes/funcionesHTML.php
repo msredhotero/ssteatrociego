@@ -64,12 +64,13 @@ function menu($usuario,$titulo,$rol,$empresa) {
 				<li style="margin-left:20%;"><span class="glyphicon glyphicon-list" id="colapsarMenu" style="cursor:pointer;"> </span></li>	
 				
 				<li class="navbar-right"><span class="glyphicon glyphicon-user"></span> '.$usuario.'</li>';
-	if ($rol != 'Empleado') {
-		$menu .= '
-				<li class="navbar-right" style="color:#FC0;">Sede: '.$empresa.' <a href="../sedes/cambiarsede.php"> Cambiar</a></li>';
-	} else {
+	if (($rol == 'Empleado') || ($rol == 'Actor')) {
 		$menu .= '
 				<li class="navbar-right" style="color:#FC0;">Sede: '.$empresa.'</li>';
+
+	} else {
+		$menu .= '
+				<li class="navbar-right" style="color:#FC0;">Sede: '.$empresa.' <a href="../sedes/cambiarsede.php"> Cambiar</a></li>';
 	}
 	$menu .= '
 

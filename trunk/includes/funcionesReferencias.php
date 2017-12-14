@@ -27,7 +27,13 @@ function calculoBasePorPersona($idPersona, $desde, $hasta) {
 	
 	
 	$month = date('Y-m');
-	$aux = date('Y-m-d', strtotime("{$month} + 1 month"));
+	
+	if ((integer)date('m')==12) {
+	    $fechaCalculo = (date('Y') + 1).'-01-01';
+	    $aux = date($fechaCalculo, strtotime("{$month} + 1 month"));
+    } else {
+    	$aux = date('Y-m-d', strtotime("{$month} + 1 month"));
+    }
 	$last_day = date('Y-m-d', strtotime("{$aux} - 1 day"));
 	
 	//echo "El último día del mes es: {$last_day}";

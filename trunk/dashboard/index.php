@@ -49,6 +49,10 @@ if ($_SESSION['idroll_predio'] == 3) {
 
     $month = date('Y-m');
 	$aux = date('Y-m-d', strtotime("{$month} + 1 month"));
+    if ((integer)date('m')==12) {
+        $fechaCalculo = (date('Y') + 1).'-01-01';
+        $aux = date($fechaCalculo, strtotime("{$month} + 1 month"));
+    }
 	$last_day = date('Y-m-d', strtotime("{$aux} - 1 day"));
 	
 	//echo "El último día del mes es: {$last_day}";
@@ -272,8 +276,11 @@ if (mysql_num_rows($resSumDatosActor)>0) {
     $funciones      = 0;
 }
 
-$sumTotalAnual = ($enero[0]['total']+$febrero[0]['total']+$marzo[0]['total']+$abril[0]['total']+$mayo[0]['total']+$junio[0]['total']+$julio[0]['total']+$agosto[0]['total']+$septiembre[0]['total']+$octubre[0]['total']+$noviembre[0]['total']+$diciembre[0]['total']);
-
+if ($_SESSION['idroll_predio'] == 3) {
+    $sumTotalAnual = ($enero + $febrero + $marzo + $abril + $mayo + $junio + $julio + $agosto + $septiembre + $octubre + $noviembre + $diciembre);
+} else {
+    $sumTotalAnual = ($enero[0]['total']+$febrero[0]['total']+$marzo[0]['total']+$abril[0]['total']+$mayo[0]['total']+$junio[0]['total']+$julio[0]['total']+$agosto[0]['total']+$septiembre[0]['total']+$octubre[0]['total']+$noviembre[0]['total']+$diciembre[0]['total']);
+}
 $sumTotalCuponerasAnual = $sumTotalAnual - $sumTotalTarjetasAnual - $sumTotalEfectivoAnual;
 ?>
 
