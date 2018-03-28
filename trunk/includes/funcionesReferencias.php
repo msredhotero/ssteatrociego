@@ -2441,6 +2441,41 @@ return $res;
 }
 
 
+
+function traerVentasGrid($fecha) {
+	$sql = "select
+v.idventa,
+v.numero,
+o.nombre as obra,
+di.dia,
+fu.horario,
+v.fecha,
+v.cantidad,
+v.valorentrada,
+v.total,
+v.totalefectivo,
+v.totaltarjeta,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+a.banda as banda,
+a.album as album,
+v.reftipopago,
+v.reffunciones,
+v.refalbum,
+o.idobra,
+v.usuario
+from dbventas v
+left join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbfunciones fu on fu.idfuncion = v.reffunciones
+inner join tbdias di on di.iddia = fu.refdias
+inner join dbobras o ON o.idobra = fu.refobras
+left join dbalbumobras ao ON ao.refobras = o.idobra
+left join tbalbum a ON a.idalbum = v.refalbum
+order by v.fecha desc";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
 function traerVentasPorDiaFuncionActivos($fecha, $reffuncion) {
 	$sql = "select
 v.idventa,

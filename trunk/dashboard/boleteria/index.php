@@ -86,7 +86,7 @@ if ($_SESSION['idroll_predio'] == 1) {
 } else {
 	$lstFunciones = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerFuncionesPorDiaDeLaSemanaSede($diaDeLaSemana,$_SESSION['idsede']),array(3,4,5),' - ');
 }
-$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),13);
+$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasGrid(),13);
 
 
 
